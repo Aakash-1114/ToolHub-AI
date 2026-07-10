@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Resume Builder - ToolHub AI</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #0f172a;
+        }
+    </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+</head>
+
+<body class="text-white">
+
+    <nav class="bg-slate-900 border-b border-slate-700">
+
+        <div class="max-w-7xl mx-auto flex justify-between items-center px-6 py-5">
+
+            <a href="../../dashboard.html" class="text-2xl font-bold text-blue-500">
+
+                🚀 ToolHub <span class="text-white">AI</span>
+
+            </a>
+
+            <a href="../../dashboard.html" class="text-gray-300 hover:text-blue-400">
+
+                ⬅ Dashboard
+
+            </a>
+
+        </div>
+
+    </nav>
+
+    <section class="max-w-7xl mx-auto p-6">
+
+        <h1 class="text-4xl font-bold mb-8">
+
+            📄 Resume Builder
+
+        </h1>
+
+        <div class="grid lg:grid-cols-2 gap-8">
+
+            <!-- Left -->
+
+            <div class="bg-slate-800 p-6 rounded-2xl">
+
+                <h2 class="text-2xl font-semibold mb-6">
+                    Your Details
+                </h2>
+
+                <h3 class="text-lg font-bold text-blue-400 mb-4">
+                    👤 Personal Information
+                </h3>
+
+                <label class="block mb-2 font-semibold">
+                    Choose Resume Template
+                </label>
+
+                <select id="template" onchange="changeTemplate()" class="w-full p-3 mb-6 rounded bg-slate-900">
+
+                    <option value="modern">Modern Blue</option>
+
+                    <option value="professional">Professional</option>
+
+                    <option value="creative">Creative</option>
+
+                </select>
+
+                <input id="name" type="text" placeholder="Full Name" class="w-full p-3 mb-4 rounded bg-slate-900">
+
+                <input id="email" type="email" placeholder="Email" class="w-full p-3 mb-4 rounded bg-slate-900">
+
+                <input id="phone" type="text" placeholder="Phone Number" class="w-full p-3 mb-4 rounded bg-slate-900">
+
+                <hr class="border-slate-700 my-6">
+
+                <h3 class="text-lg font-bold text-blue-400 mb-4">
+                    🎓 Education
+                </h3>
+
+                <input id="college" type="text" placeholder="College / University"
+                    class="w-full p-3 mb-4 rounded bg-slate-900">
+
+                <input id="degree" type="text" placeholder="Degree" class="w-full p-3 mb-4 rounded bg-slate-900">
+
+                <input id="year" type="text" placeholder="Passing Year" class="w-full p-3 mb-4 rounded bg-slate-900">
+
+                <button type="button" id="addEducation" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded mb-4">
+
+                    + Add Education
+
+                </button>
+
+                <div id="educationList"></div>
+
+                <hr class="border-slate-700 my-6">
+
+                <h3 class="text-lg font-bold text-blue-400 mb-4">
+                    💼 Experience
+                </h3>
+
+                <input id="company" type="text" placeholder="Company Name" class="w-full p-3 mb-4 rounded bg-slate-900">
+
+                <input id="job" type="text" placeholder="Job Title" class="w-full p-3 mb-4 rounded bg-slate-900">
+
+                <input id="duration" type="text" placeholder="Duration (2024 - Present)"
+                    class="w-full p-3 mb-4 rounded bg-slate-900">
+
+                <button type="button" id="addExperience" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded mb-4">
+
+                    + Add Experience
+
+                </button>
+
+                <div id="experienceList"></div>
+
+                <hr class="border-slate-700 my-6">
+
+                <h3 class="text-lg font-bold text-blue-400 mb-4">
+                    🚀 Projects
+                </h3>
+
+                <input id="project" type="text" placeholder="Project Name" class="w-full p-3 mb-4 rounded bg-slate-900">
+
+                <textarea id="projectDesc" placeholder="Project Description"
+                    class="w-full p-3 mb-4 rounded bg-slate-900 h-24"></textarea>
+
+                <button type="button" id="addProject" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded mb-4">
+
+                    + Add Project
+
+                </button>
+
+                <div id="projectList"></div>
+
+                <hr class="border-slate-700 my-6">
+
+                <h3 class="text-lg font-bold text-blue-400 mb-4">
+                    📝 Professional Summary
+                </h3>
+
+                <textarea id="summary" placeholder="Professional Summary"
+                    class="w-full p-3 mb-4 rounded bg-slate-900 h-28"></textarea>
+
+                <hr class="border-slate-700 my-6">
+
+                <h3 class="text-lg font-bold text-blue-400 mb-4">
+                    🛠 Skills
+                </h3>
+
+                <input id="skills" type="text" placeholder="Skills (Comma separated)"
+                    class="w-full p-3 mb-4 rounded bg-slate-900">
+
+                <hr class="border-slate-700 my-6">
+
+                <hr class="border-slate-700 my-6">
+
+                <h3 class="text-lg font-bold text-blue-400 mb-4">
+                    🌐 Social Links
+                </h3>
+
+                <input id="linkedin" type="text" placeholder="LinkedIn Profile URL"
+                    class="w-full p-3 mb-4 rounded bg-slate-900">
+
+                <input id="github" type="text" placeholder="GitHub Profile URL"
+                    class="w-full p-3 mb-4 rounded bg-slate-900">
+
+                <hr class="border-slate-700 my-6">
+
+                <h3 class="text-lg font-bold text-blue-400 mb-4">
+                    🏆 Certifications
+                </h3>
+
+                <input id="certificate" type="text" placeholder="Certification (e.g. Google UX Design)"
+                    class="w-full p-3 mb-4 rounded bg-slate-900">
+
+                <hr class="border-slate-700 my-6">
+
+                <h3 class="text-lg font-bold text-blue-400 mb-4">
+                    🌍 Languages
+                </h3>
+
+                <input id="languages" type="text" placeholder="Languages (e.g. English, Hindi)"
+                    class="w-full p-3 mb-4 rounded bg-slate-900">
+
+                <hr class="border-slate-700 my-6">
+
+                <h3 class="text-lg font-bold text-blue-400 mb-4">
+                    📷 Profile Photo
+                </h3>
+
+                <input type="file" id="photo" accept="image/*" class="w-full p-3 mb-4 bg-slate-900 rounded">
+
+                <button onclick="generateResume()" class="w-full bg-blue-600 hover:bg-blue-700 p-3 rounded-xl">
+                    Generate Resume
+                </button>
+
+                <button onclick="downloadPDF()" class="w-full bg-green-600 hover:bg-green-700 p-3 rounded-xl mt-4">
+                    📄 Download PDF
+                </button>
+
+                <button onclick="printResume()" class="w-full bg-purple-600 hover:bg-purple-700 p-3 rounded-xl mt-4">
+
+                    🖨️ Print Resume
+
+                </button>
+
+            </div>
+
+            <!-- Right -->
+
+            <div id="resumePreview" class="bg-white text-black rounded-2xl p-8">
+
+                <div class="text-center">
+
+                    <img id="previewPhoto" src="https://via.placeholder.com/120"
+                        class="w-28 h-28 rounded-full mx-auto mb-4 object-cover">
+
+                    <h2 id="previewName" class="text-3xl font-bold">
+
+                        Your Name
+
+                    </h2>
+
+                    <p id="previewEmail">
+
+                        email@example.com
+
+                    </p>
+
+                    <p id="previewPhone">
+
+                        +91 XXXXX XXXXX
+
+                    </p>
+
+                </div>
+
+                <hr class="my-6">
+
+                <h3 class="text-xl font-bold mt-6">
+                    🎓 Education
+                </h3>
+
+                <p id="previewEducation">
+                    Your education will appear here.
+                </p>
+
+                <h3 class="text-xl font-bold mt-6">
+                    💼 Experience
+                </h3>
+
+                <p id="previewExperience">
+                    Your experience will appear here.
+                </p>
+
+                <h3 class="text-xl font-bold mt-6">
+                    🚀 Projects
+                </h3>
+
+                <p id="previewProject">
+                    Your project will appear here.
+                </p>
+
+                <h3 class="text-xl font-bold">
+                    Professional Summary
+                </h3>
+
+                <p id="previewSummary">
+                    Your summary will appear here.
+                </p>
+
+                <h3 class="text-xl font-bold mt-6">
+                    Skills
+                </h3>
+
+                <p id="previewSkills">
+                    HTML, CSS, JavaScript
+                </p>
+
+                <h3 class="text-xl font-bold mt-6">
+                    🌐 Links
+                </h3>
+
+                <p>
+                    <b>LinkedIn:</b>
+                    <span id="previewLinkedin">Not Added</span>
+                </p>
+
+                <p class="mt-2">
+                    <b>GitHub:</b>
+                    <span id="previewGithub">Not Added</span>
+                </p>
+
+                <h3 class="text-xl font-bold mt-6">
+                    🏆 Certification
+                </h3>
+
+                <p id="previewCertificate">
+                    Not Added
+                </p>
+
+                <h3 class="text-xl font-bold mt-6">
+                    🌍 Languages
+                </h3>
+
+                <p id="previewLanguages">
+                    Not Added
+                </p>
+
+
+
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

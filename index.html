@@ -1,34 +1,366 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ToolHub AI</title>
 
-    <link rel="stylesheet" href="style.css">
+    <title>ToolHub AI - Free Online Tools</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <style>
+        * {
+            font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: #0f172a;
+        }
+    </style>
+
 </head>
-<body>
 
-<header>
-    <h1>🚀 ToolHub AI</h1>
-    <p>100+ Free Online Tools</p>
-</header>
+<body class="text-white">
 
-<section class="hero">
+    <!-- ================= NAVBAR ================= -->
 
-    <h2>Everything You Need In One Place</h2>
+    <nav class="fixed top-0 left-0 w-full bg-slate-900/80 backdrop-blur-lg border-b border-slate-700 z-50">
 
-    <p>
-        QR Generator, Password Generator,
-        Resume Builder, Image Compressor
-        and many more...
-    </p>
+        <div class="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
 
-    <button>Explore Tools</button>
+            <h1 class="text-2xl font-bold text-blue-500">
+                ToolHub<span class="text-white">AI</span>
+            </h1>
 
-</section>
+            <div class="hidden md:flex gap-8">
 
-<script src="script.js"></script>
+                <a href="#" class="hover:text-blue-400">Home</a>
 
+                <a href="dashboard.html" class="hover:text-blue-400">Tools</a>
+
+                <a href="#">About</a>
+
+                <a href="#">Contact</a>
+
+            </div>
+
+            <a href="dashboard.html">
+
+                <button class="bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded-xl">
+
+                    Launch App
+
+                </button>
+
+            </a>
+
+        </div>
+
+    </nav>
+
+    <!-- ================= HERO ================= -->
+
+    <section class="pt-40 pb-24">
+
+        <div class="max-w-7xl mx-auto px-6">
+
+            <div class="grid md:grid-cols-2 gap-16 items-center">
+
+                <!-- LEFT -->
+
+                <div>
+
+                    <p class="text-blue-400 font-semibold">
+
+                        🔥 Productivity Platform
+
+                    </p>
+
+                    <h1 class="text-5xl font-bold mt-4 leading-tight">
+
+                        All Essential Online Tools
+
+                        in
+
+                        <span class="text-blue-500">
+
+                            One Place
+
+                        </span>
+
+                    </h1>
+
+                    <p class="text-gray-400 mt-8 text-lg leading-8">
+
+                        Free online tools for students,
+
+                        developers,
+
+                        job seekers,
+
+                        creators
+
+                        and professionals.
+
+                    </p>
+
+                    <div class="flex gap-5 mt-10">
+
+                        <a href="dashboard.html">
+
+                            <button class="bg-blue-600 hover:bg-blue-700 px-7 py-3 rounded-xl text-lg">
+
+                                Explore Tools
+
+                            </button>
+
+                        </a>
+
+                        <a href="#popular-tools">
+                            <button
+                                class="border border-slate-600 hover:border-blue-500 hover:text-blue-400 px-7 py-3 rounded-xl">
+                                Learn More
+                            </button>
+                        </a>
+
+                    </div>
+
+                </div>
+
+                <!-- RIGHT -->
+
+                <div>
+
+                    <img src="https://illustrations.popsy.co/blue/web-design.svg" class="w-full">
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- ================= SEARCH ================= -->
+
+    <section class="pb-24">
+
+        <div class="max-w-4xl mx-auto px-6">
+
+            <div class="bg-slate-800 rounded-2xl p-8">
+
+                <h2 class="text-3xl font-bold text-center">
+
+                    Search Tools
+
+                </h2>
+
+                <div class="mt-8">
+
+                    <input type="text" placeholder="Search tools..."
+                        class="w-full p-4 rounded-xl bg-slate-900 border border-slate-700 outline-none">
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- ================= POPULAR TOOLS ================= -->
+
+    <section id="popular-tools" class="py-20">
+
+        <div class="max-w-7xl mx-auto px-6">
+
+            <h2 class="text-4xl font-bold text-center mb-14">
+
+                🔥 Popular Tools
+
+            </h2>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+
+                <!-- Resume Builder -->
+
+                <a href="tools/resume-builder/index.html">
+
+                    <div class="bg-slate-800 p-6 rounded-2xl hover:bg-slate-700 transition duration-300">
+
+                        <div class="text-5xl">📄</div>
+
+                        <h3 class="text-xl font-semibold mt-5">
+
+                            Resume Builder
+
+                        </h3>
+
+                        <p class="text-gray-400 mt-3">
+
+                            Create ATS-friendly resumes with live preview.
+
+                        </p>
+
+                    </div>
+
+                </a>
+
+                <!-- Cover Letter -->
+
+                <a href="tools/cover-letter/index.html">
+
+                    <div class="bg-slate-800 p-6 rounded-2xl hover:bg-slate-700 transition duration-300">
+
+                        <div class="text-5xl">✉️</div>
+
+                        <h3 class="text-xl font-semibold mt-5">
+
+                            Cover Letter
+
+                        </h3>
+
+                        <p class="text-gray-400 mt-3">
+
+                            Generate professional cover letters.
+
+                        </p>
+
+                    </div>
+
+                </a>
+
+                <!-- Image Compressor -->
+
+                <a href="tools/image-compressor/index.html">
+
+                    <div class="bg-slate-800 p-6 rounded-2xl hover:bg-slate-700 transition duration-300">
+
+                        <div class="text-5xl">🖼️</div>
+
+                        <h3 class="text-xl font-semibold mt-5">
+
+                            Image Compressor
+
+                        </h3>
+
+                        <p class="text-gray-400 mt-3">
+
+                            Compress images without losing quality.
+
+                        </p>
+
+                    </div>
+
+                </a>
+
+                <!-- Image to PDF -->
+
+                <a href="tools/image-to-pdf/index.html">
+
+                    <div class="bg-slate-800 p-6 rounded-2xl hover:bg-slate-700 transition duration-300">
+
+                        <div class="text-5xl">📑</div>
+
+                        <h3 class="text-xl font-semibold mt-5">
+
+                            Image to PDF
+
+                        </h3>
+
+                        <p class="text-gray-400 mt-3">
+
+                            Convert images into PDF instantly.
+
+                        </p>
+
+                    </div>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- ================= CATEGORIES ================= -->
+
+    <section class="py-20 bg-slate-900">
+
+        <div class="max-w-7xl mx-auto px-6">
+
+            <h2 class="text-4xl font-bold text-center mb-14">
+
+                📂 Categories
+
+            </h2>
+
+            <div class="grid md:grid-cols-3 gap-8">
+
+                <div class="bg-slate-800 rounded-2xl p-8">
+
+                    <h3 class="text-2xl font-bold">
+
+                        💼 Career Tools
+
+                    </h3>
+
+                    <p class="text-gray-400 mt-4">
+
+                        Resume Builder, Cover Letter, ATS Checker and Interview Prep.
+
+                    </p>
+
+                </div>
+
+                <div class="bg-slate-800 rounded-2xl p-8">
+
+                    <h3 class="text-2xl font-bold">
+
+                        🖼️ Image Tools
+
+                    </h3>
+
+                    <p class="text-gray-400 mt-4">
+
+                        Compress, Resize, Convert and Edit images.
+
+                    </p>
+
+                </div>
+
+                <div class="bg-slate-800 rounded-2xl p-8">
+
+                    <h3 class="text-2xl font-bold">
+
+                        📄 PDF Tools
+
+                    </h3>
+
+                    <p class="text-gray-400 mt-4">
+
+                        Merge, Split, Convert and Compress PDF files.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
 </body>
+
 </html>

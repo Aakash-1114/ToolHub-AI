@@ -1,0 +1,69 @@
+body{
+    margin:0;
+    padding:0;
+}
+
+input,
+textarea{
+    width:100%;
+    border:none;
+    outline:none;
+    color:white;
+    font-size:16px;
+    box-sizing:border-box;
+}
+
+input::placeholder,
+textarea::placeholder{
+    color:#94a3b8;
+}
+
+textarea{
+    resize:none;
+}
+
+button{
+    cursor:pointer;
+    font-weight:600;
+    transition:.3s;
+}
+
+button:hover{
+    transform:scale(1.02);
+}
+
+#resumePreview{
+    min-height:700px;
+    box-shadow:0 10px 30px rgba(0,0,0,.2);
+}
+
+#previewPhoto{
+    border:4px solid #2563eb;
+}
+
+#previewName{
+    color:#1e293b;
+}
+
+#previewEmail,
+#previewPhone{
+    color:#475569;
+}
+
+h3{
+    border-bottom:2px solid #2563eb;
+    padding-bottom:6px;
+    margin-bottom:10px;
+}
+
+@media(max-width:1024px){
+
+.grid{
+display:block;
+}
+
+#resumePreview{
+margin-top:30px;
+}
+
+}
