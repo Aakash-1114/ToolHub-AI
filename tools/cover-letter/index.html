@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Cover Letter Generator - ToolHub AI</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #0f172a;
+        }
+    </style>
+</head>
+
+<body class="text-white">
+
+    <nav class="bg-slate-900 border-b border-slate-700">
+
+        <div class="max-w-7xl mx-auto flex justify-between items-center px-6 py-5">
+
+            <a href="../../dashboard.html" class="text-2xl font-bold text-blue-500">
+
+                🚀 ToolHub <span class="text-white">AI</span>
+
+            </a>
+
+            <a href="../../dashboard.html" class="text-gray-300 hover:text-blue-400">
+
+                ⬅ Dashboard
+
+            </a>
+
+        </div>
+
+    </nav>
+
+    <section class="max-w-7xl mx-auto p-6">
+
+        <h1 class="text-4xl font-bold mb-8">
+
+            ✉️ AI Cover Letter Generator
+
+        </h1>
+
+        <div class="grid lg:grid-cols-2 gap-8">
+
+            <!-- Left -->
+
+            <div class="bg-slate-800 p-6 rounded-2xl">
+
+                <h2 class="text-2xl font-semibold mb-6">
+
+                    Enter Details
+
+                </h2>
+
+                <input id="name" type="text" placeholder="Your Name" class="w-full p-3 mb-4 rounded bg-slate-900">
+
+                <input id="company" type="text" placeholder="Company Name" class="w-full p-3 mb-4 rounded bg-slate-900">
+
+                <input id="job" type="text" placeholder="Job Role" class="w-full p-3 mb-4 rounded bg-slate-900">
+
+                <textarea id="skills" placeholder="Your Skills"
+                    class="w-full p-3 mb-4 rounded bg-slate-900 h-24"></textarea>
+
+                <label class="block mb-2 text-lg font-medium">
+                    Select Template
+                </label>
+
+                <select id="template" class="w-full p-3 mb-4 rounded bg-slate-900">
+
+                    <option value="professional">
+                        💼 Professional
+                    </option>
+
+                    <option value="modern">
+                        ✨ Modern
+                    </option>
+
+                    <option value="simple">
+                        📄 Simple
+                    </option>
+
+                </select>
+
+                <button onclick="generateLetter()" class="w-full bg-blue-600 hover:bg-blue-700 p-3 rounded-xl">
+
+                    Generate Cover Letter
+
+                </button>
+
+                <button onclick="downloadPDF()" class="w-full bg-green-600 hover:bg-green-700 p-3 rounded-xl mt-4">
+
+                    📄 Download PDF
+
+                </button>
+
+                <button onclick="copyLetter()" class="w-full bg-indigo-600 hover:bg-indigo-700 p-3 rounded-xl mt-4">
+
+                    📋 Copy Cover Letter
+
+                </button>
+
+                <button onclick="clearForm()" class="w-full bg-red-600 hover:bg-red-700 p-3 rounded-xl mt-4">
+
+                    🗑️ Clear Form
+
+                </button>
+
+                <button onclick="printLetter()" class="w-full bg-purple-600 hover:bg-purple-700 p-3 rounded-xl mt-4">
+
+                    🖨️ Print Cover Letter
+
+                </button>
+
+            </div>
+
+            <!-- Right -->
+
+            <div id="letterPreview" class="bg-white text-black rounded-2xl p-8">
+
+                <h2 class="text-3xl font-bold mb-6">
+
+                    Cover Letter
+
+                </h2>
+
+                <p id="previewLetter">
+
+                    Your cover letter will appear here...
+
+                </p>
+
+            </div>
+
+            <div class="mt-4 text-sm text-gray-600">
+                Words: <span id="wordCount">0</span> |
+                Characters: <span id="charCount">0</span>
+            </div>
+        </div>
+
+    </section>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>div>
