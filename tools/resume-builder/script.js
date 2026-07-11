@@ -49,9 +49,8 @@ function generateResume() {
 
         const inputs = item.querySelectorAll("input");
 
-        educationHTML += `< br > <br>
-        ${inputs[1].value} - ${inputs[0].value} (${inputs[2].value})`;
-
+        educationHTML += `<br><br>
+${inputs[1].value} - ${inputs[0].value} (${inputs[2].value})`;
     });
 
     document.getElementById("previewEducation").innerHTML =
@@ -133,34 +132,44 @@ document.getElementById("photo").addEventListener("change", function () {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = function (e) {
-
-        document.getElementById("previewPhoto").src = e.target.result;
+        const photo =
+        document.getElementById("previewPhoto"); photo.src = e.target.result;
+        photo.classList.remove("hidden");
     };
     reader.readAsDataURL(file);
 });
+
 function downloadPDF() {
 
-    const element = document.getElementById("resumePreview");
+    generateResume();
 
-    html2pdf()
-        .from(element)
-        .set({
-            margin: 0.5,
-            filename: "Resume.pdf",
-            image: {
-                type: "jpeg",
-                quality: 1
-            },
-            html2canvas: {
-                scale: 2
-            },
-            jsPDF: {
-                unit: "in",
-                format: "a4",
-                orientation: "portrait"
-            }
-        })
-        .save();
+    setTimeout(() => {
+
+        const element = document.getElementById("resumePreview");
+
+        html2pdf()
+            .set({
+                margin: 0.5,
+                filename: "Resume.pdf",
+                image: {
+                    type: "jpeg",
+                    quality: 1
+                },
+                html2canvas: {
+                    scale: 2,
+                    useCORS: true
+                },
+                jsPDF: {
+                    unit: "in",
+                    format: "a4",
+                    orientation: "portrait"
+                }
+            })
+            .from(element)
+            .save();
+
+    }, 300);
+
 }
 
 function printResume() {
