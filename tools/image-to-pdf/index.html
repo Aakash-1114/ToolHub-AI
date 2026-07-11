@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Image to PDF - ToolHub AI</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        body {
+            background: #0f172a;
+            font-family: Arial, sans-serif;
+        }
+    </style>
+</head>
+
+<body class="text-white">
+
+    <nav class="bg-slate-900 p-5 flex justify-between">
+
+        <h1 class="text-2xl font-bold text-blue-500">
+            🖼️ Image to PDF
+        </h1>
+
+        <a href="../../dashboard.html" class="text-gray-300 hover:text-blue-400">
+
+            ⬅ Dashboard
+
+        </a>
+
+    </nav>
+
+    <div class="max-w-5xl mx-auto p-8">
+
+        <h2 class="text-4xl font-bold mb-6">
+
+            Convert Images to PDF
+
+        </h2>
+
+        <input type="file" id="imageInput" multiple accept="image/*" class="mb-6">
+
+        <div id="dropZone" class="border-2 border-dashed border-blue-500 rounded-xl p-10 text-center mb-6">
+
+            <h3 class="text-2xl font-bold">
+                📂 Drag & Drop Images Here
+            </h3>
+
+            <p class="text-gray-400 mt-2">
+                or use the file picker above
+            </p>
+
+        </div>
+
+        <p class="mb-4 text-lg">
+            Selected Images:
+            <span id="imageCount">0</span>
+        </p>
+
+        <div id="preview" class="grid md:grid-cols-3 gap-4 mb-8">
+
+        </div>
+
+        <button onclick="convertPDF()" class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-xl">
+
+            📄 Convert to PDF
+
+        </button>
+
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
