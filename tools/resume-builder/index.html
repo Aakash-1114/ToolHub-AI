@@ -27,8 +27,9 @@
         }
     </style>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 
 <body class="text-white">
@@ -236,9 +237,7 @@
 
                 <div class="text-center">
 
-                    <img id="previewPhoto" src="https://via.placeholder.com/120"
-                        class="w-28 h-28 rounded-full mx-auto mb-4 object-cover">
-
+                    <img id="previewPhoto" src="" class="w-28 h-28 rounded-full mx-auto mb-4 object-cover hidden">
                     <h2 id="previewName" class="text-3xl font-bold">
 
                         Your Name

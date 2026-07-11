@@ -139,36 +139,35 @@ document.getElementById("photo").addEventListener("change", function () {
     reader.readAsDataURL(file);
 });
 
-function downloadPDF() {
+async function downloadPDF() {
 
     generateResume();
 
-    setTimeout(() => {
+    const element = document.getElementById("resumePreview");
 
-        const element = document.getElementById("resumePreview");
+    const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: "#ffffff"
+    });
 
-        html2pdf()
-            .set({
-                margin: 0.5,
-                filename: "Resume.pdf",
-                image: {
-                    type: "jpeg",
-                    quality: 1
-                },
-                html2canvas: {
-                    scale: 2,
-                    useCORS: true
-                },
-                jsPDF: {
-                    unit: "in",
-                    format: "a4",
-                    orientation: "portrait"
-                }
-            })
-            .from(element)
-            .save();
+    const imgData = canvas.toDataURL("image/png");
 
-    }, 300);
+    const { jsPDF } = window.jspdf;
+
+    const pdf = new jsPDF("p", "mm", "a4");
+
+    const pageWidth = pdf.internal.pageSize.getWidth();
+
+    const pageHeight = pdf.internal.pageSize.getHeight();
+
+    const imgWidth = pageWidth;
+
+    const imgHeight = canvas.height * imgWidth / canvas.width;
+
+    pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+
+    pdf.save("Resume.pdf");
 
 }
 
@@ -350,3 +349,5 @@ window.onload = function () {
     generateResume();
 
 };
+
+console.log("html2pdf =", typeof html2pdf);

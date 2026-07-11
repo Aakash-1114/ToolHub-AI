@@ -6,8 +6,8 @@ const dropZone = document.getElementById("dropZone");
 let images = [];
 
 // Upload Images
-imageInput.addEventListener("change", function () {
-    loadFiles(this.files);
+imageInput.addEventListener("change", () => {
+    loadFiles(imageInput.files);
 });
 
 // Drag & Drop
@@ -23,23 +23,24 @@ dropZone.addEventListener("dragleave", () => {
 dropZone.addEventListener("drop", (e) => {
     e.preventDefault();
     dropZone.classList.remove("bg-slate-700");
-
     loadFiles(e.dataTransfer.files);
 });
 
-// Load Images
+// Load Files
 function loadFiles(files) {
 
-    preview.innerHTML = "";
-    images = [];
-
     Array.from(files).forEach(file => {
+
+        if (!file.type.startsWith("image/")) return;
 
         const reader = new FileReader();
 
         reader.onload = function (e) {
 
-            images.push(e.target.result);
+            images.push({
+                src: e.target.result,
+                rotation: 0
+            });
 
             renderImages();
 
@@ -52,6 +53,7 @@ function loadFiles(files) {
 }
 
 // Render Images
+
 function renderImages() {
 
     preview.innerHTML = "";
@@ -60,19 +62,64 @@ function renderImages() {
 
     images.forEach((imageData, index) => {
 
-        const container = document.createElement("div");
-        container.className = "relative";
+        const card = document.createElement("div");
+        card.className =
+            "bg-slate-800 rounded-xl p-3";
+        card.dataset.index = index;
 
         const img = document.createElement("img");
-        img.src = imageData;
+        img.src = imageData.src || imageData;
+        img.style.transform =
+            `rotate(${imageData.rotation || 0}deg)`;
         img.className =
-            "rounded-xl shadow-lg w-full h-52 object-cover";
+            "w-full h-52 object-cover rounded-lg";
 
-        // Remove Button
+        // Buttons
+        const buttons = document.createElement("div");
+        buttons.className =
+            "grid grid-cols-5 gap-2 mt-3";
+
+        // LEFT
+        const leftBtn = document.createElement("button");
+        leftBtn.innerHTML = "⬅️";
+        leftBtn.className =
+            "bg-blue-600 rounded p-2";
+
+        leftBtn.onclick = () => {
+
+            if (index > 0) {
+
+                [images[index], images[index - 1]] =
+                    [images[index - 1], images[index]];
+
+                renderImages();
+
+            }
+
+        };
+
+        // ROTATE LEFT
+        const rotateLeft = document.createElement("button");
+        rotateLeft.innerHTML = "↺";
+        rotateLeft.className =
+            "bg-yellow-600 rounded p-2";
+
+        rotateLeft.onclick = () => {
+
+            if (!images[index].rotation)
+                images[index].rotation = 0;
+
+            images[index].rotation -= 90;
+
+            renderImages();
+
+        };
+
+        // DELETE
         const removeBtn = document.createElement("button");
-        removeBtn.innerHTML = "❌";
+        removeBtn.innerHTML = "🗑️";
         removeBtn.className =
-            "absolute top-2 right-2 bg-red-600 text-white rounded-full px-2 py-1";
+            "bg-red-600 rounded p-2";
 
         removeBtn.onclick = () => {
 
@@ -82,42 +129,35 @@ function renderImages() {
 
         };
 
-        // Controls
-        const controls = document.createElement("div");
-        controls.className =
-            "flex justify-center gap-2 mt-3";
+        // ROTATE RIGHT
+        const rotateRight = document.createElement("button");
+        rotateRight.innerHTML = "↻";
+        rotateRight.className =
+            "bg-yellow-600 rounded p-2";
 
-        // Left Button
-        const leftBtn = document.createElement("button");
-        leftBtn.innerHTML = "⬅️";
-        leftBtn.className =
-            "bg-blue-600 px-3 py-1 rounded";
+        rotateRight.onclick = () => {
 
-        leftBtn.onclick = () => {
+            if (!images[index].rotation)
+                images[index].rotation = 0;
 
-            if (index > 0) {
+            images[index].rotation += 90;
 
-                [images[index], images[index - 1]] =
-                [images[index - 1], images[index]];
-
-                renderImages();
-
-            }
+            renderImages();
 
         };
 
-        // Right Button
+        // RIGHT
         const rightBtn = document.createElement("button");
         rightBtn.innerHTML = "➡️";
         rightBtn.className =
-            "bg-blue-600 px-3 py-1 rounded";
+            "bg-blue-600 rounded p-2";
 
         rightBtn.onclick = () => {
 
             if (index < images.length - 1) {
 
                 [images[index], images[index + 1]] =
-                [images[index + 1], images[index]];
+                    [images[index + 1], images[index]];
 
                 renderImages();
 
@@ -125,33 +165,69 @@ function renderImages() {
 
         };
 
-        controls.appendChild(leftBtn);
-        controls.appendChild(rightBtn);
+        buttons.append(
+            leftBtn,
+            rotateLeft,
+            removeBtn,
+            rotateRight,
+            rightBtn
+        );
 
-        container.appendChild(img);
-        container.appendChild(removeBtn);
-        container.appendChild(controls);
+        card.append(img, buttons);
 
-        preview.appendChild(container);
+        preview.appendChild(card);
 
     });
 
+    if (!preview.sortableInstance) {
+
+    preview.sortableInstance = Sortable.create(preview, {
+
+        animation: 200,
+
+        onEnd(evt) {
+
+            const moved =
+                images.splice(evt.oldIndex, 1)[0];
+
+            images.splice(evt.newIndex, 0, moved);
+
+            renderImages();
+
+        }
+
+    });
+
+}
 }
 
 // Convert PDF
 async function convertPDF() {
 
     if (images.length === 0) {
-
         alert("Please select at least one image.");
-
         return;
-
     }
+
+    const pageSize =
+        document.getElementById("pageSize").value;
+
+    const orientation =
+        document.getElementById("orientation").value;
+
+    const fitMode =
+        document.getElementById("fitMode").value;
+
+    const quality =
+        parseFloat(document.getElementById("quality").value);
 
     const { jsPDF } = window.jspdf;
 
-    const pdf = new jsPDF();
+    const pdf = new jsPDF({
+        orientation: orientation,
+        unit: "mm",
+        format: pageSize
+    });
 
     for (let i = 0; i < images.length; i++) {
 
@@ -159,31 +235,50 @@ async function convertPDF() {
 
         const img = new Image();
 
-        img.src = images[i];
+        img.src = images[i].src;
 
-        await new Promise(resolve => img.onload = resolve);
+        await new Promise(resolve => {
+            img.onload = resolve;
+        });
 
-        const pageWidth = pdf.internal.pageSize.getWidth();
-        const pageHeight = pdf.internal.pageSize.getHeight();
+        const pageWidth =
+            pdf.internal.pageSize.getWidth();
 
-        const ratio = Math.min(
-            pageWidth / img.width,
-            pageHeight / img.height
-        );
+        const pageHeight =
+            pdf.internal.pageSize.getHeight();
 
-        const imgWidth = img.width * ratio;
-        const imgHeight = img.height * ratio;
+        let imgWidth;
+        let imgHeight;
+
+        if (fitMode === "fill") {
+
+            imgWidth = pageWidth;
+            imgHeight = pageHeight;
+
+        } else {
+
+            const ratio = Math.min(
+                pageWidth / img.width,
+                pageHeight / img.height
+            );
+
+            imgWidth = img.width * ratio;
+            imgHeight = img.height * ratio;
+
+        }
 
         const x = (pageWidth - imgWidth) / 2;
         const y = (pageHeight - imgHeight) / 2;
 
         pdf.addImage(
-            images[i],
+            images[i].src,
             "JPEG",
             x,
             y,
             imgWidth,
-            imgHeight
+            imgHeight,
+            "",
+            quality > 0.9 ? "FAST" : "MEDIUM"
         );
 
     }

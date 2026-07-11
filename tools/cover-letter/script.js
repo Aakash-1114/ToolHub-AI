@@ -75,36 +75,43 @@ ${name}`;
 
 }
 
-function downloadPDF() {
+async function downloadPDF() {
+
+    generateLetter();
 
     const element = document.getElementById("letterPreview");
 
-    const options = {
-        margin: 0.5,
-        filename: "Cover-Letter.pdf",
-        image: {
-            type: "jpeg",
-            quality: 1
-        },
-        html2canvas: {
-            scale: 2
-        },
-        jsPDF: {
-            unit: "in",
-            format: "a4",
-            orientation: "portrait"
-        }
-    };
+    const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: "#ffffff"
+    });
 
-    html2pdf().set(options).from(element).save();
+    const imgData = canvas.toDataURL("image/png");
+
+    const { jsPDF } = window.jspdf;
+
+    const pdf = new jsPDF("p", "mm", "a4");
+
+    const pageWidth = pdf.internal.pageSize.getWidth();
+
+    const pageHeight = pdf.internal.pageSize.getHeight();
+
+    const imgWidth = pageWidth - 20;
+
+    const imgHeight = canvas.height * imgWidth / canvas.width;
+
+    pdf.addImage(imgData, "PNG", 10, 10, imgWidth, imgHeight);
+
+    pdf.save("Cover-Letter.pdf");
 
 }
 
 function copyLetter() {
 
     const letter =
-        document.getElementById("previewLetter").textContent;
-
+        document.getElementById("previewLetter").innerHTML =
+        letter.replace(/\n/g, "<br>");
     navigator.clipboard.writeText(letter);
 
     alert("✅ Cover Letter copied successfully!");
