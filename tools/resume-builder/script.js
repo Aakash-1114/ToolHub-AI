@@ -1,340 +1,336 @@
+// ===============================
+// ToolHub AI Resume Builder
+// Part 1
+// ===============================
+
+// Inputs
+const nameInput = document.getElementById("name");
+const emailInput = document.getElementById("email");
+const phoneInput = document.getElementById("phone");
+const addressInput = document.getElementById("address");
+
+const summaryInput = document.getElementById("summary");
+const skillsInput = document.getElementById("skills");
+
+const collegeInput = document.getElementById("college");
+const degreeInput = document.getElementById("degree");
+const yearInput = document.getElementById("year");
+
+const companyInput = document.getElementById("company");
+const jobInput = document.getElementById("job");
+const durationInput = document.getElementById("duration");
+
+const projectInput = document.getElementById("project");
+const projectDescInput = document.getElementById("projectDesc");
+
+const linkedinInput = document.getElementById("linkedin");
+const githubInput = document.getElementById("github");
+
+const certificateInput = document.getElementById("certificate");
+const languagesInput = document.getElementById("languages");
+
+const photoInput = document.getElementById("photo");
+
+// Preview
+const previewName = document.getElementById("previewName");
+const previewEmail = document.getElementById("previewEmail");
+const previewPhone = document.getElementById("previewPhone");
+const previewAddress = document.getElementById("previewAddress");
+
+const previewSummary = document.getElementById("previewSummary");
+const previewSkills = document.getElementById("previewSkills");
+
+const previewEducation = document.getElementById("previewEducation");
+const previewExperience = document.getElementById("previewExperience");
+const previewProject = document.getElementById("previewProject");
+
+const previewLinkedin = document.getElementById("previewLinkedin");
+const previewGithub = document.getElementById("previewGithub");
+
+const previewCertificate = document.getElementById("previewCertificate");
+const previewLanguages = document.getElementById("previewLanguages");
+
+const previewPhoto = document.getElementById("previewPhoto");
+
+// Arrays
+let educationData = [];
+let experienceData = [];
+let projectData = [];
+
+// ===============================
+// Generate Resume
+// ===============================
+
 function generateResume() {
 
-    // // Validation
+    previewName.textContent =
+        nameInput.value.trim() || "Your Name";
 
-    // const name = document.getElementById("name").value.trim();
-    // const email = document.getElementById("email").value.trim();
-    // const phone = document.getElementById("phone").value.trim();
+    previewEmail.textContent =
+        emailInput.value.trim() || "email@example.com";
 
-    // if (name === "") {
-    //     alert("Please enter your Full Name");
-    //     return;
-    // }
+    previewPhone.textContent =
+        phoneInput.value.trim() || "+91 XXXXX XXXXX";
 
-    // if (email === "") {
-    //     alert("Please enter your Email");
-    //     return;
-    // }
+    previewAddress.textContent =
+        addressInput.value.trim() || "Your Address";
 
-    // if (phone === "") {
-    //     alert("Please enter your Phone Number");
-    //     return;
-    // }
+    previewSummary.textContent =
+        summaryInput.value.trim() ||
+        "Your professional summary will appear here.";
 
-    // Input Values
-    const name = document.getElementById("name").value;
-    const email = document.getElementById("email").value;
-    const phone = document.getElementById("phone").value;
-    const summary = document.getElementById("summary").value;
-    const skills = document.getElementById("skills").value;
-    const linkedin = document.getElementById("linkedin").value;
-    const github = document.getElementById("github").value;
-    const certificate = document.getElementById("certificate").value;
-    const languages = document.getElementById("languages").value;
-    const college = document.getElementById("college").value;
-    const degree = document.getElementById("degree").value;
-    const year = document.getElementById("year").value;
-    const company = document.getElementById("company").value;
-    const job = document.getElementById("job").value;
-    const duration = document.getElementById("duration").value;
-    const project = document.getElementById("project").value;
-    const projectDesc = document.getElementById("projectDesc").value;
+    previewSkills.textContent =
+        skillsInput.value.trim() ||
+        "HTML, CSS, JavaScript";
 
-    let educationHTML = `${degree} - ${college} (${year} ) `;
+    previewLinkedin.textContent =
+        linkedinInput.value.trim() || "Not Added";
 
-    const extraEducation =
-        document.querySelectorAll("#educationList > div");
+    previewGithub.textContent =
+        githubInput.value.trim() || "Not Added";
 
-    extraEducation.forEach(item => {
+    previewCertificate.textContent =
+        certificateInput.value.trim() || "Not Added";
 
-        const inputs = item.querySelectorAll("input");
+    previewLanguages.textContent =
+        languagesInput.value.trim() || "Not Added";
 
-        educationHTML += `<br><br>
-${inputs[1].value} - ${inputs[0].value} (${inputs[2].value})`;
-    });
+    // Education
+    let educationHTML = "";
 
-    document.getElementById("previewEducation").innerHTML =
-        educationHTML;
+    if (degreeInput.value || collegeInput.value || yearInput.value) {
 
-    let experienceHTML = `${job} - ${company} (${duration})`;
-
-    const extraExperience =
-        document.querySelectorAll("#experienceList > div");
-
-    extraExperience.forEach(item => {
-
-        const inputs = item.querySelectorAll("input");
-
-        experienceHTML += `<br><br>
-            ${inputs[1].value} - ${inputs[0].value} (${inputs[2].value})`;
-
-    });
-
-    document.getElementById("previewExperience").innerHTML =
-        experienceHTML;
-
-    let projectHTML = `<b>${project}</b><br>${projectDesc}`;
-
-    const extraProjects =
-        document.querySelectorAll("#projectList > div");
-
-    extraProjects.forEach(item => {
-
-        const inputs = item.querySelectorAll("input, textarea");
-
-        projectHTML += `<br><br><b>${inputs[0].value}</b><br>${inputs[1].value}`;
-
-    });
-
-    document.getElementById("previewProject").innerHTML =
-        projectHTML;
-
-    document.getElementById("previewSummary").textContent =
-        summary || "Your professional summary will appear here.";
-
-    // Preview Update
-    document.getElementById("previewName").textContent =
-        name || "Your Name";
-
-    document.getElementById("previewEmail").textContent =
-        email || "email@example.com";
-
-    document.getElementById("previewPhone").textContent =
-        phone || "+91 XXXXX XXXXX";
-
-    document.getElementById("previewSummary").textContent =
-        summary || "Your professional summary will appear here.";
-
-    // Skills
-    if (skills.trim() === "") {
-        document.getElementById("previewSkills").textContent =
-            "HTML, CSS, JavaScript";
-    } else {
-        document.getElementById("previewSkills").textContent = skills;
+        educationHTML += `
+        <p>
+        <b>${degreeInput.value}</b><br>
+        ${collegeInput.value}<br>
+        ${yearInput.value}
+        </p>`;
     }
-    document.getElementById("previewLinkedin").textContent =
-        linkedin || "Not Added";
 
-    document.getElementById("previewGithub").textContent =
-        github || "Not Added";
+    educationData.forEach(item => {
 
-    document.getElementById("previewCertificate").textContent =
-        certificate || "Not Added";
+        educationHTML += `
+        <p class="mt-3">
+        <b>${item.degree}</b><br>
+        ${item.college}<br>
+        ${item.year}
+        </p>`;
 
-    document.getElementById("previewLanguages").textContent =
-        languages || "Not Added";
+    });
+
+    previewEducation.innerHTML =
+        educationHTML || "Your education will appear here.";
+
+    // Experience
+    let experienceHTML = "";
+
+    if (jobInput.value || companyInput.value) {
+
+        experienceHTML += `
+        <p>
+        <b>${jobInput.value}</b><br>
+        ${companyInput.value}<br>
+        ${durationInput.value}
+        </p>`;
+    }
+
+    experienceData.forEach(item => {
+
+        experienceHTML += `
+        <p class="mt-3">
+        <b>${item.job}</b><br>
+        ${item.company}<br>
+        ${item.duration}
+        </p>`;
+
+    });
+
+    previewExperience.innerHTML =
+        experienceHTML || "Your experience will appear here.";
+
+    // Projects
+    let projectHTML = "";
+
+    if (projectInput.value || projectDescInput.value) {
+
+        projectHTML += `
+        <p>
+        <b>${projectInput.value}</b><br>
+        ${projectDescInput.value}
+        </p>`;
+    }
+
+    projectData.forEach(item => {
+
+        projectHTML += `
+        <p class="mt-3">
+        <b>${item.name}</b><br>
+        ${item.desc}
+        </p>`;
+
+    });
+
+    previewProject.innerHTML =
+        projectHTML || "Your projects will appear here.";
+
 }
 
-// Photo Preview
-document.getElementById("photo").addEventListener("change", function () {
+// ===============================
+// Profile Photo
+// ===============================
+
+photoInput.addEventListener("change", function () {
 
     const file = this.files[0];
+
     if (!file) return;
+
     const reader = new FileReader();
+
     reader.onload = function (e) {
-        const photo =
-        document.getElementById("previewPhoto"); photo.src = e.target.result;
-        photo.classList.remove("hidden");
+
+        previewPhoto.src = e.target.result;
+
+        previewPhoto.classList.remove("hidden");
+
     };
+
     reader.readAsDataURL(file);
+
 });
 
-async function downloadPDF() {
+// ===============================
+// Live Preview
+// ===============================
+
+const liveInputs = document.querySelectorAll(
+"input, textarea"
+);
+
+liveInputs.forEach(input => {
+
+    input.addEventListener("input", generateResume);
+
+});
+
+// ===============================
+// Add Education
+// ===============================
+
+document.getElementById("addEducation").addEventListener("click", () => {
+
+    if (
+        collegeInput.value.trim() === "" ||
+        degreeInput.value.trim() === ""
+    ) {
+        alert("Please enter education details.");
+        return;
+    }
+
+    educationData.push({
+
+        college: collegeInput.value,
+        degree: degreeInput.value,
+        year: yearInput.value
+
+    });
+
+    collegeInput.value = "";
+    degreeInput.value = "";
+    yearInput.value = "";
 
     generateResume();
 
-    const element = document.getElementById("resumePreview");
+});
 
-    const canvas = await html2canvas(element, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: "#ffffff"
+// ===============================
+// Add Experience
+// ===============================
+
+document.getElementById("addExperience").addEventListener("click", () => {
+
+    if (
+        companyInput.value.trim() === "" ||
+        jobInput.value.trim() === ""
+    ) {
+        alert("Please enter experience details.");
+        return;
+    }
+
+    experienceData.push({
+
+        company: companyInput.value,
+        job: jobInput.value,
+        duration: durationInput.value
+
     });
 
-    const imgData = canvas.toDataURL("image/png");
+    companyInput.value = "";
+    jobInput.value = "";
+    durationInput.value = "";
 
-    const { jsPDF } = window.jspdf;
-
-    const pdf = new jsPDF("p", "mm", "a4");
-
-    const pageWidth = pdf.internal.pageSize.getWidth();
-
-    const pageHeight = pdf.internal.pageSize.getHeight();
-
-    const imgWidth = pageWidth;
-
-    const imgHeight = canvas.height * imgWidth / canvas.width;
-
-    pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
-
-    pdf.save("Resume.pdf");
-
-}
-
-function printResume() {
-
-    const printContents = document.getElementById("resumePreview").innerHTML;
-
-    const newWindow = window.open("", "", "width=900,height=700");
-
-    newWindow.document.write(`
-        <html>
-        <head>
-            <title>Print Resume</title>
-        </head>
-        <body>
-            ${printContents}
-        </body>
-        </html>
-    `);
-
-    newWindow.document.close();
-    newWindow.focus();
-    newWindow.print();
-    newWindow.close();
-}
-
-function changeTemplate() {
-
-    const template = document.getElementById("template").value;
-
-    const resume = document.getElementById("resumePreview");
-
-    if (template === "modern") {
-
-        resume.style.background = "white";
-        resume.style.color = "black";
-        resume.style.borderTop = "10px solid #2563eb";
-
-    }
-
-    else if (template === "professional") {
-
-        resume.style.background = "#ffffff";
-        resume.style.color = "#111827";
-        resume.style.borderTop = "10px solid black";
-
-    }
-
-    else if (template === "creative") {
-
-        resume.style.background = "#fef3c7";
-        resume.style.color = "#7c2d12";
-        resume.style.borderTop = "10px solid orange";
-
-    }
-}
-
-let educationCount = 0;
-
-document.getElementById("addEducation").addEventListener("click", function () {
-
-    educationCount++;
-
-    const div = document.createElement("div");
-
-    div.className = "mt-4";
-
-    div.innerHTML = `
-            <input
-                type="text"
-                placeholder="College / University ${educationCount}"
-                class="w-full p-3 mb-2 rounded bg-slate-900">
-
-                <input
-                    type="text"
-                    placeholder="Degree ${educationCount}"
-                    class="w-full p-3 mb-2 rounded bg-slate-900">
-
-                    <input
-                        type="text"
-                        placeholder="Passing Year ${educationCount}"
-                        class="w-full p-3 mb-4 rounded bg-slate-900">
-                        `;
-
-    document.getElementById("educationList").appendChild(div);
+    generateResume();
 
 });
 
-let experienceCount = 0;
+// ===============================
+// Add Project
+// ===============================
 
-document.getElementById("addExperience").addEventListener("click", function () {
+document.getElementById("addProject").addEventListener("click", () => {
 
-    experienceCount++;
+    if (
+        projectInput.value.trim() === "" ||
+        projectDescInput.value.trim() === ""
+    ) {
+        alert("Please enter project details.");
+        return;
+    }
 
-    const div = document.createElement("div");
+    projectData.push({
 
-    div.className = "mt-4";
+        name: projectInput.value,
+        desc: projectDescInput.value
 
-    div.innerHTML = `
-                        <input
-                            type="text"
-                            placeholder="Company ${experienceCount}"
-                            class="w-full p-3 mb-2 rounded bg-slate-900">
+    });
 
-                            <input
-                                type="text"
-                                placeholder="Job Title ${experienceCount}"
-                                class="w-full p-3 mb-2 rounded bg-slate-900">
+    projectInput.value = "";
+    projectDescInput.value = "";
 
-                                <input
-                                    type="text"
-                                    placeholder="Duration ${experienceCount}"
-                                    class="w-full p-3 mb-4 rounded bg-slate-900">
-                                    `;
-
-    document.getElementById("experienceList").appendChild(div);
+    generateResume();
 
 });
 
-let projectCount = 0;
+// ===============================
+// Auto Save
+// ===============================
 
-document.getElementById("addProject").addEventListener("click", function () {
+const allFields = document.querySelectorAll("input, textarea, select");
 
-    projectCount++;
-
-    const div = document.createElement("div");
-
-    div.className = "mt-4";
-
-    div.innerHTML = `
-        <input
-        type="text"
-        placeholder="Project Name ${projectCount}"
-        class="w-full p-3 mb-2 rounded bg-slate-900">
-
-        <textarea
-        placeholder="Project Description ${projectCount}"
-        class="w-full p-3 mb-4 rounded bg-slate-900 h-24"></textarea>
-    `;
-
-    document.getElementById("projectList").appendChild(div);
-
-});
-
-// =======================
-// AUTO SAVE
-// =======================
-
-const fields = document.querySelectorAll("input, textarea, select");
-
-fields.forEach(field => {
+allFields.forEach(field => {
 
     field.addEventListener("input", () => {
 
-        localStorage.setItem(field.id, field.value);
+        if (field.type !== "file") {
+
+            localStorage.setItem(field.id, field.value);
+
+        }
 
     });
 
 });
 
-// =======================
-// LOAD SAVED DATA
-// =======================
+// ===============================
+// Load Saved Data
+// ===============================
 
-window.onload = function () {
+function loadSavedData() {
 
-    fields.forEach(field => {
+    allFields.forEach(field => {
+
+        if (field.type === "file") return;
 
         const saved = localStorage.getItem(field.id);
 
@@ -346,8 +342,259 @@ window.onload = function () {
 
     });
 
+}
+
+// ===============================
+// Resume Templates
+// ===============================
+
+document.getElementById("template").addEventListener("change", changeTemplate);
+
+function changeTemplate() {
+
+    const template = document.getElementById("template").value;
+
+    const resume = document.getElementById("resumePreview");
+
+    resume.style.background = "#ffffff";
+    resume.style.color = "#111827";
+    resume.style.borderTop = "8px solid #2563eb";
+
+    if (template === "professional") {
+
+        resume.style.borderTop = "8px solid #111827";
+
+    }
+
+    else if (template === "creative") {
+
+        resume.style.background = "#fff8e7";
+        resume.style.color = "#7c2d12";
+        resume.style.borderTop = "8px solid orange";
+
+    }
+
+}
+
+// ===============================
+// First Load
+// ===============================
+
+window.addEventListener("load", () => {
+
+    loadSavedData();
+
+    changeTemplate();
+
     generateResume();
 
-};
+});
 
-console.log("html2pdf =", typeof html2pdf);
+// ===============================
+// Download PDF (Mobile Optimized)
+// ===============================
+
+async function downloadPDF() {
+
+    generateResume();
+
+    const resume = document.getElementById("resumePreview");
+
+    const { jsPDF } = window.jspdf;
+
+    try {
+
+        const canvas = await html2canvas(resume, {
+
+            scale: 2,
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: "#ffffff",
+            scrollX: 0,
+            scrollY: -window.scrollY
+
+        });
+
+        const imgData = canvas.toDataURL("image/jpeg", 1.0);
+
+        const pdf = new jsPDF("p", "mm", "a4");
+
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+
+        const imgWidth = pdfWidth;
+
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+        let heightLeft = imgHeight;
+
+        let position = 0;
+
+        pdf.addImage(
+            imgData,
+            "JPEG",
+            0,
+            position,
+            imgWidth,
+            imgHeight
+        );
+
+        heightLeft -= pdfHeight;
+
+        while (heightLeft > 0) {
+
+            position = heightLeft - imgHeight;
+
+            pdf.addPage();
+
+            pdf.addImage(
+                imgData,
+                "JPEG",
+                0,
+                position,
+                imgWidth,
+                imgHeight
+            );
+
+            heightLeft -= pdfHeight;
+
+        }
+
+        pdf.save("Resume.pdf");
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        alert("Unable to generate PDF.");
+
+    }
+
+}
+
+// ===============================
+// Print Resume
+// ===============================
+
+function printResume() {
+
+    generateResume();
+
+    const printContents =
+        document.getElementById("resumePreview").innerHTML;
+
+    const printWindow = window.open("", "_blank");
+
+    printWindow.document.write(`
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Resume</title>
+
+<style>
+
+body{
+
+margin:0;
+padding:20px;
+font-family:Arial,sans-serif;
+background:#ffffff;
+
+}
+
+#resume{
+
+width:210mm;
+min-height:297mm;
+margin:auto;
+padding:20mm;
+background:#ffffff;
+color:#000000;
+
+}
+
+img{
+
+max-width:120px;
+border-radius:50%;
+
+}
+
+h1{
+
+margin-bottom:5px;
+
+}
+
+h2{
+
+border-bottom:2px solid #2563eb;
+padding-bottom:5px;
+margin-top:20px;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="resume">
+
+${printContents}
+
+</div>
+
+</body>
+
+</html>
+`);
+
+    printWindow.document.close();
+
+    printWindow.onload = () => {
+
+        setTimeout(() => {
+
+            printWindow.focus();
+
+            printWindow.print();
+
+            printWindow.close();
+
+        }, 800);
+
+    };
+
+}
+
+// ===============================
+// Final Initialization
+// ===============================
+
+window.addEventListener("load", () => {
+
+    loadSavedData();
+
+    changeTemplate();
+
+    generateResume();
+
+});
+
+// ===============================
+// Console
+// ===============================
+
+console.log("✅ ToolHub AI Resume Builder Loaded");

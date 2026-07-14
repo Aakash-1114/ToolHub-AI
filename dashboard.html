@@ -1,106 +1,172 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Dashboard - ToolHub AI</title>
+    <title>Dashboard - ToolHub AI</title>
 
-<script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
 
-<style>
-*{
-    font-family:'Poppins',sans-serif;
-}
-body{
-    background:#0f172a;
-}
-</style>
+    <style>
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #0f172a;
+        }
+    </style>
 
 </head>
 
-<body class="text-white">
-
+<body id="body" class="bg-slate-900 text-white transition-all duration-300"></body>
 <!-- Navbar -->
 
-<nav class="bg-slate-900 border-b border-slate-700">
+<nav class="sticky top-0 z-50 bg-slate-900/90 backdrop-blur border-b border-slate-700">
 
-<div class="max-w-7xl mx-auto flex justify-between items-center px-6 py-5">
+    <div class="max-w-7xl mx-auto flex justify-between items-center px-6 py-5">
 
-<a href="index.html" class="text-2xl font-bold text-blue-500">
-🚀 ToolHub <span class="text-white">AI</span>
-</a>
+        <a href="index.html" class="text-2xl font-bold text-blue-500">
+            🚀 ToolHub <span class="text-white">AI</span>
+        </a>
 
-<a href="index.html" class="text-gray-300 hover:text-blue-400">
-🏠 Home
-</a>
+        <div class="flex items-center gap-4">
 
-</div>
+            <button id="themeToggle" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl transition">
+
+                🌙
+
+            </button>
+
+            <a href="index.html" class="text-gray-300 hover:text-blue-400">
+
+                🏠 Home
+
+            </a>
+
+        </div>
+
+    </div>
 
 </nav>
-
 <!-- Tools -->
 
 <section class="max-w-7xl mx-auto px-6 py-12">
 
-<h1 class="text-4xl font-bold mb-8">
-All Tools
-</h1>
+    <h1 class="text-4xl font-bold mb-8">
+        All Tools
+    </h1>
 
-<input
-id="search"
-type="text"
-placeholder="Search tools..."
-class="w-full p-4 rounded-xl bg-slate-800 border border-slate-700 outline-none mb-10">
+    <div id="favoriteSection" class="hidden mb-10">
 
-<div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+    <h2 class="text-3xl font-bold mb-6">
+        ⭐ Favorite Tools
+    </h2>
 
-<a href="tools/resume-builder/index.html">
-<div class="bg-slate-800 p-6 rounded-2xl hover:bg-slate-700 transition">
-<div class="text-5xl">📄</div>
-<h2 class="text-xl font-bold mt-4">Resume Builder</h2>
-<p class="text-gray-400 mt-2">
-Create professional resumes.
-</p>
-</div>
-</a>
-
-<a href="tools/cover-letter/index.html">
-<div class="bg-slate-800 p-6 rounded-2xl hover:bg-slate-700 transition">
-<div class="text-5xl">✉️</div>
-<h2 class="text-xl font-bold mt-4">Cover Letter</h2>
-<p class="text-gray-400 mt-2">
-Generate cover letters.
-</p>
-</div>
-</a>
-
-<a href="tools/image-compressor/index.html">
-<div class="bg-slate-800 p-6 rounded-2xl hover:bg-slate-700 transition">
-<div class="text-5xl">🖼️</div>
-<h2 class="text-xl font-bold mt-4">Image Compressor</h2>
-<p class="text-gray-400 mt-2">
-Compress images instantly.
-</p>
-</div>
-</a>
-
-<a href="tools/image-to-pdf/index.html">
-<div class="bg-slate-800 p-6 rounded-2xl hover:bg-slate-700 transition">
-<div class="text-5xl">📑</div>
-<h2 class="text-xl font-bold mt-4">Image to PDF</h2>
-<p class="text-gray-400 mt-2">
-Convert images to PDF.
-</p>
-</div>
-</a>
+    <div id="favoriteTools" class="grid md:grid-cols-2 lg:grid-cols-4 gap-8"></div>
 
 </div>
+
+    <input id="search" type="text" placeholder="🔍 Search tools..."
+        class="w-full p-4 rounded-xl bg-slate-800 border border-slate-700 outline-none focus:ring-2 focus:ring-blue-500 mb-6">
+
+    <div class="flex flex-wrap gap-3 mb-8">
+
+        <button class="categoryBtn bg-blue-600 px-4 py-2 rounded-xl" data-category="all">
+            All
+        </button>
+
+        <button class="categoryBtn bg-slate-800 px-4 py-2 rounded-xl" data-category="career">
+            Career
+        </button>
+
+        <button class="categoryBtn bg-slate-800 px-4 py-2 rounded-xl" data-category="image">
+            Image
+        </button>
+
+        <button class="categoryBtn bg-slate-800 px-4 py-2 rounded-xl" data-category="pdf">
+            PDF
+        </button>
+
+        <button class="categoryBtn bg-slate-800 px-4 py-2 rounded-xl" data-category="ai">
+            AI
+        </button>
+
+    </div>
+
+    <div id="toolsGrid" class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+
+        <a href="tools/resume-builder/index.html" data-category="career" data-name="resume builder">
+            <div class="bg-slate-800 p-6 rounded-2xl hover:bg-slate-700 transition relative">
+
+                <button class="favoriteBtn absolute top-4 right-4 text-2xl" data-tool="resume-builder">
+                    🤍
+                </button>
+
+                <div class="text-5xl">📄</div>
+                <h2 class="text-xl font-bold mt-4">Resume Builder</h2>
+                <p class="text-gray-400 mt-2">
+                    Create professional resumes.
+                </p>
+            </div>
+        </a>
+
+        <a href="tools/cover-letter/index.html" data-category="career" data-name="cover letter">
+
+            <div class="bg-slate-800 p-6 rounded-2xl hover:bg-slate-700 transition relative">
+
+                <button class="favoriteBtn absolute top-4 right-4 text-2xl" data-tool="cover-letter">
+                    🤍
+                </button>
+
+                <div class="text-5xl">✉️</div>
+                <h2 class="text-xl font-bold mt-4">Cover Letter</h2>
+                <p class="text-gray-400 mt-2">
+                    Generate cover letters.
+                </p>
+            </div>
+        </a>
+
+        <a href="tools/image-compressor/index.html" data-category="image" data-name="image compressor">
+
+            <div class="bg-slate-800 p-6 rounded-2xl hover:bg-slate-700 transition relative">
+
+                <button class="favoriteBtn absolute top-4 right-4 text-2xl" data-tool="image-compressor">
+                    🤍
+                </button>
+                <div class="text-5xl">🖼️</div>
+                <h2 class="text-xl font-bold mt-4">Image Compressor</h2>
+                <p class="text-gray-400 mt-2">
+                    Compress images instantly.
+                </p>
+            </div>
+        </a>
+
+        <a href="tools/image-to-pdf/index.html" data-category="pdf image" data-name="image to pdf">
+
+            <div class="bg-slate-800 p-6 rounded-2xl hover:bg-slate-700 transition relative">
+
+                <button class="favoriteBtn absolute top-4 right-4 text-2xl" data-tool="image-to-pdf">
+                    🤍
+                </button>
+
+                <div class="text-5xl">📑</div>
+                <h2 class="text-xl font-bold mt-4">Image to PDF</h2>
+                <p class="text-gray-400 mt-2">
+                    Convert images to PDF.
+                </p>
+            </div>
+        </a>
+
+    </div>
 
 </section>
 
@@ -108,34 +174,34 @@ Convert images to PDF.
 
 <section class="max-w-7xl mx-auto px-6 py-12">
 
-<h2 class="text-3xl font-bold mb-8">
-Browse Categories
-</h2>
+    <h2 class="text-3xl font-bold mb-8">
+        Browse Categories
+    </h2>
 
-<div class="grid md:grid-cols-3 gap-8">
+    <div class="grid md:grid-cols-3 gap-8">
 
-<div class="bg-slate-800 p-6 rounded-2xl">
-<h3 class="text-2xl font-bold">💼 Career</h3>
-<p class="text-gray-400 mt-3">
-Resume Builder & Cover Letter
-</p>
-</div>
+        <div class="bg-slate-800 p-6 rounded-2xl">
+            <h3 class="text-2xl font-bold">💼 Career</h3>
+            <p class="text-gray-400 mt-3">
+                Resume Builder & Cover Letter
+            </p>
+        </div>
 
-<div class="bg-slate-800 p-6 rounded-2xl">
-<h3 class="text-2xl font-bold">🖼️ Image</h3>
-<p class="text-gray-400 mt-3">
-Image Compressor & Image to PDF
-</p>
-</div>
+        <div class="bg-slate-800 p-6 rounded-2xl">
+            <h3 class="text-2xl font-bold">🖼️ Image</h3>
+            <p class="text-gray-400 mt-3">
+                Image Compressor & Image to PDF
+            </p>
+        </div>
 
-<div class="bg-slate-800 p-6 rounded-2xl">
-<h3 class="text-2xl font-bold">📄 PDF</h3>
-<p class="text-gray-400 mt-3">
-More PDF tools coming soon.
-</p>
-</div>
+        <div class="bg-slate-800 p-6 rounded-2xl">
+            <h3 class="text-2xl font-bold">📄 PDF</h3>
+            <p class="text-gray-400 mt-3">
+                More PDF tools coming soon.
+            </p>
+        </div>
 
-</div>
+    </div>
 
 </section>
 
@@ -143,19 +209,22 @@ More PDF tools coming soon.
 
 <footer class="bg-slate-900 border-t border-slate-700 mt-12">
 
-<div class="max-w-7xl mx-auto px-6 py-6 flex justify-between items-center">
+    <div class="max-w-7xl mx-auto px-6 py-6 flex justify-between items-center">
 
-<p class="text-gray-400">
-© 2026 ToolHub AI
-</p>
+        <p class="text-gray-400">
+            © 2026 ToolHub AI
+        </p>
 
-<a href="index.html" class="text-blue-400">
-Back to Home
-</a>
+        <a href="index.html" class="text-blue-400">
+            Back to Home
+        </a>
 
-</div>
+    </div>
 
 </footer>
 
+<script src="js/dashboard.js"></script>
+
 </body>
+
 </html>
