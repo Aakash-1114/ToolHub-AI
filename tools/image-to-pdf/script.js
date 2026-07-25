@@ -75,7 +75,13 @@ function renderImages() {
         img.className =
             "w-full aspect-square object-cover rounded-xl cursor-pointer transition duration-300 hover:scale-105";
 
-            img.onclick = () => openImagePreview(img.src);
+        img.style.pointerEvents = "auto";
+
+        img.addEventListener("click", function () {
+
+            openImagePreview(imageData.src);
+
+        });
 
         // Buttons
         const buttons = document.createElement("div");
@@ -349,34 +355,24 @@ function openGallery() {
 
 }
 
-function openImagePreview(src){
+function openImagePreview(src) {
 
     currentPreviewIndex = images.findIndex(img => (img.src || img) === src);
 
     updatePreview();
 
-    document.getElementById("imagePreviewModal").style.display="flex";
+    document.getElementById("imagePreviewModal").style.display = "flex";
 
 }
 
-function closeImagePreview(){
+function closeImagePreview() {
 
     document.getElementById("imagePreviewModal").style.display = "none";
 
 }
-document.getElementById("imagePreviewModal").addEventListener("click", function(e){
+document.getElementById("imagePreviewModal").addEventListener("click", function (e) {
 
-    if(e.target===this){
-
-        closeImagePreview();
-
-    }
-
-});
-
-document.addEventListener("keydown",function(e){
-
-    if(e.key==="Escape"){
+    if (e.target === this) {
 
         closeImagePreview();
 
@@ -384,7 +380,17 @@ document.addEventListener("keydown",function(e){
 
 });
 
-function updatePreview(){
+document.addEventListener("keydown", function (e) {
+
+    if (e.key === "Escape") {
+
+        closeImagePreview();
+
+    }
+
+});
+
+function updatePreview() {
 
     const img = images[currentPreviewIndex];
 
@@ -395,9 +401,9 @@ function updatePreview(){
 
 }
 
-function nextImage(){
+function nextImage() {
 
-    if(currentPreviewIndex < images.length - 1){
+    if (currentPreviewIndex < images.length - 1) {
 
         currentPreviewIndex++;
 
@@ -407,9 +413,9 @@ function nextImage(){
 
 }
 
-function prevImage(){
+function prevImage() {
 
-    if(currentPreviewIndex > 0){
+    if (currentPreviewIndex > 0) {
 
         currentPreviewIndex--;
 
