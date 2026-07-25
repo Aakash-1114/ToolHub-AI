@@ -8,19 +8,15 @@
 
 <title>Resume Builder | ToolHub AI</title>
 
-<!-- Tailwind CSS -->
 <script src="https://cdn.tailwindcss.com"></script>
 
-<!-- Google Font -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-<!-- CSS -->
 <link rel="stylesheet" href="style.css">
 
-<!-- Libraries -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -44,8 +40,6 @@ color:#fff;
 </head>
 
 <body>
-
-<!-- Navbar -->
 
 <nav class="bg-slate-900 border-b border-slate-700">
 
@@ -80,7 +74,9 @@ class="text-gray-300 hover:text-blue-400">
 
 <div class="grid lg:grid-cols-2 gap-8">
 
-<!-- LEFT PANEL -->
+<!-- ===========================
+LEFT PANEL
+=========================== -->
 
 <div class="bg-slate-800 rounded-2xl p-6">
 
@@ -96,15 +92,42 @@ Resume Template
 
 </label>
 
-<select
-id="template"
-class="w-full p-3 mt-2 mb-5 rounded bg-slate-900">
+<select id="template" onchange="changeTemplate()" class="w-full p-3 mb-6 rounded bg-slate-900">
 
-<option value="modern">Modern Blue</option>
+<option value="classic">Classic</option>
 
-<option value="professional">Professional</option>
+<option value="modern">Modern</option>
+
+<option value="minimal">Minimal</option>
 
 <option value="creative">Creative</option>
+
+<option value="premium">Premium Canva</option>
+
+<option value="plain">Plain White</option>
+
+<option value="ats">ATS Resume</option>
+
+</select>
+
+<label class="font-semibold mt-4 block">
+Theme Color
+</label>
+
+<select id="themeColor" onchange="changeTheme()" class="w-full p-3 rounded bg-slate-900 mb-6">
+
+<option value="blue">Blue</option>
+
+<option value="green">Green</option>
+
+<option value="purple">Purple</option>
+
+<option value="red">Red</option>
+
+<option value="black">Black</option>
+
+<option value="white">White</option>
+
 
 </select>
 
@@ -185,7 +208,9 @@ class="w-full p-3 rounded bg-slate-900"></textarea>
 <hr class="border-slate-700 my-6">
 
 <h2 class="text-2xl font-bold text-blue-400 mb-5">
+
 🛠 Skills
+
 </h2>
 
 <input
@@ -197,7 +222,9 @@ class="w-full p-3 rounded bg-slate-900 mb-6">
 <hr class="border-slate-700 my-6">
 
 <h2 class="text-2xl font-bold text-blue-400 mb-5">
+
 🎓 Education
+
 </h2>
 
 <input
@@ -232,7 +259,9 @@ class="w-full bg-blue-600 hover:bg-blue-700 rounded-lg p-3 mb-4">
 <hr class="border-slate-700 my-6">
 
 <h2 class="text-2xl font-bold text-blue-400 mb-5">
+
 💼 Experience
+
 </h2>
 
 <input
@@ -267,7 +296,9 @@ class="w-full bg-blue-600 hover:bg-blue-700 rounded-lg p-3 mb-4">
 <hr class="border-slate-700 my-6">
 
 <h2 class="text-2xl font-bold text-blue-400 mb-5">
+
 🚀 Projects
+
 </h2>
 
 <input
@@ -296,7 +327,9 @@ class="w-full bg-blue-600 hover:bg-blue-700 rounded-lg p-3 mb-4">
 <hr class="border-slate-700 my-6">
 
 <h2 class="text-2xl font-bold text-blue-400 mb-5">
+
 🌐 Social Links
+
 </h2>
 
 <input
@@ -314,7 +347,9 @@ class="w-full p-3 rounded bg-slate-900 mb-6">
 <hr class="border-slate-700 my-6">
 
 <h2 class="text-2xl font-bold text-blue-400 mb-5">
+
 🏆 Certifications
+
 </h2>
 
 <input
@@ -326,7 +361,9 @@ class="w-full p-3 rounded bg-slate-900 mb-6">
 <hr class="border-slate-700 my-6">
 
 <h2 class="text-2xl font-bold text-blue-400 mb-5">
+
 🌍 Languages
+
 </h2>
 
 <input
@@ -364,130 +401,213 @@ class="w-full bg-purple-600 hover:bg-purple-700 rounded-xl p-3 font-semibold">
 
 </div>
 
-<!-- RIGHT PANEL -->
-
+<!-- RIGHT PANEL START -->
 <div>
+    <div id="resumePreview" class="bg-white rounded-3xl overflow-hidden shadow-2xl">
 
-<div id="resumePreview">
+<!-- ===========================
+PREMIUM HEADER
+=========================== -->
 
-<div class="text-center">
+<div class="bg-gradient-to-r from-violet-600 via-blue-600 to-cyan-500 text-white p-8">
+
+<div class="flex flex-col md:flex-row items-center gap-6">
 
 <img
 id="previewPhoto"
 src=""
-class="hidden w-28 h-28 rounded-full mx-auto mb-4 object-cover">
+class="hidden w-32 h-32 rounded-full border-4 border-white object-cover">
+
+<div class="flex-1 text-center md:text-left">
 
 <h1
 id="previewName"
-class="text-4xl font-bold">
+class="text-5xl font-bold">
 
 Your Name
 
 </h1>
 
+<p class="text-blue-100 mt-2 text-lg">
+
+Professional Resume
+
+</p>
+
+<div class="mt-5 space-y-1">
+
 <p id="previewEmail">
+
 email@example.com
+
 </p>
 
 <p id="previewPhone">
+
 +91 XXXXX XXXXX
+
 </p>
 
 <p id="previewAddress">
+
 Your Address
+
 </p>
 
 </div>
 
-<hr class="my-6">
+</div>
 
-<h2 class="text-xl font-bold">
-📝 Professional Summary
-</h2>
+</div>
 
-<p id="previewSummary">
-Your professional summary will appear here.
-</p>
+</div>
 
-<hr class="my-6">
+<!-- ===========================
+BODY
+=========================== -->
 
-<h2 class="text-xl font-bold">
+<div class="grid md:grid-cols-3">
+
+<!-- LEFT SIDEBAR -->
+
+<div class="bg-slate-100 p-6">
+
+<h2 class="font-bold text-xl mb-4">
+
 🛠 Skills
+
 </h2>
 
 <p id="previewSkills">
+
 HTML, CSS, JavaScript
+
 </p>
 
 <hr class="my-6">
 
-<h2 class="text-xl font-bold">
-🎓 Education
-</h2>
+<h2 class="font-bold text-xl mb-4">
 
-<div id="previewEducation">
-Your education will appear here.
-</div>
-
-<hr class="my-6">
-
-<h2 class="text-xl font-bold">
-💼 Experience
-</h2>
-
-<div id="previewExperience">
-Your experience will appear here.
-</div>
-
-<hr class="my-6">
-
-<h2 class="text-xl font-bold">
-🚀 Projects
-</h2>
-
-<div id="previewProject">
-Your projects will appear here.
-</div>
-
-<hr class="my-6">
-
-<h2 class="text-xl font-bold">
 🌐 Social Links
+
 </h2>
 
 <p>
-<b>LinkedIn:</b>
-<span id="previewLinkedin">Not Added</span>
+
+<b>LinkedIn</b>
+
 </p>
 
-<p class="mt-2">
-<b>GitHub:</b>
-<span id="previewGithub">Not Added</span>
+<p id="previewLinkedin">
+
+Not Added
+
+</p>
+
+<br>
+
+<p>
+
+<b>GitHub</b>
+
+</p>
+
+<p id="previewGithub">
+
+Not Added
+
 </p>
 
 <hr class="my-6">
 
-<h2 class="text-xl font-bold">
+<h2 class="font-bold text-xl mb-4">
+
 🏆 Certifications
+
 </h2>
 
 <p id="previewCertificate">
+
 Not Added
+
 </p>
 
 <hr class="my-6">
 
-<h2 class="text-xl font-bold">
+<h2 class="font-bold text-xl mb-4">
+
 🌍 Languages
+
 </h2>
 
 <p id="previewLanguages">
+
 Not Added
+
 </p>
 
 </div>
 
+<!-- RIGHT CONTENT -->
+
+<div class="md:col-span-2 p-8">
+    <h2 class="text-2xl font-bold text-slate-800 mb-4">
+
+📝 Professional Summary
+
+</h2>
+
+<p id="previewSummary" class="text-gray-700 leading-7 mb-8">
+
+Your professional summary will appear here.
+
+</p>
+
+<h2 class="resume-heading">
+
+🎓 Education
+
+</h2>
+
+<div id="previewEducation" class="mb-8">
+
+Your education will appear here.
+
 </div>
+
+<h2 class="resume-heading">
+
+💼 Experience
+
+</h2>
+
+<div id="previewExperience" class="mb-8">
+
+Your experience will appear here.
+
+</div>
+
+<h2 class="resume-heading">
+
+🚀 Projects
+
+</h2>
+
+<div id="previewProject" class="mb-8">
+
+Your projects will appear here.
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- END RESUME PREVIEW -->
 
 </div>
 
@@ -498,7 +618,9 @@ Not Added
 <div class="max-w-7xl mx-auto flex justify-between items-center px-6">
 
 <p class="text-gray-400">
+
 © 2026 ToolHub AI
+
 </p>
 
 <a
@@ -516,4 +638,5 @@ class="text-blue-400 hover:text-blue-300">
 <script src="script.js"></script>
 
 </body>
+
 </html>

@@ -8,14 +8,11 @@
     <title>Image to PDF - ToolHub AI</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 
-    <style>
-        body {
-            background: #0f172a;
-            font-family: Arial, sans-serif;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
+
 </head>
 
 <body class="text-white">
@@ -23,7 +20,9 @@
     <nav class="bg-slate-900 p-5 flex justify-between">
 
         <h1 class="text-2xl font-bold text-blue-500">
-            🖼️ Image to PDF
+            <i class="fa-solid fa-file-image text-blue-500 mr-2"></i>
+
+            Image to PDF
         </h1>
 
         <a href="../../dashboard.html" class="text-gray-300 hover:text-blue-400">
@@ -36,159 +35,246 @@
 
     <div class="max-w-5xl mx-auto p-8">
 
-        <h2 class="text-4xl font-bold mb-6">
+        <h2 class="page-title">
 
-            Convert Images to PDF
+            Image to PDF
 
         </h2>
 
-        <input type="file" id="imageInput" multiple accept="image/*" class="mb-6">
+        <p class="page-subtitle">
 
-        <div id="dropZone" class="border-2 border-dashed border-blue-500 rounded-xl p-10 text-center mb-6">
+            Merge multiple images into one professional PDF document.
 
-            <h3 class="text-2xl font-bold">
-                📂 Drag & Drop Images Here
-            </h3>
-
-            <p class="text-gray-400 mt-2">
-                or use the file picker above
-            </p>
-
-        </div>
-
-        <div class="grid md:grid-cols-2 gap-4 mt-6">
-
-            <div>
-
-                <label class="font-semibold block mb-2">
-
-                    📄 Page Size
-
-                </label>
-
-                <select id="pageSize" class="w-full rounded bg-slate-900 p-3">
-
-                    <option value="a4">
-
-                        A4
-
-                    </option>
-
-                    <option value="letter">
-
-                        Letter
-
-                    </option>
-
-                </select>
-
-            </div>
-
-            <div>
-
-                <label class="font-semibold block mb-2">
-
-                    📐 Orientation
-
-                </label>
-
-                <select id="orientation" class="w-full rounded bg-slate-900 p-3">
-
-                    <option value="portrait">
-
-                        Portrait
-
-                    </option>
-
-                    <option value="landscape">
-
-                        Landscape
-
-                    </option>
-
-                </select>
-
-            </div>
-
-        </div>
-
-        <div class="grid md:grid-cols-2 gap-4 mt-4">
-
-            <div>
-
-                <label class="font-semibold block mb-2">
-
-                    🖼 Fit Mode
-
-                </label>
-
-                <select id="fitMode" class="w-full rounded bg-slate-900 p-3">
-
-                    <option value="fit">
-
-                        Fit
-
-                    </option>
-
-                    <option value="fill">
-
-                        Fill
-
-                    </option>
-
-                </select>
-
-            </div>
-
-            <div>
-
-                <label class="font-semibold block mb-2">
-
-                    ⚡ Image Quality
-
-                </label>
-
-                <select id="quality" class="w-full rounded bg-slate-900 p-3">
-
-                    <option value="1">
-
-                        High
-
-                    </option>
-
-                    <option value="0.8">
-
-                        Medium
-
-                    </option>
-
-                    <option value="0.6">
-
-                        Low
-
-                    </option>
-
-                </select>
-
-            </div>
-
-        </div>
-
-        <p class="mb-4 text-lg">
-            Selected Images:
-            <span id="imageCount">0</span>
         </p>
 
-        <div id="preview" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 mt-6">
+        <div class="upload-card">
+
+            <input type="file" id="imageInput" multiple accept="image/*" hidden>
+
+            <label for="imageInput" id="dropZone" class="upload-zone">
+
+                <div class="upload-icon">
+
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+
+                </div>
+
+                <h2>
+
+                    Drag & Drop Images
+
+                </h2>
+
+                <p>
+
+                    or Click to Browse
+
+                </p>
+
+                <span>
+
+                    PNG • JPG • JPEG • WEBP
+
+                </span>
+
+                <div class="flex justify-center gap-4 mt-6">
+
+                    <button type="button" class="camera-btn" onclick="openCamera()">
+
+                        <i class="fa-solid fa-camera"></i>
+
+                        Take Photo
+
+                    </button>
+
+                    <button type="button" class="gallery-btn" onclick="openGallery()">
+
+                        <i class="fa-solid fa-images"></i>
+
+                        Choose Gallery
+
+                    </button>
+
+                </div>
+
+            </label>
+
         </div>
 
-        <button onclick="convertPDF()" class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-xl">
+        <div class="settings-card">
 
-            📄 Convert to PDF
+            <h2 class="settings-title">
 
-        </button>
+                ⚙ PDF Settings
 
-    </div>
+            </h2>
+
+            <div class="grid md:grid-cols-2 gap-4 mt-6">
+
+                <div>
+
+                    <label class="font-semibold block mb-2">
+
+                        📄 Page Size
+
+                    </label>
+
+                    <select id="pageSize" class="w-full rounded bg-slate-900 p-3">
+
+                        <option value="a4">
+
+                            A4
+
+                        </option>
+
+                        <option value="letter">
+
+                            Letter
+
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div>
+
+                    <label class="font-semibold block mb-2">
+
+                        📐 Orientation
+
+                    </label>
+
+                    <select id="orientation" class="w-full rounded bg-slate-900 p-3">
+
+                        <option value="portrait">
+
+                            Portrait
+
+                        </option>
+
+                        <option value="landscape">
+
+                            Landscape
+
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-4 mt-4">
+
+                <div>
+
+                    <label class="font-semibold block mb-2">
+
+                        🖼 Fit Mode
+
+                    </label>
+
+                    <select id="fitMode" class="w-full rounded bg-slate-900 p-3">
+
+                        <option value="fit">
+
+                            Fit
+
+                        </option>
+
+                        <option value="fill">
+
+                            Fill
+
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div>
+
+                    <label class="font-semibold block mb-2">
+
+                        ⚡ Image Quality
+
+                    </label>
+
+                    <select id="quality" class="w-full rounded bg-slate-900 p-3">
+
+                        <option value="1">
+
+                            High
+
+                        </option>
+
+                        <option value="0.8">
+
+                            Medium
+
+                        </option>
+
+                        <option value="0.6">
+
+                            Low
+
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+            <div class="counter-card">
+
+                <div>
+
+                    <h3>
+
+                        Images
+
+                    </h3>
+
+                    <span>
+
+                        Ready to Convert
+
+                    </span>
+
+                </div>
+
+                <div id="imageCount">
+
+                    0
+
+                </div>
+
+            </div>
+
+            <div id="preview" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 mt-6">
+            </div>
+
+            <div class="flex justify-center mt-10">
+
+                <button id="convertBtn" onclick="convertPDF()" class="convert-btn">
+
+                    <span class="btn-icon">
+                        <i class="fa-solid fa-file-pdf"></i>
+                    </span>
+
+                    <span id="btnText">
+                        Convert Images to PDF
+                    </span>
+
+                </button>
+
+            </div>
+
+        </div> <!-- settings-card -->
+
+    </div> <!-- max-w-5xl -->
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 

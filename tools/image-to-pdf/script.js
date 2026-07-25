@@ -13,16 +13,16 @@ imageInput.addEventListener("change", () => {
 // Drag & Drop
 dropZone.addEventListener("dragover", (e) => {
     e.preventDefault();
-    dropZone.classList.add("bg-slate-700");
+    dropZone.classList.add("dragover");
 });
 
 dropZone.addEventListener("dragleave", () => {
-    dropZone.classList.remove("bg-slate-700");
+    dropZone.classList.remove("dragover");
 });
 
 dropZone.addEventListener("drop", (e) => {
     e.preventDefault();
-    dropZone.classList.remove("bg-slate-700");
+    dropZone.classList.remove("dragover");
     loadFiles(e.dataTransfer.files);
 });
 
@@ -63,8 +63,8 @@ function renderImages() {
     images.forEach((imageData, index) => {
 
         const card = document.createElement("div");
-        card.className =
-            "bg-slate-800 rounded-xl p-3";
+
+        card.className = "image-card";
         card.dataset.index = index;
 
         const img = document.createElement("img");
@@ -76,14 +76,15 @@ function renderImages() {
 
         // Buttons
         const buttons = document.createElement("div");
-        buttons.className =
-            "grid grid-cols-5 gap-2 mt-3";
+
+        buttons.className = "action-bar";
 
         // LEFT
         const leftBtn = document.createElement("button");
-        leftBtn.innerHTML = "⬅️";
-        leftBtn.className =
-            "bg-blue-600 rounded p-2";
+        leftBtn.innerHTML = '<i class="fa-solid fa-arrow-up"></i>';
+        leftBtn.className = "action-btn bg-blue-600 rounded p-2";
+
+        leftBtn.dataset.title = "Move Up";
 
         leftBtn.onclick = () => {
 
@@ -100,9 +101,10 @@ function renderImages() {
 
         // ROTATE LEFT
         const rotateLeft = document.createElement("button");
-        rotateLeft.innerHTML = "↺";
-        rotateLeft.className =
-            "bg-yellow-600 rounded p-2";
+        rotateLeft.innerHTML = '<i class="fa-solid fa-rotate-left"></i>';
+        rotateLeft.className = "action-btn bg-yellow-600 rounded p-2";
+
+        rotateLeft.dataset.title = "Rotate Left";
 
         rotateLeft.onclick = () => {
 
@@ -117,9 +119,10 @@ function renderImages() {
 
         // DELETE
         const removeBtn = document.createElement("button");
-        removeBtn.innerHTML = "🗑️";
-        removeBtn.className =
-            "bg-red-600 rounded p-2";
+        removeBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+        removeBtn.className = "action-btn bg-red-600 rounded p-2";
+
+        removeBtn.dataset.title = "Delete Image";
 
         removeBtn.onclick = () => {
 
@@ -131,9 +134,10 @@ function renderImages() {
 
         // ROTATE RIGHT
         const rotateRight = document.createElement("button");
-        rotateRight.innerHTML = "↻";
-        rotateRight.className =
-            "bg-yellow-600 rounded p-2";
+        rotateRight.innerHTML = '<i class="fa-solid fa-rotate-right"></i>';
+        rotateRight.className = "action-btn bg-yellow-600 rounded p-2";
+
+        rotateRight.dataset.title = "Rotate Right";
 
         rotateRight.onclick = () => {
 
@@ -148,9 +152,10 @@ function renderImages() {
 
         // RIGHT
         const rightBtn = document.createElement("button");
-        rightBtn.innerHTML = "➡️";
-        rightBtn.className =
-            "bg-blue-600 rounded p-2";
+        rightBtn.innerHTML = '<i class="fa-solid fa-arrow-down"></i>';
+        rightBtn.className = "action-btn bg-blue-600 rounded p-2";
+
+        rightBtn.dataset.title = "Move Down";
 
         rightBtn.onclick = () => {
 
@@ -181,28 +186,39 @@ function renderImages() {
 
     if (!preview.sortableInstance) {
 
-    preview.sortableInstance = Sortable.create(preview, {
+        preview.sortableInstance = Sortable.create(preview, {
 
-        animation: 200,
+            animation: 200,
 
-        onEnd(evt) {
+            onEnd(evt) {
 
-            const moved =
-                images.splice(evt.oldIndex, 1)[0];
+                const moved =
+                    images.splice(evt.oldIndex, 1)[0];
 
-            images.splice(evt.newIndex, 0, moved);
+                images.splice(evt.newIndex, 0, moved);
 
-            renderImages();
+                renderImages();
 
-        }
+            }
 
-    });
+        });
 
-}
+    }
 }
 
 // Convert PDF
+
 async function convertPDF() {
+
+    const btn = document.getElementById("convertBtn");
+    const btnText = document.getElementById("btnText");
+    const btnIcon = btn.querySelector("i");
+
+    btn.disabled = true;
+    btnText.innerHTML = "Generating PDF...";
+    btnIcon.className = "fa-solid fa-spinner fa-spin";
+
+    try {
 
     if (images.length === 0) {
         alert("Please select at least one image.");
@@ -284,5 +300,48 @@ async function convertPDF() {
     }
 
     pdf.save("ToolHubAI-Images.pdf");
+
+}
+
+catch(error){
+
+    console.error(error);
+
+    alert("Failed to generate PDF.");
+
+}
+
+finally{
+
+    btn.disabled = false;
+
+    btnText.innerHTML = "Convert Images to PDF";
+
+    btnIcon.className = "fa-solid fa-file-pdf";
+
+}
+}
+
+function openCamera(){
+
+    const input=document.getElementById("imageInput");
+
+    input.removeAttribute("multiple");
+
+    input.setAttribute("capture","environment");
+
+    input.click();
+
+}
+
+function openGallery(){
+
+    const input=document.getElementById("imageInput");
+
+    input.setAttribute("multiple","multiple");
+
+    input.removeAttribute("capture");
+
+    input.click();
 
 }
