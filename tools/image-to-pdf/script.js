@@ -4,6 +4,7 @@ const imageCount = document.getElementById("imageCount");
 const dropZone = document.getElementById("dropZone");
 
 let images = [];
+let currentPreviewIndex = 0;
 
 // Upload Images
 imageInput.addEventListener("change", () => {
@@ -72,7 +73,9 @@ function renderImages() {
         img.style.transform =
             `rotate(${imageData.rotation || 0}deg)`;
         img.className =
-            "w-full h-52 object-cover rounded-lg";
+            "w-full aspect-square object-cover rounded-xl cursor-pointer transition duration-300 hover:scale-105";
+
+            img.onclick = () => openImagePreview(img.src);
 
         // Buttons
         const buttons = document.createElement("div");
@@ -220,128 +223,198 @@ async function convertPDF() {
 
     try {
 
-    if (images.length === 0) {
-        alert("Please select at least one image.");
-        return;
-    }
+        if (images.length === 0) {
+            alert("Please select at least one image.");
+            return;
+        }
 
-    const pageSize =
-        document.getElementById("pageSize").value;
+        const pageSize =
+            document.getElementById("pageSize").value;
 
-    const orientation =
-        document.getElementById("orientation").value;
+        const orientation =
+            document.getElementById("orientation").value;
 
-    const fitMode =
-        document.getElementById("fitMode").value;
+        const fitMode =
+            document.getElementById("fitMode").value;
 
-    const quality =
-        parseFloat(document.getElementById("quality").value);
+        const quality =
+            parseFloat(document.getElementById("quality").value);
 
-    const { jsPDF } = window.jspdf;
+        const { jsPDF } = window.jspdf;
 
-    const pdf = new jsPDF({
-        orientation: orientation,
-        unit: "mm",
-        format: pageSize
-    });
-
-    for (let i = 0; i < images.length; i++) {
-
-        if (i > 0) pdf.addPage();
-
-        const img = new Image();
-
-        img.src = images[i].src;
-
-        await new Promise(resolve => {
-            img.onload = resolve;
+        const pdf = new jsPDF({
+            orientation: orientation,
+            unit: "mm",
+            format: pageSize
         });
 
-        const pageWidth =
-            pdf.internal.pageSize.getWidth();
+        for (let i = 0; i < images.length; i++) {
 
-        const pageHeight =
-            pdf.internal.pageSize.getHeight();
+            if (i > 0) pdf.addPage();
 
-        let imgWidth;
-        let imgHeight;
+            const img = new Image();
 
-        if (fitMode === "fill") {
+            img.src = images[i].src;
 
-            imgWidth = pageWidth;
-            imgHeight = pageHeight;
+            await new Promise(resolve => {
+                img.onload = resolve;
+            });
 
-        } else {
+            const pageWidth =
+                pdf.internal.pageSize.getWidth();
 
-            const ratio = Math.min(
-                pageWidth / img.width,
-                pageHeight / img.height
+            const pageHeight =
+                pdf.internal.pageSize.getHeight();
+
+            let imgWidth;
+            let imgHeight;
+
+            if (fitMode === "fill") {
+
+                imgWidth = pageWidth;
+                imgHeight = pageHeight;
+
+            } else {
+
+                const ratio = Math.min(
+                    pageWidth / img.width,
+                    pageHeight / img.height
+                );
+
+                imgWidth = img.width * ratio;
+                imgHeight = img.height * ratio;
+
+            }
+
+            const x = (pageWidth - imgWidth) / 2;
+            const y = (pageHeight - imgHeight) / 2;
+
+            pdf.addImage(
+                images[i].src,
+                "JPEG",
+                x,
+                y,
+                imgWidth,
+                imgHeight,
+                "",
+                quality > 0.9 ? "FAST" : "MEDIUM"
             );
-
-            imgWidth = img.width * ratio;
-            imgHeight = img.height * ratio;
 
         }
 
-        const x = (pageWidth - imgWidth) / 2;
-        const y = (pageHeight - imgHeight) / 2;
-
-        pdf.addImage(
-            images[i].src,
-            "JPEG",
-            x,
-            y,
-            imgWidth,
-            imgHeight,
-            "",
-            quality > 0.9 ? "FAST" : "MEDIUM"
-        );
+        pdf.save("ToolHubAI-Images.pdf");
 
     }
 
-    pdf.save("ToolHubAI-Images.pdf");
+    catch (error) {
 
+        console.error(error);
+
+        alert("Failed to generate PDF.");
+
+    }
+
+    finally {
+
+        btn.disabled = false;
+
+        btnText.innerHTML = "Convert Images to PDF";
+
+        btnIcon.className = "fa-solid fa-file-pdf";
+
+    }
 }
 
-catch(error){
+function openCamera() {
 
-    console.error(error);
-
-    alert("Failed to generate PDF.");
-
-}
-
-finally{
-
-    btn.disabled = false;
-
-    btnText.innerHTML = "Convert Images to PDF";
-
-    btnIcon.className = "fa-solid fa-file-pdf";
-
-}
-}
-
-function openCamera(){
-
-    const input=document.getElementById("imageInput");
+    const input = document.getElementById("imageInput");
 
     input.removeAttribute("multiple");
 
-    input.setAttribute("capture","environment");
+    input.setAttribute("capture", "environment");
 
     input.click();
 
 }
 
-function openGallery(){
+function openGallery() {
 
-    const input=document.getElementById("imageInput");
+    const input = document.getElementById("imageInput");
 
-    input.setAttribute("multiple","multiple");
+    input.setAttribute("multiple", "multiple");
 
     input.removeAttribute("capture");
 
     input.click();
+
+}
+
+function openImagePreview(src){
+
+    currentPreviewIndex = images.findIndex(img => (img.src || img) === src);
+
+    updatePreview();
+
+    document.getElementById("imagePreviewModal").style.display="flex";
+
+}
+
+function closeImagePreview(){
+
+    document.getElementById("imagePreviewModal").style.display = "none";
+
+}
+document.getElementById("imagePreviewModal").addEventListener("click", function(e){
+
+    if(e.target===this){
+
+        closeImagePreview();
+
+    }
+
+});
+
+document.addEventListener("keydown",function(e){
+
+    if(e.key==="Escape"){
+
+        closeImagePreview();
+
+    }
+
+});
+
+function updatePreview(){
+
+    const img = images[currentPreviewIndex];
+
+    document.getElementById("previewImage").src = img.src || img;
+
+    document.getElementById("previewCounter").textContent =
+        `${currentPreviewIndex + 1} / ${images.length}`;
+
+}
+
+function nextImage(){
+
+    if(currentPreviewIndex < images.length - 1){
+
+        currentPreviewIndex++;
+
+        updatePreview();
+
+    }
+
+}
+
+function prevImage(){
+
+    if(currentPreviewIndex > 0){
+
+        currentPreviewIndex--;
+
+        updatePreview();
+
+    }
 
 }

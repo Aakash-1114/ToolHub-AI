@@ -280,6 +280,28 @@
 
     <script src="script.js"></script>
 
+<div id="imagePreviewModal" class="preview-modal">
+
+    <span class="close-preview" onclick="closeImagePreview()">
+        &times;
+    </span>
+
+    <button class="preview-nav left" onclick="prevImage()">
+        <i class="fa-solid fa-chevron-left"></i>
+    </button>
+
+    <img id="previewImage" class="preview-image">
+
+    <button class="preview-nav right" onclick="nextImage()">
+        <i class="fa-solid fa-chevron-right"></i>
+    </button>
+
+    <div id="previewCounter" class="preview-counter">
+        1 / 1
+    </div>
+
+</div>
+
 </body>
 
 </html>
