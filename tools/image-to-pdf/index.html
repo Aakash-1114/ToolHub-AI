@@ -231,23 +231,27 @@
 
                 <div>
 
-                    <h3>
+                    <h3>Images</h3>
 
-                        Images
-
-                    </h3>
-
-                    <span>
-
-                        Ready to Convert
-
-                    </span>
+                    <span>Ready to Convert</span>
 
                 </div>
 
-                <div id="imageCount">
+                <div class="counter-right">
 
-                    0
+                    <div id="imageCount">
+
+                        0
+
+                    </div>
+
+                    <button id="removeAllBtn">
+
+                        <i class="fa-solid fa-trash"></i>
+
+                        Remove All
+
+                    </button>
 
                 </div>
 
@@ -256,29 +260,31 @@
             <div id="preview" class="grid grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-3 mt-6">
             </div>
 
-            <div class="flex justify-center mt-10">
+            <div id="progressContainer">
 
-                <button id="convertBtn" onclick="convertPDF()" class="convert-btn">
+                <div class="progress-info">
 
-                    <span class="btn-icon">
-                        <i class="fa-solid fa-file-pdf"></i>
+                    <span>Generating PDF...</span>
+
+                    <span id="progressPercent">
+
+                        0%
+
                     </span>
 
-                    <span id="btnText">
-                        Convert Images to PDF
-                    </span>
+                </div>
 
-                </button>
+                <div class="progress-bar">
+
+                    <div id="progressFill"></div>
+
+                </div>
 
             </div>
 
         </div> <!-- settings-card -->
 
     </div> <!-- max-w-5xl -->
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-    <script src="script.js"></script>
 
     <div id="imagePreviewModal" class="preview-modal">
 
@@ -290,9 +296,25 @@
             <i class="fa-solid fa-chevron-left"></i>
         </button>
 
-        <img id="previewImage" class="preview-image">
+        <img id="previewImage" class="preview-image" alt="Preview Image">
 
-        <button class="preview-nav right" onclick="nextImage()">
+        <div class="preview-toolbar">
+
+            <button id="rotateLeftPreview" aria-label="Rotate Left"> <i class="fa-solid fa-rotate-left"></i>
+            </button>
+
+            <button id="rotateRightPreview" aria-label="Rotate Right"> <i class="fa-solid fa-rotate-right"></i>
+            </button>
+
+            <button id="deletePreview" aria-label="Delete Image"> <i class="fa-solid fa-trash"></i>
+            </button>
+
+            <button type="button" onclick="closeImagePreview()" aria-label="Close Preview"> <i class="fa-solid fa-xmark"></i>
+            </button>
+
+        </div>
+
+        <button class="preview-nav right" aria-label="Next Image" onclick="nextImage()">
             <i class="fa-solid fa-chevron-right"></i>
         </button>
 
@@ -301,6 +323,13 @@
         </div>
 
     </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script src="script.js"></script>
+
 
 </body>
 

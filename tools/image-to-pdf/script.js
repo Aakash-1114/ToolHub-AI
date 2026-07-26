@@ -2,9 +2,19 @@ const imageInput = document.getElementById("imageInput");
 const preview = document.getElementById("preview");
 const imageCount = document.getElementById("imageCount");
 const dropZone = document.getElementById("dropZone");
-
 let images = [];
+
+const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB
+
+const ALLOWED_TYPES = [
+    "image/jpeg",
+    "image/jpg",
+    "image/png",
+    "image/webp"
+];
+
 let currentPreviewIndex = 0;
+let currentRotation = 0;
 
 // Upload Images
 imageInput.addEventListener("change", () => {
@@ -28,28 +38,77 @@ dropZone.addEventListener("drop", (e) => {
 });
 
 // Load Files
-function loadFiles(files) {
 
-    Array.from(files).forEach(file => {
+async function loadFiles(files) {
 
-        if (!file.type.startsWith("image/")) return;
+    const fileList = Array.from(files);
 
-        const reader = new FileReader();
+    for (const file of fileList) {
 
-        reader.onload = function (e) {
+        // Image validation
 
-            images.push({
-                src: e.target.result,
-                rotation: 0
-            });
+        if (!ALLOWED_TYPES.includes(file.type)) {
 
-            renderImages();
+            showToast("Unsupported image format.");
+            continue;
 
-        };
+        }
 
-        reader.readAsDataURL(file);
+        // Size validation
 
-    });
+        if (file.size > MAX_FILE_SIZE) {
+
+            showToast("Image exceeds 20MB.");
+            continue;
+
+        }
+
+        // Duplicate validation
+
+        const duplicate = images.some(img =>
+            img.name === file.name &&
+            img.size === file.size
+        );
+
+        if (duplicate) {
+
+            showToast("Image already added.");
+
+            continue;
+
+        }
+
+        // Object URL
+
+        if (!(file instanceof File)) {
+
+            continue;
+
+        }
+
+        const url = URL.createObjectURL(file);
+
+        images.push({
+
+            src: url,
+
+            file: file,
+
+            name: file.name,
+
+            size: file.size,
+
+            type: file.type,
+
+            rotation: 0
+
+        });
+
+    }
+
+    renderImages();
+
+    imageInput.value = "";
 
 }
 
@@ -58,6 +117,44 @@ function loadFiles(files) {
 function renderImages() {
 
     preview.innerHTML = "";
+
+    if (images.length === 0) {
+
+        preview.innerHTML = `
+
+<div class="text-center col-span-full text-gray-400 py-10">
+
+<i class="fa-solid fa-images text-5xl mb-4"></i>
+
+<p>No Images Selected</p>
+
+</div>
+
+`;
+
+        imageCount.textContent = 0;
+
+        return;
+
+    }
+
+    imageCount.animate(
+
+        [
+
+            { transform: "scale(1.2)" },
+
+            { transform: "scale(1)" }
+
+        ],
+
+        {
+
+            duration: 250
+
+        }
+
+    );
 
     imageCount.textContent = images.length;
 
@@ -69,11 +166,26 @@ function renderImages() {
         card.dataset.index = index;
 
         const img = document.createElement("img");
+        img.loading = "lazy";
+        img.draggable = false;
+        img.alt = imageData.name || "Uploaded Image";
+        img.decoding = "async";
         img.src = imageData.src || imageData;
+
+        img.onerror = () => {
+
+            images.splice(index, 1);
+
+            renderImages();
+
+            console.error("Failed:", imageData.name);
+
+        };
+
         img.style.transform =
             `rotate(${imageData.rotation || 0}deg)`;
         img.className =
-            "w-full aspect-square object-cover rounded-xl cursor-pointer transition duration-300 hover:scale-105";
+            "w-full aspect-square object-cover rounded-xl cursor-pointer transition duration-300";
 
         img.style.pointerEvents = "auto";
 
@@ -83,111 +195,9 @@ function renderImages() {
 
         });
 
-        // Buttons
-        const buttons = document.createElement("div");
 
-        buttons.className = "action-bar";
 
-        // LEFT
-        const leftBtn = document.createElement("button");
-        leftBtn.innerHTML = '<i class="fa-solid fa-arrow-up"></i>';
-        leftBtn.className = "action-btn bg-blue-600 rounded p-2";
-
-        leftBtn.dataset.title = "Move Up";
-
-        leftBtn.onclick = () => {
-
-            if (index > 0) {
-
-                [images[index], images[index - 1]] =
-                    [images[index - 1], images[index]];
-
-                renderImages();
-
-            }
-
-        };
-
-        // ROTATE LEFT
-        const rotateLeft = document.createElement("button");
-        rotateLeft.innerHTML = '<i class="fa-solid fa-rotate-left"></i>';
-        rotateLeft.className = "action-btn bg-yellow-600 rounded p-2";
-
-        rotateLeft.dataset.title = "Rotate Left";
-
-        rotateLeft.onclick = () => {
-
-            if (!images[index].rotation)
-                images[index].rotation = 0;
-
-            images[index].rotation -= 90;
-
-            renderImages();
-
-        };
-
-        // DELETE
-        const removeBtn = document.createElement("button");
-        removeBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
-        removeBtn.className = "action-btn bg-red-600 rounded p-2";
-
-        removeBtn.dataset.title = "Delete Image";
-
-        removeBtn.onclick = () => {
-
-            images.splice(index, 1);
-
-            renderImages();
-
-        };
-
-        // ROTATE RIGHT
-        const rotateRight = document.createElement("button");
-        rotateRight.innerHTML = '<i class="fa-solid fa-rotate-right"></i>';
-        rotateRight.className = "action-btn bg-yellow-600 rounded p-2";
-
-        rotateRight.dataset.title = "Rotate Right";
-
-        rotateRight.onclick = () => {
-
-            if (!images[index].rotation)
-                images[index].rotation = 0;
-
-            images[index].rotation += 90;
-
-            renderImages();
-
-        };
-
-        // RIGHT
-        const rightBtn = document.createElement("button");
-        rightBtn.innerHTML = '<i class="fa-solid fa-arrow-down"></i>';
-        rightBtn.className = "action-btn bg-blue-600 rounded p-2";
-
-        rightBtn.dataset.title = "Move Down";
-
-        rightBtn.onclick = () => {
-
-            if (index < images.length - 1) {
-
-                [images[index], images[index + 1]] =
-                    [images[index + 1], images[index]];
-
-                renderImages();
-
-            }
-
-        };
-
-        buttons.append(
-            leftBtn,
-            rotateLeft,
-            removeBtn,
-            rotateRight,
-            rightBtn
-        );
-
-        card.append(img, buttons);
+        card.append(img);
 
         preview.appendChild(card);
 
@@ -197,7 +207,13 @@ function renderImages() {
 
         preview.sortableInstance = Sortable.create(preview, {
 
-            animation: 200,
+            animation: 180,
+
+            ghostClass: "dragging",
+
+            chosenClass: "chosen",
+
+            dragClass: "dragging",
 
             onEnd(evt) {
 
@@ -215,11 +231,125 @@ function renderImages() {
     }
 }
 
+// Image Compression Function 
+
+async function compressImage(imageData, quality = 0.8) {
+
+    return new Promise((resolve) => {
+
+        const img = new Image();
+
+        img.src = imageData.src;
+
+        img.onload = () => {
+
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+
+            let width = img.width;
+            let height = img.height;
+
+            // Max size
+            const MAX = 2000;
+
+            if (width > MAX || height > MAX) {
+
+                const ratio = Math.min(MAX / width, MAX / height);
+
+                width *= ratio;
+                height *= ratio;
+
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+
+            // Apply Rotation
+            if (imageData.rotation % 360 !== 0) {
+
+                const rotateCanvas = document.createElement("canvas");
+                const rotateCtx = rotateCanvas.getContext("2d");
+
+                if (Math.abs(imageData.rotation % 180) === 90) {
+
+                    rotateCanvas.width = height;
+                    rotateCanvas.height = width;
+
+                } else {
+
+                    rotateCanvas.width = width;
+                    rotateCanvas.height = height;
+
+                }
+
+                rotateCtx.translate(
+                    rotateCanvas.width / 2,
+                    rotateCanvas.height / 2
+                );
+
+                rotateCtx.rotate(
+                    imageData.rotation * Math.PI / 180
+                );
+
+                rotateCtx.drawImage(
+                    img,
+                    -width / 2,
+                    -height / 2,
+                    width,
+                    height
+                );
+
+                resolve(
+                    rotateCanvas.toDataURL(
+                        "image/jpeg",
+                        quality
+                    )
+                );
+
+            } else {
+
+                ctx.drawImage(
+                    img,
+                    0,
+                    0,
+                    width,
+                    height
+                );
+
+                resolve(
+                    canvas.toDataURL(
+                        "image/jpeg",
+                        quality
+                    )
+                );
+
+            }
+
+        };
+
+        img.onerror = () => {
+            resolve(imageData.src);
+        };
+
+    });
+
+}
+
 // Convert PDF
 
 async function convertPDF() {
 
     const btn = document.getElementById("convertBtn");
+    const progressContainer =
+        document.getElementById("progressContainer");
+
+    const progressFill =
+        document.getElementById("progressFill");
+
+    const progressPercent =
+        document.getElementById("progressPercent");
+
+    progressContainer.style.display = "block";
     const btnText = document.getElementById("btnText");
     const btnIcon = btn.querySelector("i");
 
@@ -230,7 +360,7 @@ async function convertPDF() {
     try {
 
         if (images.length === 0) {
-            alert("Please select at least one image.");
+            showToast("Please upload at least one image.");
             return;
         }
 
@@ -254,16 +384,40 @@ async function convertPDF() {
             format: pageSize
         });
 
+        const start = performance.now();
+
+        pdf.setProperties({
+
+            title: "Image to PDF",
+
+            author: "ToolHub AI",
+
+            subject: "Converted Images",
+
+            creator: "ToolHub AI"
+
+        });
+
         for (let i = 0; i < images.length; i++) {
 
             if (i > 0) pdf.addPage();
 
+            const compressedImage =
+                await compressImage(
+                    images[i],
+                    quality
+                );
+
             const img = new Image();
 
-            img.src = images[i].src;
+            img.src = compressedImage;
 
-            await new Promise(resolve => {
+            await new Promise((resolve, reject) => {
+
                 img.onload = resolve;
+
+                img.onerror = reject;
+
             });
 
             const pageWidth =
@@ -292,23 +446,54 @@ async function convertPDF() {
 
             }
 
-            const x = (pageWidth - imgWidth) / 2;
-            const y = (pageHeight - imgHeight) / 2;
+            const margin = 10;
+
+            const x = Math.max(margin, (pageWidth - imgWidth) / 2);
+
+            const y = Math.max(margin, (pageHeight - imgHeight) / 2);
 
             pdf.addImage(
-                images[i].src,
-                "JPEG",
+                compressedImage,
+                images[i].type === "image/png"
+                    ? "PNG"
+                    : "JPEG",
                 x,
                 y,
                 imgWidth,
                 imgHeight,
                 "",
-                quality > 0.9 ? "FAST" : "MEDIUM"
+                "FAST"
             );
+
+            const percent = Math.round(((i + 1) / images.length) * 100);
+
+            progressFill.style.width = percent + "%";
+
+            progressPercent.textContent = percent + "%";
 
         }
 
-        pdf.save("ToolHubAI-Images.pdf");
+        setTimeout(() => {
+
+            const name =
+
+                images.length === 1
+
+                    ? images[0].name.replace(/\.[^/.]+$/, "")
+
+                    : "Merged-Images";
+
+            pdf.save(name + ".pdf");
+
+            const end = performance.now();
+
+            console.log(
+                "PDF Generated in",
+                ((end - start) / 1000).toFixed(2),
+                "seconds"
+            );
+
+        }, 100);
 
     }
 
@@ -316,8 +501,7 @@ async function convertPDF() {
 
         console.error(error);
 
-        alert("Failed to generate PDF.");
-
+        showToast("Failed to generate PDF.");
     }
 
     finally {
@@ -327,6 +511,12 @@ async function convertPDF() {
         btnText.innerHTML = "Convert Images to PDF";
 
         btnIcon.className = "fa-solid fa-file-pdf";
+
+        progressContainer.style.display = "none";
+
+        progressFill.style.width = "0%";
+
+        progressPercent.textContent = "0%";
 
     }
 }
@@ -361,30 +551,64 @@ function openImagePreview(src) {
 
     updatePreview();
 
+    currentRotation = images[currentPreviewIndex].rotation || 0;
+
+    document.getElementById("previewImage").style.transform =
+        `rotate(${currentRotation}deg)`;
+
     document.getElementById("imagePreviewModal").style.display = "flex";
 
 }
 
 function closeImagePreview() {
 
+    renderImages();
+
     document.getElementById("imagePreviewModal").style.display = "none";
 
 }
-document.getElementById("imagePreviewModal").addEventListener("click", function (e) {
 
-    if (e.target === this) {
+const previewModal = document.getElementById("imagePreviewModal");
 
-        closeImagePreview();
+if (previewModal) {
 
-    }
+    previewModal.addEventListener("click", function (e) {
 
-});
+        if (e.target === this) {
 
-document.addEventListener("keydown", function (e) {
+            closeImagePreview();
 
-    if (e.key === "Escape") {
+        }
 
-        closeImagePreview();
+    });
+
+}
+
+document.addEventListener("keydown", (e) => {
+
+    const modal = document.getElementById("imagePreviewModal");
+
+    if (modal.style.display !== "flex") return;
+
+    switch (e.key) {
+
+        case "Escape":
+
+            closeImagePreview();
+
+            break;
+
+        case "ArrowRight":
+
+            nextImage();
+
+            break;
+
+        case "ArrowLeft":
+
+            prevImage();
+
+            break;
 
     }
 
@@ -394,7 +618,20 @@ function updatePreview() {
 
     const img = images[currentPreviewIndex];
 
-    document.getElementById("previewImage").src = img.src || img;
+    const previewImg = document.getElementById("previewImage");
+
+    previewImg.style.opacity = "0";
+
+    previewImg.onload = () => {
+
+        previewImg.style.opacity = "1";
+
+    };
+
+    previewImg.src = img.src || img;
+
+    previewImg.style.transform =
+        `rotate(${images[currentPreviewIndex].rotation || 0}deg)`;
 
     document.getElementById("previewCounter").textContent =
         `${currentPreviewIndex + 1} / ${images.length}`;
@@ -424,3 +661,132 @@ function prevImage() {
     }
 
 }
+
+document.getElementById("rotateLeftPreview").onclick = () => {
+
+    images[currentPreviewIndex].rotation =
+        (images[currentPreviewIndex].rotation || 0) - 90;
+
+    updatePreview();
+
+};
+
+document.getElementById("rotateRightPreview").onclick = () => {
+
+    images[currentPreviewIndex].rotation =
+        (images[currentPreviewIndex].rotation || 0) + 90;
+
+    updatePreview();
+
+};
+
+document.getElementById("deletePreview").onclick = () => {
+
+    const deleted = images.splice(currentPreviewIndex, 1)[0];
+
+    if (deleted.src.startsWith("blob:")) {
+        URL.revokeObjectURL(deleted.src);
+    }
+
+    showToast("Image Deleted");
+
+    window.lastDeleted = deleted;
+
+    if (images.length === 0) {
+
+        closeImagePreview();
+
+    } else {
+
+        if (currentPreviewIndex >= images.length) {
+
+            currentPreviewIndex = images.length - 1;
+
+        }
+
+        renderImages();
+
+        updatePreview();
+
+    }
+
+};
+
+const removeAllBtn =
+    document.getElementById("removeAllBtn");
+
+removeAllBtn.addEventListener("click", () => {
+
+    if (images.length === 0) {
+
+        return;
+
+    }
+
+    if (!confirm("Remove all images?")) {
+
+        return;
+
+    }
+
+    images.forEach(img => {
+
+        if (img.src.startsWith("blob:")) {
+            URL.revokeObjectURL(img.src);
+        }
+
+    });
+
+    images = [];
+
+    renderImages();
+
+});
+
+function showToast(message) {
+
+    const toast = document.getElementById("toast");
+
+    toast.textContent = message;
+
+    toast.classList.add("show");
+
+    setTimeout(() => {
+
+        toast.classList.remove("show");
+
+    }, 2500);
+
+}
+
+document.addEventListener("keydown", (e) => {
+
+    if (e.ctrlKey && e.key === "z") {
+
+        if (window.lastDeleted) {
+
+            images.push(window.lastDeleted);
+
+            window.lastDeleted = null;
+
+            renderImages();
+
+            showToast("Undo Successful");
+
+        }
+
+    }
+
+});
+
+window.addEventListener("beforeunload", (e) => {
+
+    if (images.length > 0) {
+
+        e.preventDefault();
+
+        e.returnValue = "";
+
+    }
+
+});
