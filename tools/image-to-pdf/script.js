@@ -1,86 +1,124 @@
+/* ===========================================
+   TOOLHUB AI
+   IMAGE TO PDF PRO
+=========================================== */
+
 const imageInput = document.getElementById("imageInput");
-const preview = document.getElementById("preview");
-const imageCount = document.getElementById("imageCount");
+
 const dropZone = document.getElementById("dropZone");
+
+const preview = document.getElementById("preview");
+
+const imageCount = document.getElementById("imageCount");
+
+const mainPreview = document.getElementById("mainPreview");
+
+const emptyPreview = document.getElementById("emptyPreview");
+
+const progressContainer =
+    document.getElementById("progressContainer");
+
+const progressFill =
+    document.getElementById("progressFill");
+
+const progressPercent =
+    document.getElementById("progressPercent");
+
 let images = [];
 
-const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB
+let currentIndex = 0;
+
+let zoom = 1;
+
+const MAX_FILE_SIZE = 20 * 1024 * 1024;
 
 const ALLOWED_TYPES = [
+
     "image/jpeg",
+
     "image/jpg",
+
     "image/png",
+
     "image/webp"
+
 ];
 
-let currentPreviewIndex = 0;
-let currentRotation = 0;
+/* ===========================================
+UPLOAD
+=========================================== */
 
-// Upload Images
 imageInput.addEventListener("change", () => {
+
     loadFiles(imageInput.files);
+
 });
 
-// Drag & Drop
+/* ===========================================
+DRAG DROP
+=========================================== */
+
 dropZone.addEventListener("dragover", (e) => {
+
     e.preventDefault();
+
     dropZone.classList.add("dragover");
+
 });
 
 dropZone.addEventListener("dragleave", () => {
+
     dropZone.classList.remove("dragover");
+
 });
 
 dropZone.addEventListener("drop", (e) => {
+
     e.preventDefault();
+
     dropZone.classList.remove("dragover");
+
     loadFiles(e.dataTransfer.files);
+
 });
 
-// Load Files
+/* ===========================================
+LOAD FILES
+=========================================== */
 
 async function loadFiles(files) {
 
-    const fileList = Array.from(files);
+    const list = [...files];
 
-    for (const file of fileList) {
-
-        // Image validation
+    for (const file of list) {
 
         if (!ALLOWED_TYPES.includes(file.type)) {
 
-            showToast("Unsupported image format.");
+            showToast("Unsupported format");
+
             continue;
 
         }
-
-        // Size validation
 
         if (file.size > MAX_FILE_SIZE) {
 
-            showToast("Image exceeds 20MB.");
+            showToast("Max 20MB");
+
             continue;
 
         }
 
-        // Duplicate validation
-
         const duplicate = images.some(img =>
+
             img.name === file.name &&
+
             img.size === file.size
+
         );
 
         if (duplicate) {
 
-            showToast("Image already added.");
-
-            continue;
-
-        }
-
-        // Object URL
-
-        if (!(file instanceof File)) {
+            showToast("Duplicate skipped");
 
             continue;
 
@@ -106,618 +144,336 @@ async function loadFiles(files) {
 
     }
 
-    renderImages();
-
-    imageInput.value = "";
+    renderSidebar();
 
 }
 
-// Render Images
+/* ===========================================
+SIDEBAR
+=========================================== */
 
-function renderImages() {
+function renderSidebar(){
 
-    preview.innerHTML = "";
+    preview.innerHTML="";
 
-    if (images.length === 0) {
+    imageCount.textContent=images.length;
 
-        preview.innerHTML = `
+    if(images.length===0){
 
-<div class="text-center col-span-full text-gray-400 py-10">
+        emptyPreview.style.display="flex";
+        mainPreview.style.display="none";
 
-<i class="fa-solid fa-images text-5xl mb-4"></i>
-
-<p>No Images Selected</p>
-
-</div>
-
-`;
-
-        imageCount.textContent = 0;
+        updateEmptyState();
 
         return;
-
     }
 
-    imageCount.animate(
+    images.forEach((img,index)=>{
 
-        [
+        const image=document.createElement("img");
 
-            { transform: "scale(1.2)" },
+        image.src=img.src;
 
-            { transform: "scale(1)" }
+        image.draggable=false;
 
-        ],
+        image.style.transform=
+        `rotate(${img.rotation}deg)`;
 
-        {
+        image.onclick=()=>{
 
-            duration: 250
+            currentIndex=index;
 
-        }
-
-    );
-
-    imageCount.textContent = images.length;
-
-    images.forEach((imageData, index) => {
-
-        const card = document.createElement("div");
-
-        card.className = "image-card";
-        card.dataset.index = index;
-
-        const img = document.createElement("img");
-        img.loading = "lazy";
-        img.draggable = false;
-        img.alt = imageData.name || "Uploaded Image";
-        img.decoding = "async";
-        img.src = imageData.src || imageData;
-
-        img.onerror = () => {
-
-            images.splice(index, 1);
-
-            renderImages();
-
-            console.error("Failed:", imageData.name);
+            showPreview();
 
         };
 
-        img.style.transform =
-            `rotate(${imageData.rotation || 0}deg)`;
-        img.className =
-            "w-full aspect-square object-cover rounded-xl cursor-pointer transition duration-300";
+        preview.appendChild(image);
 
-        img.style.pointerEvents = "auto";
-
-        img.addEventListener("click", function () {
-
-            openImagePreview(imageData.src);
-
-        });
-
-
-
-        card.append(img);
-
-        preview.appendChild(card);
+        animateThumbnail(image);
 
     });
 
-    if (!preview.sortableInstance) {
+    updateActiveThumbnail();
 
-        preview.sortableInstance = Sortable.create(preview, {
+    updateEmptyState();
 
-            animation: 180,
-
-            ghostClass: "dragging",
-
-            chosenClass: "chosen",
-
-            dragClass: "dragging",
-
-            onEnd(evt) {
-
-                const moved =
-                    images.splice(evt.oldIndex, 1)[0];
-
-                images.splice(evt.newIndex, 0, moved);
-
-                renderImages();
-
-            }
-
-        });
-
-    }
-}
-
-// Image Compression Function 
-
-async function compressImage(imageData, quality = 0.8) {
-
-    return new Promise((resolve) => {
-
-        const img = new Image();
-
-        img.src = imageData.src;
-
-        img.onload = () => {
-
-            const canvas = document.createElement("canvas");
-            const ctx = canvas.getContext("2d");
-
-            let width = img.width;
-            let height = img.height;
-
-            // Max size
-            const MAX = 2000;
-
-            if (width > MAX || height > MAX) {
-
-                const ratio = Math.min(MAX / width, MAX / height);
-
-                width *= ratio;
-                height *= ratio;
-
-            }
-
-            canvas.width = width;
-            canvas.height = height;
-
-            // Apply Rotation
-            if (imageData.rotation % 360 !== 0) {
-
-                const rotateCanvas = document.createElement("canvas");
-                const rotateCtx = rotateCanvas.getContext("2d");
-
-                if (Math.abs(imageData.rotation % 180) === 90) {
-
-                    rotateCanvas.width = height;
-                    rotateCanvas.height = width;
-
-                } else {
-
-                    rotateCanvas.width = width;
-                    rotateCanvas.height = height;
-
-                }
-
-                rotateCtx.translate(
-                    rotateCanvas.width / 2,
-                    rotateCanvas.height / 2
-                );
-
-                rotateCtx.rotate(
-                    imageData.rotation * Math.PI / 180
-                );
-
-                rotateCtx.drawImage(
-                    img,
-                    -width / 2,
-                    -height / 2,
-                    width,
-                    height
-                );
-
-                resolve(
-                    rotateCanvas.toDataURL(
-                        "image/jpeg",
-                        quality
-                    )
-                );
-
-            } else {
-
-                ctx.drawImage(
-                    img,
-                    0,
-                    0,
-                    width,
-                    height
-                );
-
-                resolve(
-                    canvas.toDataURL(
-                        "image/jpeg",
-                        quality
-                    )
-                );
-
-            }
-
-        };
-
-        img.onerror = () => {
-            resolve(imageData.src);
-        };
-
-    });
+    showPreview();
 
 }
 
-// Convert PDF
+/* ===========================================
+MAIN PREVIEW
+=========================================== */
 
-async function convertPDF() {
+[
+    "rotateLeftBtn",
+    "rotateLeftModal"
+].forEach(id => {
+    const btn = document.getElementById(id);
+    if (btn) btn.onclick = () => rotateCurrent(-90);
+});
 
-    const btn = document.getElementById("convertBtn");
-    const progressContainer =
-        document.getElementById("progressContainer");
+[
+    "rotateRightBtn",
+    "rotateRightModal"
+].forEach(id => {
+    const btn = document.getElementById(id);
+    if (btn) btn.onclick = () => rotateCurrent(90);
+});
 
-    const progressFill =
-        document.getElementById("progressFill");
+[
+    "deleteBtn",
+    "deleteModal"
+].forEach(id => {
+    const btn = document.getElementById(id);
+    if (btn) btn.onclick = deleteCurrent;
+});
 
-    const progressPercent =
-        document.getElementById("progressPercent");
+/* ===========================================
+ZOOM
+=========================================== */
 
-    progressContainer.style.display = "block";
-    const btnText = document.getElementById("btnText");
-    const btnIcon = btn.querySelector("i");
+document.getElementById("zoomInBtn").onclick = () => {
 
-    btn.disabled = true;
-    btnText.innerHTML = "Generating PDF...";
-    btnIcon.className = "fa-solid fa-spinner fa-spin";
+    zoom += 0.1;
 
-    try {
+    if (zoom > 3) zoom = 3;
 
-        if (images.length === 0) {
-            showToast("Please upload at least one image.");
-            return;
-        }
+    updateZoom();
 
-        const pageSize =
-            document.getElementById("pageSize").value;
+};
 
-        const orientation =
-            document.getElementById("orientation").value;
+document.getElementById("zoomOutBtn").onclick = () => {
 
-        const fitMode =
-            document.getElementById("fitMode").value;
+    zoom -= 0.1;
 
-        const quality =
-            parseFloat(document.getElementById("quality").value);
+    if (zoom < 0.2) zoom = 0.2;
 
-        const { jsPDF } = window.jspdf;
+    updateZoom();
 
-        const pdf = new jsPDF({
-            orientation: orientation,
-            unit: "mm",
-            format: pageSize
-        });
+};
 
-        const start = performance.now();
+function updateZoom() {
 
-        pdf.setProperties({
+    document.getElementById("zoomValue").textContent =
 
-            title: "Image to PDF",
+        Math.round(zoom * 100) + "%";
 
-            author: "ToolHub AI",
+    if (images.length) {
 
-            subject: "Converted Images",
+        mainPreview.style.transform =
 
-            creator: "ToolHub AI"
-
-        });
-
-        for (let i = 0; i < images.length; i++) {
-
-            if (i > 0) pdf.addPage();
-
-            const compressedImage =
-                await compressImage(
-                    images[i],
-                    quality
-                );
-
-            const img = new Image();
-
-            img.src = compressedImage;
-
-            await new Promise((resolve, reject) => {
-
-                img.onload = resolve;
-
-                img.onerror = reject;
-
-            });
-
-            const pageWidth =
-                pdf.internal.pageSize.getWidth();
-
-            const pageHeight =
-                pdf.internal.pageSize.getHeight();
-
-            let imgWidth;
-            let imgHeight;
-
-            if (fitMode === "fill") {
-
-                imgWidth = pageWidth;
-                imgHeight = pageHeight;
-
-            } else {
-
-                const ratio = Math.min(
-                    pageWidth / img.width,
-                    pageHeight / img.height
-                );
-
-                imgWidth = img.width * ratio;
-                imgHeight = img.height * ratio;
-
-            }
-
-            const margin = 10;
-
-            const x = Math.max(margin, (pageWidth - imgWidth) / 2);
-
-            const y = Math.max(margin, (pageHeight - imgHeight) / 2);
-
-            pdf.addImage(
-                compressedImage,
-                images[i].type === "image/png"
-                    ? "PNG"
-                    : "JPEG",
-                x,
-                y,
-                imgWidth,
-                imgHeight,
-                "",
-                "FAST"
-            );
-
-            const percent = Math.round(((i + 1) / images.length) * 100);
-
-            progressFill.style.width = percent + "%";
-
-            progressPercent.textContent = percent + "%";
-
-        }
-
-        setTimeout(() => {
-
-            const name =
-
-                images.length === 1
-
-                    ? images[0].name.replace(/\.[^/.]+$/, "")
-
-                    : "Merged-Images";
-
-            pdf.save(name + ".pdf");
-
-            const end = performance.now();
-
-            console.log(
-                "PDF Generated in",
-                ((end - start) / 1000).toFixed(2),
-                "seconds"
-            );
-
-        }, 100);
+            `scale(${zoom}) rotate(${images[currentIndex].rotation}deg)`;
 
     }
 
-    catch (error) {
+}
 
-        console.error(error);
+/* ===========================================
+NEXT PREVIOUS
+=========================================== */
 
-        showToast("Failed to generate PDF.");
+document.getElementById("nextBtn").onclick = nextImage;
+
+document.getElementById("prevBtn").onclick = prevImage;
+
+function nextImage(){
+
+    if(images.length===0) return;
+
+    currentIndex++;
+
+    if(currentIndex>=images.length){
+
+        currentIndex=0;
+
     }
 
-    finally {
+    zoom=1;
 
-        btn.disabled = false;
+    updateZoom();
 
-        btnText.innerHTML = "Convert Images to PDF";
+    showPreview();
 
-        btnIcon.className = "fa-solid fa-file-pdf";
+}
 
-        progressContainer.style.display = "none";
+function prevImage(){
 
-        progressFill.style.width = "0%";
+    if(images.length===0) return;
 
-        progressPercent.textContent = "0%";
+    currentIndex--;
+
+    if(currentIndex<0){
+
+        currentIndex=images.length-1;
 
     }
-}
 
-function openCamera() {
+    zoom=1;
 
-    const input = document.getElementById("imageInput");
+    updateZoom();
 
-    input.removeAttribute("multiple");
-
-    input.setAttribute("capture", "environment");
-
-    input.click();
+    showPreview();
 
 }
 
-function openGallery() {
+/* ===========================================
+ROTATE
+=========================================== */
 
-    const input = document.getElementById("imageInput");
+function rotateCurrent(value){
 
-    input.setAttribute("multiple", "multiple");
+    if(images.length===0) return;
 
-    input.removeAttribute("capture");
+    images[currentIndex].rotation += value;
 
-    input.click();
+    showPreview();
+
+    renderSidebar();
+
+    const modal=document.getElementById("previewImage");
+
+    if(modal){
+
+        modal.style.transform=
+        `rotate(${images[currentIndex].rotation}deg)`;
+
+    }
 
 }
 
-function openImagePreview(src) {
+/* ===========================================
+DELETE
+=========================================== */
 
-    currentPreviewIndex = images.findIndex(img => (img.src || img) === src);
+function deleteCurrent(){
 
-    updatePreview();
+    if(images.length===0) return;
 
-    currentRotation = images[currentPreviewIndex].rotation || 0;
+    const deleted = images.splice(currentIndex,1)[0];
 
-    document.getElementById("previewImage").style.transform =
-        `rotate(${currentRotation}deg)`;
+    window.lastDeleted = deleted;
+
+    if(deleted.src.startsWith("blob:")){
+        URL.revokeObjectURL(deleted.src);
+    }
+
+    if(currentIndex>=images.length){
+        currentIndex=Math.max(0,images.length-1);
+    }
+
+    renderSidebar();
+
+    if(images.length===0){
+        closeImagePreview();
+    }else{
+        showPreview();
+    }
+
+    showToast("Image Deleted");
+
+}
+
+[
+    "deleteBtn",
+    "deleteModal"
+].forEach(id => {
+    const btn = document.getElementById(id);
+    if (btn) btn.onclick = deleteCurrent;
+});
+
+/* ===========================================
+FULLSCREEN
+=========================================== */
+
+document.getElementById("fullscreenBtn").onclick = () => {
+
+    const area = document.querySelector(".preview-area");
+
+    if (!document.fullscreenElement) {
+
+        area.requestFullscreen();
+
+    } else {
+
+        document.exitFullscreen();
+
+    }
+
+};
+
+/* ===========================================
+MODAL
+=========================================== */
+
+mainPreview.onclick = () => {
+
+    if (images.length === 0) return;
 
     document.getElementById("imagePreviewModal").style.display = "flex";
 
-}
+    const img = document.getElementById("previewImage");
+
+    img.src = images[currentIndex].src;
+
+    img.style.transform =
+
+        `rotate(${images[currentIndex].rotation}deg)`;
+
+};
 
 function closeImagePreview() {
-
-    renderImages();
 
     document.getElementById("imagePreviewModal").style.display = "none";
 
 }
 
-const previewModal = document.getElementById("imagePreviewModal");
+document.querySelector(".modal-close").onclick =
 
-if (previewModal) {
+    closeImagePreview;
 
-    previewModal.addEventListener("click", function (e) {
-
-        if (e.target === this) {
-
-            closeImagePreview();
-
-        }
-
-    });
-
-}
-
+/* ===========================================
+KEYBOARD
+=========================================== */
 document.addEventListener("keydown", (e) => {
-
-    const modal = document.getElementById("imagePreviewModal");
-
-    if (modal.style.display !== "flex") return;
 
     switch (e.key) {
 
-        case "Escape":
-
-            closeImagePreview();
-
-            break;
-
         case "ArrowRight":
-
             nextImage();
-
             break;
 
         case "ArrowLeft":
-
             prevImage();
-
             break;
 
+        case "Escape":
+            closeImagePreview();
+            break;
+    }
+
+    if (e.ctrlKey && e.key === "z") {
+
+        if (window.lastDeleted) {
+            images.push(window.lastDeleted);
+            window.lastDeleted = null;
+            renderSidebar();
+            showToast("Undo Success");
+        }
     }
 
 });
 
-function updatePreview() {
 
-    const img = images[currentPreviewIndex];
+/* ===========================================
+   REMOVE ALL
+=========================================== */
 
-    const previewImg = document.getElementById("previewImage");
-
-    previewImg.style.opacity = "0";
-
-    previewImg.onload = () => {
-
-        previewImg.style.opacity = "1";
-
-    };
-
-    previewImg.src = img.src || img;
-
-    previewImg.style.transform =
-        `rotate(${images[currentPreviewIndex].rotation || 0}deg)`;
-
-    document.getElementById("previewCounter").textContent =
-        `${currentPreviewIndex + 1} / ${images.length}`;
-
-}
-
-function nextImage() {
-
-    if (currentPreviewIndex < images.length - 1) {
-
-        currentPreviewIndex++;
-
-        updatePreview();
-
-    }
-
-}
-
-function prevImage() {
-
-    if (currentPreviewIndex > 0) {
-
-        currentPreviewIndex--;
-
-        updatePreview();
-
-    }
-
-}
-
-document.getElementById("rotateLeftPreview").onclick = () => {
-
-    images[currentPreviewIndex].rotation =
-        (images[currentPreviewIndex].rotation || 0) - 90;
-
-    updatePreview();
-
-};
-
-document.getElementById("rotateRightPreview").onclick = () => {
-
-    images[currentPreviewIndex].rotation =
-        (images[currentPreviewIndex].rotation || 0) + 90;
-
-    updatePreview();
-
-};
-
-document.getElementById("deletePreview").onclick = () => {
-
-    const deleted = images.splice(currentPreviewIndex, 1)[0];
-
-    if (deleted.src.startsWith("blob:")) {
-        URL.revokeObjectURL(deleted.src);
-    }
-
-    showToast("Image Deleted");
-
-    window.lastDeleted = deleted;
+document.getElementById("removeAllBtn").onclick = () => {
 
     if (images.length === 0) {
 
-        closeImagePreview();
-
-    } else {
-
-        if (currentPreviewIndex >= images.length) {
-
-            currentPreviewIndex = images.length - 1;
-
-        }
-
-        renderImages();
-
-        updatePreview();
-
-    }
-
-};
-
-const removeAllBtn =
-    document.getElementById("removeAllBtn");
-
-removeAllBtn.addEventListener("click", () => {
-
-    if (images.length === 0) {
+        showToast("No Images");
 
         return;
 
@@ -732,16 +488,54 @@ removeAllBtn.addEventListener("click", () => {
     images.forEach(img => {
 
         if (img.src.startsWith("blob:")) {
+
             URL.revokeObjectURL(img.src);
+
         }
 
     });
 
     images = [];
 
-    renderImages();
+    currentIndex = 0;
+
+    zoom = 1;
+
+    updateZoom();
+
+    renderSidebar();
+
+    showToast("All Images Removed");
+
+};
+
+/* ===========================================
+   SORTABLE
+=========================================== */
+
+Sortable.create(preview, {
+
+    animation: 200,
+
+    ghostClass: "dragging",
+
+    onEnd: (evt) => {
+
+        const moved = images.splice(evt.oldIndex, 1)[0];
+
+        images.splice(evt.newIndex, 0, moved);
+
+        currentIndex = evt.newIndex;
+
+        renderSidebar();
+
+    }
 
 });
+
+/* ===========================================
+   TOAST
+=========================================== */
 
 function showToast(message) {
 
@@ -751,7 +545,9 @@ function showToast(message) {
 
     toast.classList.add("show");
 
-    setTimeout(() => {
+    clearTimeout(window.toastTimer);
+
+    window.toastTimer = setTimeout(() => {
 
         toast.classList.remove("show");
 
@@ -759,34 +555,1030 @@ function showToast(message) {
 
 }
 
-document.addEventListener("keydown", (e) => {
+/* ===========================================
+   COMPRESS IMAGE
+=========================================== */
 
-    if (e.ctrlKey && e.key === "z") {
+async function compressImage(imageData, quality = 0.85) {
 
-        if (window.lastDeleted) {
+    return new Promise(resolve => {
 
-            images.push(window.lastDeleted);
+        const img = new Image();
 
-            window.lastDeleted = null;
+        img.onload = () => {
 
-            renderImages();
+            let w = img.width;
 
-            showToast("Undo Successful");
+            let h = img.height;
 
-        }
+            const MAX = 2200;
+
+            if (w > MAX || h > MAX) {
+
+                const ratio = Math.min(MAX / w, MAX / h);
+
+                w *= ratio;
+
+                h *= ratio;
+
+            }
+
+            const canvas = document.createElement("canvas");
+
+            const ctx = canvas.getContext("2d");
+
+            if (Math.abs(imageData.rotation) % 180 === 90) {
+
+                canvas.width = h;
+
+                canvas.height = w;
+
+            } else {
+
+                canvas.width = w;
+
+                canvas.height = h;
+
+            }
+
+            ctx.translate(canvas.width / 2, canvas.height / 2);
+
+            ctx.rotate(imageData.rotation * Math.PI / 180);
+
+            ctx.drawImage(img, -w / 2, -h / 2, w, h);
+
+            resolve(
+
+                canvas.toDataURL(
+
+                    imageData.type === "image/png"
+
+                        ? "image/png"
+
+                        : "image/jpeg",
+
+                    quality
+
+                )
+
+            );
+
+        };
+
+        img.src = imageData.src;
+
+    });
+
+}
+
+/* ===========================================
+   CONVERT PDF
+=========================================== */
+
+async function convertPDF() {
+
+    if (images.length === 0) {
+
+        showToast("Upload Images First");
+
+        return;
 
     }
 
-});
+    showLoader();
+
+    progressContainer.style.display = "block";
+
+    const { jsPDF } = window.jspdf;
+
+    const pdf = new jsPDF({
+
+        orientation: document.getElementById("orientation").value,
+
+        format: document.getElementById("pageSize").value,
+
+        unit: "mm"
+
+    });
+
+    applyPdfMeta(pdf);
+
+    const quality = parseFloat(
+
+        document.getElementById("quality").value
+
+    );
+
+    const fit = document.getElementById("fitMode").value;
+
+    for (let i = 0; i < images.length; i++) {
+
+        if (i > 0) {
+
+            pdf.addPage();
+
+        }
+
+        const data = await compressImage(images[i], quality);
+
+        const img = new Image();
+
+        img.src = data;
+
+        await new Promise(r => img.onload = r);
+
+        const pw = pdf.internal.pageSize.getWidth();
+
+        const ph = pdf.internal.pageSize.getHeight();
+
+        let iw, ih;
+
+        if (fit === "fill") {
+
+            iw = pw;
+
+            ih = ph;
+
+        } else {
+
+            const ratio = Math.min(
+
+                pw / img.width,
+
+                ph / img.height
+
+            );
+
+            iw = img.width * ratio;
+
+            ih = img.height * ratio;
+
+        }
+
+        pdf.addImage(
+
+            data,
+
+            images[i].type === "image/png"
+
+                ? "PNG"
+
+                : "JPEG",
+
+            (pw - iw) / 2,
+
+            (ph - ih) / 2,
+
+            iw,
+
+            ih,
+
+            "",
+
+            "FAST"
+
+        );
+
+        const percent = Math.round(
+
+            ((i + 1) / images.length) * 100
+
+        );
+
+        progressFill.style.width = percent + "%";
+
+        progressPercent.textContent = percent + "%";
+
+    }
+
+    const fileName =
+
+        images.length === 1
+
+            ? images[0].name.replace(/\.[^.]+$/, "")
+
+            : "Merged-Images";
+
+    pdf.save(fileName + ".pdf");
+
+    progressContainer.style.display = "none";
+
+    progressFill.style.width = "0%";
+
+    progressPercent.textContent = "0%";
+
+    showToast("PDF Generated");
+
+    hideLoader();
+
+}
+
+/* ===========================================
+   BEFORE UNLOAD
+=========================================== */
 
 window.addEventListener("beforeunload", (e) => {
 
-    if (images.length > 0) {
+    if (images.length) {
 
         e.preventDefault();
 
         e.returnValue = "";
 
     }
+
+});
+
+/* ===========================================
+   CLEANUP
+=========================================== */
+
+window.addEventListener("unload", () => {
+
+    images.forEach(img => {
+
+        if (img.src.startsWith("blob:")) {
+
+            URL.revokeObjectURL(img.src);
+
+        }
+
+    });
+
+});
+
+/* ===========================================
+   CAMERA & GALLERY
+=========================================== */
+
+function openCamera() {
+
+    imageInput.removeAttribute("multiple");
+
+    imageInput.setAttribute("capture", "environment");
+
+    imageInput.click();
+
+}
+
+function openGallery() {
+
+    imageInput.removeAttribute("capture");
+
+    imageInput.setAttribute("multiple", "multiple");
+
+    imageInput.click();
+
+}
+
+/* ===========================================
+   DOWNLOAD CURRENT IMAGE
+=========================================== */
+
+document.getElementById("downloadImage").onclick = () => {
+
+    if (images.length === 0) {
+
+        showToast("No Image");
+
+        return;
+
+    }
+
+    const a = document.createElement("a");
+
+    a.href = images[currentIndex].src;
+
+    a.download = images[currentIndex].name;
+
+    a.click();
+
+};
+
+/* ===========================================
+   DOWNLOAD FROM MODAL
+=========================================== */
+
+document.getElementById("downloadPreview").onclick = () => {
+
+    if (images.length === 0) {
+
+        showToast("No Image");
+
+        return;
+
+    }
+
+    const a = document.createElement("a");
+
+    a.href = images[currentIndex].src;
+
+    a.download = images[currentIndex].name;
+
+    a.click();
+
+};
+
+/* ===========================================
+   PREVIEW COUNTER
+=========================================== */
+
+function updateCounter() {
+
+    const counter = document.getElementById("previewCounter");
+
+    if (counter) {
+
+        counter.textContent =
+
+            `${currentIndex + 1} / ${images.length}`;
+
+    }
+
+}
+
+
+
+
+/* ===========================================
+   SHORTCUT MODAL
+=========================================== */
+
+function closeShortcutModal() {
+
+    document.getElementById("shortcutModal").style.display = "none";
+
+}
+
+function openShortcutModal() {
+
+    document.getElementById("shortcutModal").style.display = "flex";
+
+}
+
+/* ===========================================
+   DELETE KEY
+=========================================== */
+
+document.addEventListener("keydown", (e) => {
+
+    if (e.key === "Delete") {
+
+        deleteCurrent();
+
+    }
+
+});
+
+/* ===========================================
+   LOADING
+=========================================== */
+
+function showLoader() {
+
+    document.getElementById("loadingOverlay").style.display = "flex";
+
+}
+
+function hideLoader() {
+
+    document.getElementById("loadingOverlay").style.display = "none";
+
+}
+
+/* ===========================================
+   PRODUCTION OPTIMIZATION
+=========================================== */
+
+/* ---------- Active Thumbnail ---------- */
+
+function updateActiveThumbnail() {
+
+    document.querySelectorAll("#preview img").forEach((img, index) => {
+
+        img.classList.toggle("active-thumb", index === currentIndex);
+
+    });
+
+}
+
+/* ---------- PDF Metadata ---------- */
+
+function applyPdfMeta(pdf) {
+
+    pdf.setProperties({
+
+        title: "ToolHub AI Image to PDF",
+
+        author: "ToolHub AI",
+
+        subject: "Image to PDF",
+
+        creator: "ToolHub AI"
+
+    });
+
+}
+
+/* ---------- Memory Cleanup ---------- */
+
+function cleanupImages() {
+
+    images.forEach(img => {
+
+        if (img.src.startsWith("blob:")) {
+
+            URL.revokeObjectURL(img.src);
+
+        }
+
+    });
+
+}
+
+/* ---------- Smooth Preview ---------- */
+
+mainPreview.onload = () => {
+
+    mainPreview.animate(
+
+        [
+
+            {
+
+                opacity: 0,
+
+                transform: "scale(.96)"
+
+            },
+
+            {
+
+                opacity: 1,
+
+                transform: "scale(1)"
+
+            }
+
+        ],
+
+        {
+
+            duration: 220,
+
+            fill: "forwards"
+
+        });
+
+};
+
+/* ---------- Keyboard Shortcuts ---------- */
+
+document.addEventListener("keydown", (e) => {
+
+    if (e.ctrlKey && e.key === "=") {
+
+        e.preventDefault();
+
+        zoom = Math.min(3, zoom + .1);
+
+        updateZoom();
+
+    }
+
+    if (e.ctrlKey && e.key === "-") {
+
+        e.preventDefault();
+
+        zoom = Math.max(.2, zoom - .1);
+
+        updateZoom();
+
+    }
+
+});
+
+/* ---------- Drag Highlight ---------- */
+
+dropZone.addEventListener("dragenter", () => {
+
+    dropZone.style.borderColor = "#3b82f6";
+
+});
+
+dropZone.addEventListener("dragleave", () => {
+
+    dropZone.style.borderColor = "";
+
+});
+
+/* ---------- Active Thumbnail CSS ---------- */
+
+const style = document.createElement("style");
+
+style.textContent = `
+
+.active-thumb{
+
+outline:3px solid #3b82f6;
+
+border-radius:12px;
+
+box-shadow:0 0 18px rgba(59,130,246,.45);
+
+}
+
+`;
+
+document.head.appendChild(style);
+
+/* ---------- Startup ---------- */
+
+renderSidebar();
+
+updateZoom();
+
+/* ===========================================
+   PART 3F
+   MODAL SYNC & SMART NAVIGATION
+=========================================== */
+
+function refreshModal() {
+
+    const modal = document.getElementById("imagePreviewModal");
+
+    if (modal.style.display !== "flex") return;
+
+    const img = document.getElementById("previewImage");
+
+    img.src = images[currentIndex].src;
+
+    img.style.transform =
+        `rotate(${images[currentIndex].rotation}deg)`;
+
+    updateCounter();
+
+}
+
+/* ---------- Double Click ---------- */
+
+mainPreview.ondblclick = () => {
+
+    if (images.length) {
+
+        document.getElementById("imagePreviewModal").style.display = "flex";
+
+        refreshModal();
+
+    }
+
+};
+
+/* ---------- Mouse Wheel Zoom ---------- */
+
+mainPreview.addEventListener("wheel", (e) => {
+
+    e.preventDefault();
+
+    if (e.deltaY < 0) {
+
+        zoom = Math.min(3, zoom + .1);
+
+    } else {
+
+        zoom = Math.max(.2, zoom - .1);
+
+    }
+
+    updateZoom();
+
+});
+
+/* ---------- Touch Zoom Placeholder ---------- */
+
+let touchStartDistance = 0;
+
+mainPreview.addEventListener("touchstart", (e) => {
+
+    if (e.touches.length !== 2) return;
+
+    const dx = e.touches[0].clientX - e.touches[1].clientX;
+
+    const dy = e.touches[0].clientY - e.touches[1].clientY;
+
+    touchStartDistance = Math.sqrt(dx * dx + dy * dy);
+
+});
+
+mainPreview.addEventListener("touchmove", (e) => {
+
+    if (e.touches.length !== 2) return;
+
+    const dx = e.touches[0].clientX - e.touches[1].clientX;
+
+    const dy = e.touches[0].clientY - e.touches[1].clientY;
+
+    const dist = Math.sqrt(dx * dx + dy * dy);
+
+    if (dist > touchStartDistance) {
+
+        zoom = Math.min(3, zoom + .02);
+
+    } else {
+
+        zoom = Math.max(.2, zoom - .02);
+
+    }
+
+    touchStartDistance = dist;
+
+    updateZoom();
+
+});
+
+/* ---------- Startup ---------- */
+
+refreshModal();
+
+/* ===========================================
+   PART 3G
+   PDF ENGINE V2
+=========================================== */
+
+async function getProcessedImage(imageData, quality) {
+
+    return new Promise((resolve, reject) => {
+
+        const img = new Image();
+
+        img.onload = () => {
+
+            let width = img.width;
+            let height = img.height;
+
+            // Maximum Render Size
+            const MAX_SIZE = 2500;
+
+            if (width > MAX_SIZE || height > MAX_SIZE) {
+
+                const ratio = Math.min(
+                    MAX_SIZE / width,
+                    MAX_SIZE / height
+                );
+
+                width = Math.round(width * ratio);
+                height = Math.round(height * ratio);
+
+            }
+
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+
+            // Rotation Support
+            if (Math.abs(imageData.rotation) % 180 === 90) {
+
+                canvas.width = height;
+                canvas.height = width;
+
+            } else {
+
+                canvas.width = width;
+                canvas.height = height;
+
+            }
+
+            ctx.translate(canvas.width / 2, canvas.height / 2);
+
+            ctx.rotate(
+                imageData.rotation * Math.PI / 180
+            );
+
+            ctx.drawImage(
+                img,
+                -width / 2,
+                -height / 2,
+                width,
+                height
+            );
+
+            const format =
+
+                imageData.type === "image/png"
+                    ? "image/png"
+                    : "image/jpeg";
+
+            resolve({
+
+                data: canvas.toDataURL(
+                    format,
+                    quality
+                ),
+
+                width: canvas.width,
+
+                height: canvas.height
+
+            });
+
+        };
+
+        img.onerror = reject;
+
+        img.src = imageData.src;
+
+    });
+
+}
+
+/* ===========================================
+   FIT ENGINE
+=========================================== */
+
+function calculateFit(
+
+    pageWidth,
+    pageHeight,
+    imgWidth,
+    imgHeight,
+    fitMode
+
+) {
+
+    if (fitMode === "fill") {
+
+        return {
+
+            x: 0,
+            y: 0,
+            width: pageWidth,
+            height: pageHeight
+
+        };
+
+    }
+
+    const ratio = Math.min(
+
+        pageWidth / imgWidth,
+        pageHeight / imgHeight
+
+    );
+
+    const width = imgWidth * ratio;
+
+    const height = imgHeight * ratio;
+
+    return {
+
+        width,
+
+        height,
+
+        x: (pageWidth - width) / 2,
+
+        y: (pageHeight - height) / 2
+
+    };
+
+}
+
+/* ===========================================
+   LOADING
+=========================================== */
+
+function startProgress(total) {
+
+    progressContainer.style.display = "block";
+
+    progressFill.style.width = "0%";
+
+    progressPercent.textContent = "0%";
+
+}
+
+function updateProgress(index, total) {
+
+    const percent = Math.round(
+
+        ((index + 1) / total) * 100
+
+    );
+
+    progressFill.style.width =
+
+        percent + "%";
+
+    progressPercent.textContent =
+
+        percent + "%";
+
+}
+
+function finishProgress() {
+
+    progressFill.style.width = "100%";
+
+    progressPercent.textContent = "100%";
+
+    setTimeout(() => {
+
+        progressContainer.style.display = "none";
+
+        progressFill.style.width = "0%";
+
+        progressPercent.textContent = "0%";
+
+    }, 800);
+
+}
+
+/* ===========================================
+   PART 3H
+   FINAL PRODUCTION POLISH
+=========================================== */
+
+/* ---------- Performance Cache ---------- */
+
+const imageCache = new Map();
+
+async function preloadImages() {
+
+    for (const img of images) {
+
+        if (imageCache.has(img.src)) continue;
+
+        await new Promise(resolve => {
+
+            const i = new Image();
+
+            i.onload = () => {
+
+                imageCache.set(img.src, true);
+
+                resolve();
+
+            };
+
+            i.onerror = resolve;
+
+            i.src = img.src;
+
+        });
+
+    }
+
+}
+
+/* ---------- Smooth Thumbnail Animation ---------- */
+
+function animateThumbnail(element) {
+
+    element.animate(
+
+        [
+
+            {
+
+                opacity: 0,
+
+                transform: "translateY(10px)"
+
+            },
+
+            {
+
+                opacity: 1,
+
+                transform: "translateY(0)"
+
+            }
+
+        ],
+
+        {
+
+            duration: 180,
+
+            fill: "forwards"
+
+        }
+
+    );
+
+}
+
+/* ---------- Preview Fade ---------- */
+
+function fadePreview() {
+
+    mainPreview.animate(
+
+        [
+
+            {
+
+                opacity: 0
+
+            },
+
+            {
+
+                opacity: 1
+
+            }
+
+        ],
+
+        {
+
+            duration: 200,
+
+            fill: "forwards"
+
+        }
+
+    );
+
+}
+
+
+
+/* ---------- Empty State ---------- */
+
+function updateEmptyState() {
+
+    if (images.length) {
+
+        emptyPreview.style.display = "none";
+
+        mainPreview.style.display = "block";
+
+    }
+
+    else {
+
+        emptyPreview.style.display = "flex";
+
+        mainPreview.style.display = "none";
+
+    }
+
+}
+
+
+
+/* ---------- Auto Cleanup ---------- */
+
+window.addEventListener("pagehide", () => {
+
+    cleanupImages();
+
+});
+
+/* ---------- Auto Revoke Deleted ---------- */
+
+function revokeImage(url) {
+
+    if (url.startsWith("blob:")) {
+
+        URL.revokeObjectURL(url);
+
+    }
+
+}
+
+/* ---------- PDF Size Estimate ---------- */
+
+function estimatePdfSize() {
+
+    let total = 0;
+
+    images.forEach(img => {
+
+        total += img.size;
+
+    });
+
+    return (
+
+        total /
+
+        (1024 * 1024)
+
+    ).toFixed(2);
+
+}
+
+
+
+/* ---------- Final Startup ---------- */
+
+window.addEventListener("load", () => {
+
+    updateZoom();
+
+    updateEmptyState();
+
+    showToast("Image to PDF Pro Ready 🚀");
 
 });

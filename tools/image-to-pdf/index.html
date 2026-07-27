@@ -2,254 +2,143 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Image to PDF - ToolHub AI</title>
+    <title>ToolHub AI • Image to PDF Pro</title>
 
+    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <!-- Sortable -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 
+    <!-- CSS -->
     <link rel="stylesheet" href="style.css">
 
 </head>
 
-<body class="text-white">
+<body>
 
-    <nav class="bg-slate-900 p-5 flex justify-between">
+<div class="app">
 
-        <h1 class="text-2xl font-bold text-blue-500">
-            <i class="fa-solid fa-file-image text-blue-500 mr-2"></i>
+    <!-- ===========================
+            TOP BAR
+    ============================ -->
 
-            Image to PDF
-        </h1>
+    <header class="topbar">
 
-        <a href="../../dashboard.html" class="text-gray-300 hover:text-blue-400">
+        <div class="logo">
 
-            ⬅ Dashboard
+            <i class="fa-solid fa-file-pdf"></i>
 
-        </a>
-
-    </nav>
-
-    <div class="max-w-5xl mx-auto p-8">
-
-        <h2 class="page-title">
-
-            Image to PDF
-
-        </h2>
-
-        <p class="page-subtitle">
-
-            Merge multiple images into one professional PDF document.
-
-        </p>
-
-        <div class="upload-card">
-
-            <input type="file" id="imageInput" multiple accept="image/*" hidden>
-
-            <label for="imageInput" id="dropZone" class="upload-zone">
-
-                <div class="upload-icon">
-
-                    <i class="fa-solid fa-cloud-arrow-up"></i>
-
-                </div>
-
-                <h2>
-
-                    Drag & Drop Images
-
-                </h2>
-
-                <p>
-
-                    or Click to Browse
-
-                </p>
-
-                <span>
-
-                    PNG • JPG • JPEG • WEBP
-
-                </span>
-
-                <div class="flex justify-center gap-4 mt-6">
-
-                    <button type="button" class="camera-btn" onclick="openCamera()">
-
-                        <i class="fa-solid fa-camera"></i>
-
-                        Take Photo
-
-                    </button>
-
-                    <button type="button" class="gallery-btn" onclick="openGallery()">
-
-                        <i class="fa-solid fa-images"></i>
-
-                        Choose Gallery
-
-                    </button>
-
-                </div>
-
-            </label>
+            <span>ToolHub AI</span>
 
         </div>
 
-        <div class="settings-card">
+        <div class="title">
 
-            <h2 class="settings-title">
+            Image to PDF Pro
 
-                ⚙ PDF Settings
+        </div>
 
-            </h2>
+        <div class="top-actions">
 
-            <div class="grid md:grid-cols-2 gap-4 mt-6">
+            <button id="themeBtn">
 
-                <div>
+                <i class="fa-solid fa-moon"></i>
 
-                    <label class="font-semibold block mb-2">
+            </button>
 
-                        📄 Page Size
+            <a href="../../dashboard.html">
 
-                    </label>
+                Dashboard
 
-                    <select id="pageSize" class="w-full rounded bg-slate-900 p-3">
+            </a>
 
-                        <option value="a4">
+        </div>
 
-                            A4
+    </header>
 
-                        </option>
 
-                        <option value="letter">
+    <!-- ===========================
+            MAIN LAYOUT
+    ============================ -->
 
-                            Letter
+    <div class="layout">
 
-                        </option>
 
-                    </select>
+        <!-- ===========================
+                SIDEBAR
+        ============================ -->
 
-                </div>
+        <aside class="sidebar">
 
-                <div>
 
-                    <label class="font-semibold block mb-2">
+            <!-- Upload Card -->
 
-                        📐 Orientation
+            <div class="sidebar-card">
 
-                    </label>
+                <h3>
 
-                    <select id="orientation" class="w-full rounded bg-slate-900 p-3">
+                    Upload Images
 
-                        <option value="portrait">
+                </h3>
 
-                            Portrait
+                <input
+                    type="file"
+                    id="imageInput"
+                    multiple
+                    accept="image/*"
+                    hidden>
 
-                        </option>
+                <label
+                    for="imageInput"
+                    id="dropZone"
+                    class="upload-box">
 
-                        <option value="landscape">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
 
-                            Landscape
+                    <h4>
 
-                        </option>
+                        Drag Images
 
-                    </select>
+                    </h4>
 
-                </div>
+                    <p>
 
-            </div>
+                        or Click Here
 
-            <div class="grid md:grid-cols-2 gap-4 mt-4">
+                    </p>
 
-                <div>
+                </label>
 
-                    <label class="font-semibold block mb-2">
 
-                        🖼 Fit Mode
+                <div class="upload-buttons">
 
-                    </label>
+                    <button
+                        class="camera-btn"
+                        onclick="openCamera()">
 
-                    <select id="fitMode" class="w-full rounded bg-slate-900 p-3">
+                        <i class="fa-solid fa-camera"></i>
 
-                        <option value="fit">
+                        Camera
 
-                            Fit
+                    </button>
 
-                        </option>
 
-                        <option value="fill">
+                    <button
+                        class="gallery-btn"
+                        onclick="openGallery()">
 
-                            Fill
+                        <i class="fa-solid fa-images"></i>
 
-                        </option>
-
-                    </select>
-
-                </div>
-
-                <div>
-
-                    <label class="font-semibold block mb-2">
-
-                        ⚡ Image Quality
-
-                    </label>
-
-                    <select id="quality" class="w-full rounded bg-slate-900 p-3">
-
-                        <option value="1">
-
-                            High
-
-                        </option>
-
-                        <option value="0.8">
-
-                            Medium
-
-                        </option>
-
-                        <option value="0.6">
-
-                            Low
-
-                        </option>
-
-                    </select>
-
-                </div>
-
-            </div>
-
-            <div class="counter-card">
-
-                <div>
-
-                    <h3>Images</h3>
-
-                    <span>Ready to Convert</span>
-
-                </div>
-
-                <div class="counter-right">
-
-                    <div id="imageCount">
-
-                        0
-
-                    </div>
-
-                    <button id="removeAllBtn">
-
-                        <i class="fa-solid fa-trash"></i>
-
-                        Remove All
+                        Gallery
 
                     </button>
 
@@ -257,14 +146,221 @@
 
             </div>
 
-            <div id="preview" class="grid grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-3 mt-6">
+
+            <!-- Counter -->
+
+            <div class="sidebar-card">
+
+                <div class="counter">
+
+                    <div>
+
+                        <small>Total Images</small>
+
+                        <h2 id="imageCount">
+
+                            0
+
+                        </h2>
+
+                    </div>
+
+                    <i class="fa-solid fa-images"></i>
+
+                </div>
+
             </div>
 
-            <div id="progressContainer">
 
-                <div class="progress-info">
+            <!-- Thumbnail List -->
 
-                    <span>Generating PDF...</span>
+            <div class="sidebar-card">
+
+                <div class="section-title">
+
+                    Images
+
+                </div>
+
+                <div
+                    id="preview"
+                    class="thumbnail-list">
+
+                </div>
+
+            </div>
+
+
+            <!-- Bottom Buttons -->
+
+            <div class="sidebar-card">
+
+                <button
+                    id="removeAllBtn"
+                    class="danger-btn">
+
+                    <i class="fa-solid fa-trash"></i>
+
+                    Remove All
+
+                </button>
+
+
+                <button
+                    id="convertBtn"
+                    onclick="convertPDF()"
+                    class="convert-btn">
+
+                    <i class="fa-solid fa-file-pdf"></i>
+
+                    <span id="btnText">
+
+                        Convert to PDF
+
+                    </span>
+
+                </button>
+
+            </div>
+
+        </aside>
+
+
+                <!-- =====================================
+                    WORKSPACE
+        ====================================== -->
+
+        <main class="workspace">
+
+            <!-- Toolbar -->
+
+            <div class="toolbar">
+
+                <div class="toolbar-left">
+
+                    <h2>
+
+                        Live Preview
+
+                    </h2>
+
+                </div>
+
+                <div class="toolbar-right">
+
+                    <button id="zoomOutBtn">
+
+                        <i class="fa-solid fa-magnifying-glass-minus"></i>
+
+                    </button>
+
+                    <span id="zoomValue">
+
+                        100%
+
+                    </span>
+
+                    <button id="zoomInBtn">
+
+                        <i class="fa-solid fa-magnifying-glass-plus"></i>
+
+                    </button>
+
+                    <button id="fullscreenBtn">
+
+                        <i class="fa-solid fa-expand"></i>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- Preview Area -->
+
+            <section class="preview-area">
+
+                <div id="emptyPreview" class="empty-preview">
+
+                    <i class="fa-solid fa-image"></i>
+
+                    <h2>
+
+                        No Image Selected
+
+                    </h2>
+
+                    <p>
+
+                        Upload images to preview them here.
+
+                    </p>
+
+                </div>
+
+                <img
+                    id="mainPreview"
+                    class="main-preview"
+                    alt="Preview">
+
+            </section>
+
+
+            <!-- Image Toolbar -->
+
+            <div class="image-toolbar">
+
+                <button id="prevBtn">
+
+                    <i class="fa-solid fa-chevron-left"></i>
+
+                </button>
+
+                <button id="nextBtn">
+
+                    <i class="fa-solid fa-chevron-right"></i>
+
+                </button>
+
+                <button id="rotateLeftBtn">
+
+                    <i class="fa-solid fa-rotate-left"></i>
+
+                </button>
+
+                <button id="rotateRightBtn">
+
+                    <i class="fa-solid fa-rotate-right"></i>
+
+                </button>
+
+                <button id="deleteBtn">
+
+                    <i class="fa-solid fa-trash"></i>
+
+                </button>
+
+                <button id="downloadImage">
+
+                    <i class="fa-solid fa-download"></i>
+
+                </button>
+
+            </div>
+
+
+            <!-- Progress -->
+
+            <div id="progressContainer" class="progress-wrapper">
+
+                <div class="progress-header">
+
+                    <span>
+
+                        Generating PDF...
+
+                    </span>
 
                     <span id="progressPercent">
 
@@ -282,54 +378,317 @@
 
             </div>
 
-        </div> <!-- settings-card -->
 
-    </div> <!-- max-w-5xl -->
+            <!-- PDF Settings -->
 
-    <div id="imagePreviewModal" class="preview-modal">
+            <div class="settings-panel">
 
-        <span class="close-preview" onclick="closeImagePreview()">
-            &times;
-        </span>
+                <h2>
 
-        <button class="preview-nav left" onclick="prevImage()">
-            <i class="fa-solid fa-chevron-left"></i>
-        </button>
+                    PDF Settings
 
-        <img id="previewImage" class="preview-image" alt="Preview Image">
+                </h2>
 
-        <div class="preview-toolbar">
+                <div class="settings-grid">
 
-            <button id="rotateLeftPreview" aria-label="Rotate Left"> <i class="fa-solid fa-rotate-left"></i>
+                    <div class="setting">
+
+                        <label>
+
+                            Page Size
+
+                        </label>
+
+                        <select id="pageSize">
+
+                            <option value="a4">A4</option>
+
+                            <option value="letter">Letter</option>
+
+                            <option value="legal">Legal</option>
+
+                            <option value="a3">A3</option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="setting">
+
+                        <label>
+
+                            Orientation
+
+                        </label>
+
+                        <select id="orientation">
+
+                            <option value="portrait">
+
+                                Portrait
+
+                            </option>
+
+                            <option value="landscape">
+
+                                Landscape
+
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="setting">
+
+                        <label>
+
+                            Fit Mode
+
+                        </label>
+
+                        <select id="fitMode">
+
+                            <option value="fit">
+
+                                Fit
+
+                            </option>
+
+                            <option value="fill">
+
+                                Fill
+
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="setting">
+
+                        <label>
+
+                            Quality
+
+                        </label>
+
+                        <select id="quality">
+
+                            <option value="1">
+
+                                High
+
+                            </option>
+
+                            <option value="0.8">
+
+                                Medium
+
+                            </option>
+
+                            <option value="0.6">
+
+                                Low
+
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+
+                <!-- =====================================
+                PREVIEW MODAL
+        ====================================== -->
+
+        <div id="imagePreviewModal" class="preview-modal">
+
+            <button class="modal-close" onclick="closeImagePreview()">
+                <i class="fa-solid fa-xmark"></i>
             </button>
 
-            <button id="rotateRightPreview" aria-label="Rotate Right"> <i class="fa-solid fa-rotate-right"></i>
+            <button class="modal-nav left" onclick="prevImage()">
+                <i class="fa-solid fa-chevron-left"></i>
             </button>
 
-            <button id="deletePreview" aria-label="Delete Image"> <i class="fa-solid fa-trash"></i>
-            </button>
+            <div class="modal-content">
 
-            <button type="button" onclick="closeImagePreview()" aria-label="Close Preview"> <i class="fa-solid fa-xmark"></i>
+                <img
+                    id="previewImage"
+                    class="preview-image"
+                    alt="Preview">
+
+                <div class="preview-counter">
+
+                    <span id="previewCounter">
+
+                        1 / 1
+
+                    </span>
+
+                </div>
+
+                <div class="preview-toolbar">
+
+                    <button id="rotateLeftModal">
+
+                        <i class="fa-solid fa-rotate-left"></i>
+
+                    </button>
+
+                    <button id="rotateRightModal">
+
+                        <i class="fa-solid fa-rotate-right"></i>
+
+                    </button>
+
+                    <button id="deleteModal">
+
+                        <i class="fa-solid fa-trash"></i>
+
+                    </button>
+
+                    <button id="downloadPreview">
+
+                        <i class="fa-solid fa-download"></i>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+            <button class="modal-nav right" onclick="nextImage()">
+                <i class="fa-solid fa-chevron-right"></i>
             </button>
 
         </div>
 
-        <button class="preview-nav right" aria-label="Next Image" onclick="nextImage()">
-            <i class="fa-solid fa-chevron-right"></i>
-        </button>
 
-        <div id="previewCounter" class="preview-counter">
-            1 / 1
+        <!-- =====================================
+                TOAST
+        ====================================== -->
+
+        <div id="toast" class="toast">
+
+            Ready
+
         </div>
+
+
+        <!-- =====================================
+                LOADING
+        ====================================== -->
+
+        <div id="loadingOverlay" class="loading-overlay">
+
+            <div class="loader-card">
+
+                <div class="loader-spinner"></div>
+
+                <h2>
+
+                    Generating PDF
+
+                </h2>
+
+                <p>
+
+                    Please wait...
+
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================
+                SHORTCUTS
+        ====================================== -->
+
+        <div id="shortcutModal" class="shortcut-modal">
+
+            <div class="shortcut-card">
+
+                <h2>
+
+                    Keyboard Shortcuts
+
+                </h2>
+
+                <ul>
+
+                    <li>
+
+                        ← Previous Image
+
+                    </li>
+
+                    <li>
+
+                        → Next Image
+
+                    </li>
+
+                    <li>
+
+                        Esc Close Preview
+
+                    </li>
+
+                    <li>
+
+                        Ctrl + Z Undo Delete
+
+                    </li>
+
+                    <li>
+
+                        Delete Remove Image
+
+                    </li>
+
+                </ul>
+
+                <button onclick="closeShortcutModal()">
+
+                    Close
+
+                </button>
+
+            </div>
+
+        </div>
+
 
     </div>
+    <!-- layout -->
 
-    <div id="toast" class="toast"></div>
+</div>
+<!-- app -->
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-    <script src="script.js"></script>
+<footer class="footer">
 
+    <p>
+
+        © 2026 ToolHub AI • Image to PDF Pro
+
+    </p>
+
+</footer>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script src="script.js"></script>
 
 </body>
 
