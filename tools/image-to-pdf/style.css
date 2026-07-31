@@ -986,127 +986,87 @@ button:disabled,
 
 @media (max-width: 992px) {
 
-    body{
-        overflow:auto;
+    .layout {
+        grid-template-columns: 1fr;
+        overflow-y: auto;
     }
 
-    .layout{
-        display:flex;
-        flex-direction:column;
-        height:auto;
+    .sidebar {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        overflow-y: visible;
     }
 
-    .sidebar{
-        width:100%;
-        height:auto;
-        border-right:none;
-        border-bottom:1px solid var(--border);
-        padding:14px;
-        overflow:visible;
-    }
-
-    .workspace{
-        width:100%;
-        min-height:auto;
-    }
-
-    .preview-area{
-        height:45vh;
-        margin:12px;
-    }
-
-    .thumbnail-list{
-        display:grid;
-        grid-template-columns:repeat(auto-fill,minmax(80px,1fr));
-        max-height:220px;
-        overflow-y:auto;
-    }
-
-    .settings-panel{
-        margin:12px;
-    }
-
-    .progress-wrapper{
-        margin:0 12px 12px;
+    .workspace {
+        min-height: 70vh;
     }
 }
 
-@media (max-width:768px){
+@media (max-width: 768px) {
 
-    .topbar{
-        height:64px;
-        padding:0 12px;
+    .topbar {
+        padding: 0 14px;
     }
 
-    .logo-text small{
-        display:none;
+    .logo-text span {
+        font-size: 16px;
     }
 
-    .logo-text span{
-        font-size:16px;
-    }
-
-    .top-actions{
-        gap:6px;
+    .logo-text small {
+        font-size: 10px;
     }
 
     .top-actions button,
-    .top-actions a{
-        width:38px;
-        height:38px;
+    .top-actions a {
+        width: 38px;
+        height: 38px;
     }
 
-    .toolbar{
-        height:auto;
-        padding:12px;
-        flex-direction:column;
-        align-items:flex-start;
-        gap:10px;
+    .toolbar {
+        padding: 0 14px;
     }
 
-    .toolbar-right{
-        width:100%;
-        justify-content:space-between;
+    .toolbar-left h2 {
+        font-size: 17px;
     }
 
-    .preview-area{
-        height:42vh;
-        margin:10px;
+    .preview-area {
+        margin: 12px;
     }
 
-    .main-preview{
-        max-width:95%;
-        max-height:95%;
+    .image-toolbar {
+        gap: 8px;
+        padding: 10px;
+        height: auto;
     }
 
-    .image-toolbar{
-        display:grid;
-        grid-template-columns:repeat(3,1fr);
-        gap:10px;
-        height:auto;
-        padding:12px;
+    .image-toolbar button {
+        width: 44px;
+        height: 44px;
     }
 
-    .image-toolbar button{
-        width:100%;
-        height:48px;
+    .settings-panel,
+    .progress-wrapper {
+        margin-left: 12px;
+        margin-right: 12px;
     }
 
-    .settings-grid{
-        grid-template-columns:1fr;
+    .settings-grid {
+        grid-template-columns: 1fr 1fr;
     }
 
-    .thumbnail-list{
-        grid-template-columns:repeat(auto-fill,minmax(70px,1fr));
+    .preview-image {
+        max-width: 92vw;
+        max-height: 60vh;
     }
 
-    .footer{
-        font-size:11px;
-        text-align:center;
-        padding:8px;
-        height:auto;
+    .modal-nav {
+        width: 42px;
+        height: 42px;
     }
 
+    .modal-nav.left { left: 8px; }
+    .modal-nav.right { right: 8px; }
 }
 
 @media (max-width: 480px) {
@@ -1131,48 +1091,4 @@ button:disabled,
         animation-duration: 0.001ms !important;
         transition-duration: 0.001ms !important;
     }
-}
-
-@media (max-width:480px){
-
-    .sidebar-card{
-        padding:14px;
-    }
-
-    .upload-box{
-        min-height:140px;
-    }
-
-    .upload-box i{
-        font-size:34px;
-    }
-
-    .counter h2{
-        font-size:28px;
-    }
-
-    .preview-area{
-        height:38vh;
-    }
-
-    .preview-image{
-        max-width:96vw;
-        max-height:55vh;
-    }
-
-    .modal-nav{
-        display:none;
-    }
-
-    .preview-toolbar{
-        width:100%;
-        justify-content:center;
-        flex-wrap:wrap;
-    }
-
-    .shortcut-card{
-        width:95%;
-        padding:20px;
-    }
-
 }
