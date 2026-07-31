@@ -986,19 +986,41 @@ button:disabled,
 
 @media (max-width: 992px) {
 
+    /* Below this width the app stops being a fixed-height single
+       screen and becomes a normal scrolling page — sidebar first,
+       then the workspace. Fixing the height on .app/.layout while
+       also flexing children (flex:1) is what collapsed the preview
+       area to ~0px, so we drop the fixed-height chain entirely here. */
+
+    body {
+        overflow-y: auto;
+    }
+
+    .app {
+        height: auto;
+        min-height: 100vh;
+        min-height: 100dvh;
+    }
+
     .layout {
         grid-template-columns: 1fr;
-        overflow-y: auto;
+        overflow: visible;
+        min-height: 0;
     }
 
     .sidebar {
         border-right: none;
         border-bottom: 1px solid var(--border);
         overflow-y: visible;
+        max-height: none;
     }
 
     .workspace {
-        min-height: 70vh;
+        min-height: auto;
+    }
+
+    .preview-area {
+        min-height: 45vh;
     }
 }
 
@@ -1023,15 +1045,39 @@ button:disabled,
     }
 
     .toolbar {
-        padding: 0 14px;
+        flex-wrap: wrap;
+        height: auto;
+        padding: 12px 14px;
+        row-gap: 8px;
+    }
+
+    .toolbar-left {
+        width: 100%;
+        flex-wrap: wrap;
+        min-width: 0;
     }
 
     .toolbar-left h2 {
         font-size: 17px;
     }
 
+    .preview-index {
+        display: block;
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 12px;
+    }
+
+    .toolbar-right {
+        width: 100%;
+        justify-content: space-between;
+    }
+
     .preview-area {
         margin: 12px;
+        min-height: 40vh;
     }
 
     .image-toolbar {
