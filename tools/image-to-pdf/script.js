@@ -1,1211 +1,626 @@
 /* ===========================================
-   TOOLHUB AI
-   IMAGE TO PDF PRO
+   TOOLHUB AI — IMAGE TO PDF PRO
+   Clean rebuild: single source of truth state,
+   no dead code, no undefined function calls.
 =========================================== */
 
+/* ---------- Element refs ---------- */
+
 const imageInput = document.getElementById("imageInput");
-
 const dropZone = document.getElementById("dropZone");
-
 const preview = document.getElementById("preview");
-
 const imageCount = document.getElementById("imageCount");
-
+const sizeEstimate = document.getElementById("sizeEstimate");
 const mainPreview = document.getElementById("mainPreview");
-
 const emptyPreview = document.getElementById("emptyPreview");
+const previewArea = document.getElementById("previewArea");
+const previewIndexLabel = document.getElementById("previewIndex");
 
-const progressContainer =
-    document.getElementById("progressContainer");
+const progressContainer = document.getElementById("progressContainer");
+const progressFill = document.getElementById("progressFill");
+const progressPercent = document.getElementById("progressPercent");
 
-const progressFill =
-    document.getElementById("progressFill");
+const modal = document.getElementById("imagePreviewModal");
+const modalImage = document.getElementById("previewImage");
+const previewCounter = document.getElementById("previewCounter");
 
-const progressPercent =
-    document.getElementById("progressPercent");
+const zoomValueEl = document.getElementById("zoomValue");
 
-let images = [];
+const convertBtn = document.getElementById("convertBtn");
+const removeAllBtn = document.getElementById("removeAllBtn");
 
-let currentIndex = 0;
+/* ---------- State ---------- */
 
+let images = [];        // { id, src, file, name, size, type, rotation }
+let selectedId = null;  // id of the image currently in the main preview
 let zoom = 1;
+let lastDeleted = null; // { item, index } for undo
+let toastTimer = null;
 
 const MAX_FILE_SIZE = 20 * 1024 * 1024;
+const ALLOWED_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
-const ALLOWED_TYPES = [
+function uid() {
+    return (crypto.randomUUID ? crypto.randomUUID() : Date.now() + "-" + Math.random().toString(16).slice(2));
+}
 
-    "image/jpeg",
+function getIndexById(id) {
+    return images.findIndex(img => img.id === id);
+}
 
-    "image/jpg",
-
-    "image/png",
-
-    "image/webp"
-
-];
+function getSelected() {
+    return images.find(img => img.id === selectedId) || null;
+}
 
 /* ===========================================
-UPLOAD
+   UPLOAD (input + drag/drop)
 =========================================== */
 
 imageInput.addEventListener("change", () => {
-
     loadFiles(imageInput.files);
-
+    imageInput.value = ""; // allow re-selecting the same file later
 });
-
-/* ===========================================
-DRAG DROP
-=========================================== */
 
 dropZone.addEventListener("dragover", (e) => {
-
     e.preventDefault();
-
     dropZone.classList.add("dragover");
-
 });
 
-dropZone.addEventListener("dragleave", () => {
-
-    dropZone.classList.remove("dragover");
-
+["dragleave", "dragend"].forEach(evt => {
+    dropZone.addEventListener(evt, () => dropZone.classList.remove("dragover"));
 });
 
 dropZone.addEventListener("drop", (e) => {
-
     e.preventDefault();
-
     dropZone.classList.remove("dragover");
-
     loadFiles(e.dataTransfer.files);
-
 });
 
-/* ===========================================
-LOAD FILES
-=========================================== */
+// Also allow dropping anywhere on the preview area
+previewArea.addEventListener("dragover", (e) => e.preventDefault());
+previewArea.addEventListener("drop", (e) => {
+    e.preventDefault();
+    loadFiles(e.dataTransfer.files);
+});
 
-async function loadFiles(files) {
+async function loadFiles(fileList) {
 
-    const list = [...files];
+    const files = [...fileList];
+    if (files.length === 0) return;
 
-    for (const file of list) {
+    let added = 0;
+    let firstAddedId = null;
+
+    for (const file of files) {
 
         if (!ALLOWED_TYPES.includes(file.type)) {
-
-            showToast("Unsupported format");
-
+            showToast(`Unsupported format: ${file.name}`, true);
             continue;
-
         }
 
         if (file.size > MAX_FILE_SIZE) {
-
-            showToast("Max 20MB");
-
+            showToast(`${file.name} is over 20MB`, true);
             continue;
-
         }
 
-        const duplicate = images.some(img =>
-
-            img.name === file.name &&
-
-            img.size === file.size
-
-        );
-
-        if (duplicate) {
-
-            showToast("Duplicate skipped");
-
-            continue;
-
-        }
-
-        const url = URL.createObjectURL(file);
-
-        images.push({
-
-            src: url,
-
-            file: file,
-
+        const item = {
+            id: uid(),
+            src: URL.createObjectURL(file),
+            file,
             name: file.name,
-
             size: file.size,
-
             type: file.type,
-
             rotation: 0
-
-        });
-
-    }
-
-    renderSidebar();
-
-}
-
-/* ===========================================
-SIDEBAR
-=========================================== */
-
-function renderSidebar(){
-
-    preview.innerHTML="";
-
-    imageCount.textContent=images.length;
-
-    if(images.length===0){
-
-        emptyPreview.style.display="flex";
-        mainPreview.style.display="none";
-
-        updateEmptyState();
-
-        return;
-    }
-
-    images.forEach((img,index)=>{
-
-        const image=document.createElement("img");
-
-        image.src=img.src;
-
-        image.draggable=false;
-
-        image.style.transform=
-        `rotate(${img.rotation}deg)`;
-
-        image.onclick=()=>{
-
-            currentIndex=index;
-
-            showPreview();
-
         };
 
-        preview.appendChild(image);
+        images.push(item);
+        added++;
+        if (!firstAddedId) firstAddedId = item.id;
+    }
 
-        animateThumbnail(image);
+    if (added > 0) {
+        if (!selectedId) selectedId = firstAddedId;
+        showToast(added === 1 ? "Image added" : `${added} images added`);
+    }
 
+    renderSidebar();
+}
+
+/* ===========================================
+   SIDEBAR / THUMBNAILS
+=========================================== */
+
+function renderSidebar() {
+
+    preview.innerHTML = "";
+    imageCount.textContent = images.length;
+    sizeEstimate.textContent = estimateTotalSize() + " MB";
+
+    images.forEach((img, index) => {
+
+        const wrap = document.createElement("div");
+        wrap.className = "thumb";
+        wrap.dataset.id = img.id;
+        if (img.id === selectedId) wrap.classList.add("active-thumb");
+
+        const thumbImg = document.createElement("img");
+        thumbImg.src = img.src;
+        thumbImg.draggable = false;
+        thumbImg.style.transform = `rotate(${img.rotation}deg)`;
+        thumbImg.alt = img.name;
+
+        const badge = document.createElement("span");
+        badge.className = "thumb-index";
+        badge.textContent = index + 1;
+
+        wrap.appendChild(thumbImg);
+        wrap.appendChild(badge);
+
+        wrap.addEventListener("click", () => {
+            selectedId = img.id;
+            zoom = 1;
+            renderAll();
+        });
+
+        preview.appendChild(wrap);
+        animateThumbnail(wrap);
     });
 
-    updateActiveThumbnail();
-
-    updateEmptyState();
-
-    showPreview();
-
+    updateControlsState();
 }
 
 /* ===========================================
-MAIN PREVIEW
+   MAIN PREVIEW + MODAL (single source of truth)
 =========================================== */
 
-[
-    "rotateLeftBtn",
-    "rotateLeftModal"
-].forEach(id => {
-    const btn = document.getElementById(id);
-    if (btn) btn.onclick = () => rotateCurrent(-90);
-});
+function renderAll() {
 
-[
-    "rotateRightBtn",
-    "rotateRightModal"
-].forEach(id => {
-    const btn = document.getElementById(id);
-    if (btn) btn.onclick = () => rotateCurrent(90);
-});
+    const current = getSelected();
 
-[
-    "deleteBtn",
-    "deleteModal"
-].forEach(id => {
-    const btn = document.getElementById(id);
-    if (btn) btn.onclick = deleteCurrent;
-});
-
-/* ===========================================
-ZOOM
-=========================================== */
-
-document.getElementById("zoomInBtn").onclick = () => {
-
-    zoom += 0.1;
-
-    if (zoom > 3) zoom = 3;
-
-    updateZoom();
-
-};
-
-document.getElementById("zoomOutBtn").onclick = () => {
-
-    zoom -= 0.1;
-
-    if (zoom < 0.2) zoom = 0.2;
-
-    updateZoom();
-
-};
-
-function updateZoom() {
-
-    document.getElementById("zoomValue").textContent =
-
-        Math.round(zoom * 100) + "%";
-
-    if (images.length) {
-
-        mainPreview.style.transform =
-
-            `scale(${zoom}) rotate(${images[currentIndex].rotation}deg)`;
-
+    if (!current) {
+        emptyPreview.style.display = "flex";
+        mainPreview.style.display = "none";
+        previewIndexLabel.textContent = "";
+    } else {
+        emptyPreview.style.display = "none";
+        mainPreview.style.display = "block";
+        mainPreview.src = current.src;
+        mainPreview.style.transform = `scale(${zoom}) rotate(${current.rotation}deg)`;
+        const idx = getIndexById(current.id);
+        previewIndexLabel.textContent = `${idx + 1} of ${images.length} — ${current.name}`;
     }
 
+    updateZoomLabel();
+    updateActiveThumbClass();
+    updateControlsState();
+
+    if (modal.style.display === "flex") {
+        refreshModal();
+    }
+}
+
+function updateActiveThumbClass() {
+    document.querySelectorAll(".thumbnail-list .thumb").forEach(el => {
+        el.classList.toggle("active-thumb", el.dataset.id === selectedId);
+    });
+}
+
+function updateControlsState() {
+    const has = images.length > 0;
+    ["prevBtn", "nextBtn", "rotateLeftBtn", "rotateRightBtn", "deleteBtn",
+     "downloadImage", "zoomInBtn", "zoomOutBtn", "fullscreenBtn"]
+        .forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.disabled = !has;
+        });
+    convertBtn.disabled = !has;
+    removeAllBtn.disabled = !has;
 }
 
 /* ===========================================
-NEXT PREVIOUS
+   NAVIGATION
 =========================================== */
+
+function nextImage() {
+    if (images.length === 0) return;
+    const idx = getIndexById(selectedId);
+    const nextIdx = (idx + 1) % images.length;
+    selectedId = images[nextIdx].id;
+    zoom = 1;
+    renderAll();
+}
+
+function prevImage() {
+    if (images.length === 0) return;
+    const idx = getIndexById(selectedId);
+    const prevIdx = (idx - 1 + images.length) % images.length;
+    selectedId = images[prevIdx].id;
+    zoom = 1;
+    renderAll();
+}
 
 document.getElementById("nextBtn").onclick = nextImage;
-
 document.getElementById("prevBtn").onclick = prevImage;
-
-function nextImage(){
-
-    if(images.length===0) return;
-
-    currentIndex++;
-
-    if(currentIndex>=images.length){
-
-        currentIndex=0;
-
-    }
-
-    zoom=1;
-
-    updateZoom();
-
-    showPreview();
-
-}
-
-function prevImage(){
-
-    if(images.length===0) return;
-
-    currentIndex--;
-
-    if(currentIndex<0){
-
-        currentIndex=images.length-1;
-
-    }
-
-    zoom=1;
-
-    updateZoom();
-
-    showPreview();
-
-}
+document.getElementById("modalNextBtn").onclick = nextImage;
+document.getElementById("modalPrevBtn").onclick = prevImage;
 
 /* ===========================================
-ROTATE
+   ROTATE
 =========================================== */
 
-function rotateCurrent(value){
-
-    if(images.length===0) return;
-
-    images[currentIndex].rotation += value;
-
-    showPreview();
-
+function rotateCurrent(delta) {
+    const current = getSelected();
+    if (!current) return;
+    current.rotation = (current.rotation + delta) % 360;
+    renderAll();
     renderSidebar();
-
-    const modal=document.getElementById("previewImage");
-
-    if(modal){
-
-        modal.style.transform=
-        `rotate(${images[currentIndex].rotation}deg)`;
-
-    }
-
 }
 
-/* ===========================================
-DELETE
-=========================================== */
+["rotateLeftBtn", "rotateLeftModal"].forEach(id => {
+    document.getElementById(id).onclick = () => rotateCurrent(-90);
+});
 
-function deleteCurrent(){
-
-    if(images.length===0) return;
-
-    const deleted = images.splice(currentIndex,1)[0];
-
-    window.lastDeleted = deleted;
-
-    if(deleted.src.startsWith("blob:")){
-        URL.revokeObjectURL(deleted.src);
-    }
-
-    if(currentIndex>=images.length){
-        currentIndex=Math.max(0,images.length-1);
-    }
-
-    renderSidebar();
-
-    if(images.length===0){
-        closeImagePreview();
-    }else{
-        showPreview();
-    }
-
-    showToast("Image Deleted");
-
-}
-
-[
-    "deleteBtn",
-    "deleteModal"
-].forEach(id => {
-    const btn = document.getElementById(id);
-    if (btn) btn.onclick = deleteCurrent;
+["rotateRightBtn", "rotateRightModal"].forEach(id => {
+    document.getElementById(id).onclick = () => rotateCurrent(90);
 });
 
 /* ===========================================
-FULLSCREEN
+   DELETE + UNDO
 =========================================== */
 
-document.getElementById("fullscreenBtn").onclick = () => {
-
-    const area = document.querySelector(".preview-area");
-
-    if (!document.fullscreenElement) {
-
-        area.requestFullscreen();
-
-    } else {
-
-        document.exitFullscreen();
-
-    }
-
-};
-
-/* ===========================================
-MODAL
-=========================================== */
-
-mainPreview.onclick = () => {
+function deleteCurrent() {
 
     if (images.length === 0) return;
 
-    document.getElementById("imagePreviewModal").style.display = "flex";
+    const idx = getIndexById(selectedId);
+    if (idx === -1) return;
 
-    const img = document.getElementById("previewImage");
+    const [removed] = images.splice(idx, 1);
 
-    img.src = images[currentIndex].src;
+    // Keep the previous "last deleted" only until it's overwritten —
+    // don't revoke its blob URL yet so undo still works.
+    if (lastDeleted && lastDeleted.item.id !== removed.id) {
+        revokeImage(lastDeleted.item.src);
+    }
+    lastDeleted = { item: removed, index: idx };
 
-    img.style.transform =
+    if (images.length === 0) {
+        selectedId = null;
+        closeImagePreview();
+    } else {
+        const newIdx = Math.min(idx, images.length - 1);
+        selectedId = images[newIdx].id;
+    }
 
-        `rotate(${images[currentIndex].rotation}deg)`;
-
-};
-
-function closeImagePreview() {
-
-    document.getElementById("imagePreviewModal").style.display = "none";
-
+    zoom = 1;
+    renderSidebar();
+    renderAll();
+    showToast("Image deleted — Ctrl+Z to undo");
 }
 
-document.querySelector(".modal-close").onclick =
-
-    closeImagePreview;
-
-/* ===========================================
-KEYBOARD
-=========================================== */
-document.addEventListener("keydown", (e) => {
-
-    switch (e.key) {
-
-        case "ArrowRight":
-            nextImage();
-            break;
-
-        case "ArrowLeft":
-            prevImage();
-            break;
-
-        case "Escape":
-            closeImagePreview();
-            break;
+function undoDelete() {
+    if (!lastDeleted) {
+        showToast("Nothing to undo");
+        return;
     }
+    const { item, index } = lastDeleted;
+    const insertAt = Math.min(index, images.length);
+    images.splice(insertAt, 0, item);
+    selectedId = item.id;
+    lastDeleted = null;
+    renderSidebar();
+    renderAll();
+    showToast("Undo successful");
+}
 
-    if (e.ctrlKey && e.key === "z") {
-
-        if (window.lastDeleted) {
-            images.push(window.lastDeleted);
-            window.lastDeleted = null;
-            renderSidebar();
-            showToast("Undo Success");
-        }
-    }
-
+["deleteBtn", "deleteModal"].forEach(id => {
+    document.getElementById(id).onclick = deleteCurrent;
 });
-
 
 /* ===========================================
    REMOVE ALL
 =========================================== */
 
-document.getElementById("removeAllBtn").onclick = () => {
+removeAllBtn.onclick = () => {
 
     if (images.length === 0) {
-
-        showToast("No Images");
-
+        showToast("No images to remove");
         return;
-
     }
 
-    if (!confirm("Remove all images?")) {
+    if (!confirm("Remove all images? This can't be undone.")) return;
 
-        return;
-
-    }
-
-    images.forEach(img => {
-
-        if (img.src.startsWith("blob:")) {
-
-            URL.revokeObjectURL(img.src);
-
-        }
-
-    });
+    images.forEach(img => revokeImage(img.src));
+    if (lastDeleted) revokeImage(lastDeleted.item.src);
+    lastDeleted = null;
 
     images = [];
-
-    currentIndex = 0;
-
+    selectedId = null;
     zoom = 1;
 
-    updateZoom();
-
     renderSidebar();
-
-    showToast("All Images Removed");
-
+    renderAll();
+    closeImagePreview();
+    showToast("All images removed");
 };
 
 /* ===========================================
-   SORTABLE
+   REORDER (drag to reorder thumbnails)
 =========================================== */
 
 Sortable.create(preview, {
-
     animation: 200,
-
-    ghostClass: "dragging",
-
+    ghostClass: "sortable-ghost",
+    chosenClass: "sortable-chosen",
     onEnd: (evt) => {
-
-        const moved = images.splice(evt.oldIndex, 1)[0];
-
+        if (evt.oldIndex === evt.newIndex) return;
+        const [moved] = images.splice(evt.oldIndex, 1);
         images.splice(evt.newIndex, 0, moved);
-
-        currentIndex = evt.newIndex;
-
-        renderSidebar();
-
+        renderSidebar(); // selectedId is unaffected — it tracks by id, not index
+        renderAll();
     }
-
 });
 
 /* ===========================================
-   TOAST
+   ZOOM
 =========================================== */
 
-function showToast(message) {
+document.getElementById("zoomInBtn").onclick = () => setZoom(zoom + 0.1);
+document.getElementById("zoomOutBtn").onclick = () => setZoom(zoom - 0.1);
 
-    const toast = document.getElementById("toast");
+function setZoom(value) {
+    zoom = Math.min(3, Math.max(0.2, value));
+    const current = getSelected();
+    if (current) {
+        mainPreview.style.transform = `scale(${zoom}) rotate(${current.rotation}deg)`;
+    }
+    updateZoomLabel();
+}
 
-    toast.textContent = message;
+function updateZoomLabel() {
+    zoomValueEl.textContent = Math.round(zoom * 100) + "%";
+}
 
-    toast.classList.add("show");
+previewArea.addEventListener("wheel", (e) => {
+    if (images.length === 0) return;
+    e.preventDefault();
+    setZoom(zoom + (e.deltaY < 0 ? 0.1 : -0.1));
+}, { passive: false });
 
-    clearTimeout(window.toastTimer);
+mainPreview.addEventListener("click", () => openModal());
 
-    window.toastTimer = setTimeout(() => {
+/* Pinch-to-zoom on touch devices */
+let pinchStartDist = 0;
+let pinchStartZoom = 1;
 
-        toast.classList.remove("show");
+previewArea.addEventListener("touchstart", (e) => {
+    if (e.touches.length !== 2) return;
+    pinchStartDist = touchDistance(e.touches);
+    pinchStartZoom = zoom;
+}, { passive: true });
 
-    }, 2500);
+previewArea.addEventListener("touchmove", (e) => {
+    if (e.touches.length !== 2 || pinchStartDist === 0) return;
+    e.preventDefault();
+    const dist = touchDistance(e.touches);
+    setZoom(pinchStartZoom * (dist / pinchStartDist));
+}, { passive: false });
 
+previewArea.addEventListener("touchend", (e) => {
+    if (e.touches.length < 2) pinchStartDist = 0;
+});
+
+function touchDistance(touches) {
+    const dx = touches[0].clientX - touches[1].clientX;
+    const dy = touches[0].clientY - touches[1].clientY;
+    return Math.sqrt(dx * dx + dy * dy);
 }
 
 /* ===========================================
-   COMPRESS IMAGE
+   FULLSCREEN
 =========================================== */
 
-async function compressImage(imageData, quality = 0.85) {
+const fullscreenBtn = document.getElementById("fullscreenBtn");
 
-    return new Promise(resolve => {
+fullscreenBtn.onclick = () => {
+    if (!document.fullscreenElement) {
+        previewArea.requestFullscreen().catch(() => showToast("Fullscreen not available", true));
+    } else {
+        document.exitFullscreen();
+    }
+};
 
-        const img = new Image();
-
-        img.onload = () => {
-
-            let w = img.width;
-
-            let h = img.height;
-
-            const MAX = 2200;
-
-            if (w > MAX || h > MAX) {
-
-                const ratio = Math.min(MAX / w, MAX / h);
-
-                w *= ratio;
-
-                h *= ratio;
-
-            }
-
-            const canvas = document.createElement("canvas");
-
-            const ctx = canvas.getContext("2d");
-
-            if (Math.abs(imageData.rotation) % 180 === 90) {
-
-                canvas.width = h;
-
-                canvas.height = w;
-
-            } else {
-
-                canvas.width = w;
-
-                canvas.height = h;
-
-            }
-
-            ctx.translate(canvas.width / 2, canvas.height / 2);
-
-            ctx.rotate(imageData.rotation * Math.PI / 180);
-
-            ctx.drawImage(img, -w / 2, -h / 2, w, h);
-
-            resolve(
-
-                canvas.toDataURL(
-
-                    imageData.type === "image/png"
-
-                        ? "image/png"
-
-                        : "image/jpeg",
-
-                    quality
-
-                )
-
-            );
-
-        };
-
-        img.src = imageData.src;
-
-    });
-
-}
+document.addEventListener("fullscreenchange", () => {
+    const icon = fullscreenBtn.querySelector("i");
+    icon.className = document.fullscreenElement
+        ? "fa-solid fa-compress"
+        : "fa-solid fa-expand";
+});
 
 /* ===========================================
-   CONVERT PDF
+   MODAL
 =========================================== */
 
-async function convertPDF() {
+function openModal() {
+    if (images.length === 0) return;
+    modal.style.display = "flex";
+    refreshModal();
+}
 
-    if (images.length === 0) {
+function closeImagePreview() {
+    modal.style.display = "none";
+}
 
-        showToast("Upload Images First");
-
+function refreshModal() {
+    const current = getSelected();
+    if (!current) {
+        closeImagePreview();
         return;
-
     }
-
-    showLoader();
-
-    progressContainer.style.display = "block";
-
-    const { jsPDF } = window.jspdf;
-
-    const pdf = new jsPDF({
-
-        orientation: document.getElementById("orientation").value,
-
-        format: document.getElementById("pageSize").value,
-
-        unit: "mm"
-
-    });
-
-    applyPdfMeta(pdf);
-
-    const quality = parseFloat(
-
-        document.getElementById("quality").value
-
-    );
-
-    const fit = document.getElementById("fitMode").value;
-
-    for (let i = 0; i < images.length; i++) {
-
-        if (i > 0) {
-
-            pdf.addPage();
-
-        }
-
-        const data = await compressImage(images[i], quality);
-
-        const img = new Image();
-
-        img.src = data;
-
-        await new Promise(r => img.onload = r);
-
-        const pw = pdf.internal.pageSize.getWidth();
-
-        const ph = pdf.internal.pageSize.getHeight();
-
-        let iw, ih;
-
-        if (fit === "fill") {
-
-            iw = pw;
-
-            ih = ph;
-
-        } else {
-
-            const ratio = Math.min(
-
-                pw / img.width,
-
-                ph / img.height
-
-            );
-
-            iw = img.width * ratio;
-
-            ih = img.height * ratio;
-
-        }
-
-        pdf.addImage(
-
-            data,
-
-            images[i].type === "image/png"
-
-                ? "PNG"
-
-                : "JPEG",
-
-            (pw - iw) / 2,
-
-            (ph - ih) / 2,
-
-            iw,
-
-            ih,
-
-            "",
-
-            "FAST"
-
-        );
-
-        const percent = Math.round(
-
-            ((i + 1) / images.length) * 100
-
-        );
-
-        progressFill.style.width = percent + "%";
-
-        progressPercent.textContent = percent + "%";
-
-    }
-
-    const fileName =
-
-        images.length === 1
-
-            ? images[0].name.replace(/\.[^.]+$/, "")
-
-            : "Merged-Images";
-
-    pdf.save(fileName + ".pdf");
-
-    progressContainer.style.display = "none";
-
-    progressFill.style.width = "0%";
-
-    progressPercent.textContent = "0%";
-
-    showToast("PDF Generated");
-
-    hideLoader();
-
+    modalImage.src = current.src;
+    modalImage.style.transform = `rotate(${current.rotation}deg)`;
+    const idx = getIndexById(current.id);
+    previewCounter.textContent = `${idx + 1} / ${images.length}`;
+
+    document.getElementById("modalPrevBtn").disabled = images.length < 2;
+    document.getElementById("modalNextBtn").disabled = images.length < 2;
 }
 
+document.getElementById("modalCloseBtn").onclick = closeImagePreview;
+
+// Click on the dark backdrop (not the content) closes the modal
+modal.addEventListener("click", (e) => {
+    if (e.target === modal) closeImagePreview();
+});
+
+mainPreview.addEventListener("dblclick", openModal);
+
 /* ===========================================
-   BEFORE UNLOAD
+   DOWNLOAD SINGLE IMAGE
 =========================================== */
 
-window.addEventListener("beforeunload", (e) => {
-
-    if (images.length) {
-
-        e.preventDefault();
-
-        e.returnValue = "";
-
+function downloadCurrentImage() {
+    const current = getSelected();
+    if (!current) {
+        showToast("No image selected", true);
+        return;
     }
+    const a = document.createElement("a");
+    a.href = current.src;
+    a.download = current.name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+}
 
-});
-
-/* ===========================================
-   CLEANUP
-=========================================== */
-
-window.addEventListener("unload", () => {
-
-    images.forEach(img => {
-
-        if (img.src.startsWith("blob:")) {
-
-            URL.revokeObjectURL(img.src);
-
-        }
-
-    });
-
-});
+document.getElementById("downloadImage").onclick = downloadCurrentImage;
+document.getElementById("downloadPreview").onclick = downloadCurrentImage;
 
 /* ===========================================
    CAMERA & GALLERY
 =========================================== */
 
-function openCamera() {
-
+document.getElementById("cameraBtn").onclick = () => {
     imageInput.removeAttribute("multiple");
-
     imageInput.setAttribute("capture", "environment");
-
     imageInput.click();
+};
 
-}
-
-function openGallery() {
-
+document.getElementById("galleryBtn").onclick = () => {
     imageInput.removeAttribute("capture");
-
     imageInput.setAttribute("multiple", "multiple");
-
     imageInput.click();
-
-}
-
-/* ===========================================
-   DOWNLOAD CURRENT IMAGE
-=========================================== */
-
-document.getElementById("downloadImage").onclick = () => {
-
-    if (images.length === 0) {
-
-        showToast("No Image");
-
-        return;
-
-    }
-
-    const a = document.createElement("a");
-
-    a.href = images[currentIndex].src;
-
-    a.download = images[currentIndex].name;
-
-    a.click();
-
 };
 
 /* ===========================================
-   DOWNLOAD FROM MODAL
-=========================================== */
-
-document.getElementById("downloadPreview").onclick = () => {
-
-    if (images.length === 0) {
-
-        showToast("No Image");
-
-        return;
-
-    }
-
-    const a = document.createElement("a");
-
-    a.href = images[currentIndex].src;
-
-    a.download = images[currentIndex].name;
-
-    a.click();
-
-};
-
-/* ===========================================
-   PREVIEW COUNTER
-=========================================== */
-
-function updateCounter() {
-
-    const counter = document.getElementById("previewCounter");
-
-    if (counter) {
-
-        counter.textContent =
-
-            `${currentIndex + 1} / ${images.length}`;
-
-    }
-
-}
-
-
-
-
-/* ===========================================
-   SHORTCUT MODAL
-=========================================== */
-
-function closeShortcutModal() {
-
-    document.getElementById("shortcutModal").style.display = "none";
-
-}
-
-function openShortcutModal() {
-
-    document.getElementById("shortcutModal").style.display = "flex";
-
-}
-
-/* ===========================================
-   DELETE KEY
+   KEYBOARD SHORTCUTS
 =========================================== */
 
 document.addEventListener("keydown", (e) => {
 
-    if (e.key === "Delete") {
+    const tag = (e.target && e.target.tagName) || "";
+    if (tag === "SELECT" || tag === "INPUT" || tag === "TEXTAREA") return;
 
-        deleteCurrent();
-
+    switch (e.key) {
+        case "ArrowRight":
+            nextImage();
+            break;
+        case "ArrowLeft":
+            prevImage();
+            break;
+        case "Escape":
+            closeImagePreview();
+            document.getElementById("shortcutModal").style.display = "none";
+            break;
+        case "Delete":
+        case "Backspace":
+            if (modal.style.display === "flex" || document.activeElement === document.body) {
+                deleteCurrent();
+            }
+            break;
     }
 
+    if (e.ctrlKey || e.metaKey) {
+        if (e.key === "z" || e.key === "Z") {
+            e.preventDefault();
+            undoDelete();
+        } else if (e.key === "=" || e.key === "+") {
+            e.preventDefault();
+            setZoom(zoom + 0.1);
+        } else if (e.key === "-") {
+            e.preventDefault();
+            setZoom(zoom - 0.1);
+        }
+    }
 });
 
 /* ===========================================
-   LOADING
+   SHORTCUTS HELP MODAL
+=========================================== */
+
+const shortcutModal = document.getElementById("shortcutModal");
+document.getElementById("helpBtn").onclick = () => shortcutModal.style.display = "flex";
+document.getElementById("closeShortcutBtn").onclick = () => shortcutModal.style.display = "none";
+shortcutModal.addEventListener("click", (e) => {
+    if (e.target === shortcutModal) shortcutModal.style.display = "none";
+});
+
+/* ===========================================
+   THEME TOGGLE
+=========================================== */
+
+const themeBtn = document.getElementById("themeBtn");
+
+function applyTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    themeBtn.querySelector("i").className = theme === "light"
+        ? "fa-solid fa-sun"
+        : "fa-solid fa-moon";
+}
+
+(function initTheme() {
+    let saved = null;
+    try { saved = localStorage.getItem("toolhub-theme"); } catch (err) { /* ignore */ }
+    applyTheme(saved === "light" ? "light" : "dark");
+})();
+
+themeBtn.onclick = () => {
+    const current = document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark";
+    const next = current === "light" ? "dark" : "light";
+    applyTheme(next);
+    try { localStorage.setItem("toolhub-theme", next); } catch (err) { /* ignore */ }
+};
+
+/* ===========================================
+   TOAST
+=========================================== */
+
+function showToast(message, isError = false) {
+    const toast = document.getElementById("toast");
+    toast.textContent = message;
+    toast.classList.toggle("error", !!isError);
+    toast.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove("show"), 2500);
+}
+
+/* ===========================================
+   LOADING OVERLAY
 =========================================== */
 
 function showLoader() {
-
     document.getElementById("loadingOverlay").style.display = "flex";
-
 }
 
 function hideLoader() {
-
     document.getElementById("loadingOverlay").style.display = "none";
-
 }
 
 /* ===========================================
-   PRODUCTION OPTIMIZATION
+   IMAGE PROCESSING (rotation-aware, downscaled)
 =========================================== */
 
-/* ---------- Active Thumbnail ---------- */
-
-function updateActiveThumbnail() {
-
-    document.querySelectorAll("#preview img").forEach((img, index) => {
-
-        img.classList.toggle("active-thumb", index === currentIndex);
-
-    });
-
-}
-
-/* ---------- PDF Metadata ---------- */
-
-function applyPdfMeta(pdf) {
-
-    pdf.setProperties({
-
-        title: "ToolHub AI Image to PDF",
-
-        author: "ToolHub AI",
-
-        subject: "Image to PDF",
-
-        creator: "ToolHub AI"
-
-    });
-
-}
-
-/* ---------- Memory Cleanup ---------- */
-
-function cleanupImages() {
-
-    images.forEach(img => {
-
-        if (img.src.startsWith("blob:")) {
-
-            URL.revokeObjectURL(img.src);
-
-        }
-
-    });
-
-}
-
-/* ---------- Smooth Preview ---------- */
-
-mainPreview.onload = () => {
-
-    mainPreview.animate(
-
-        [
-
-            {
-
-                opacity: 0,
-
-                transform: "scale(.96)"
-
-            },
-
-            {
-
-                opacity: 1,
-
-                transform: "scale(1)"
-
-            }
-
-        ],
-
-        {
-
-            duration: 220,
-
-            fill: "forwards"
-
-        });
-
-};
-
-/* ---------- Keyboard Shortcuts ---------- */
-
-document.addEventListener("keydown", (e) => {
-
-    if (e.ctrlKey && e.key === "=") {
-
-        e.preventDefault();
-
-        zoom = Math.min(3, zoom + .1);
-
-        updateZoom();
-
-    }
-
-    if (e.ctrlKey && e.key === "-") {
-
-        e.preventDefault();
-
-        zoom = Math.max(.2, zoom - .1);
-
-        updateZoom();
-
-    }
-
-});
-
-/* ---------- Drag Highlight ---------- */
-
-dropZone.addEventListener("dragenter", () => {
-
-    dropZone.style.borderColor = "#3b82f6";
-
-});
-
-dropZone.addEventListener("dragleave", () => {
-
-    dropZone.style.borderColor = "";
-
-});
-
-/* ---------- Active Thumbnail CSS ---------- */
-
-const style = document.createElement("style");
-
-style.textContent = `
-
-.active-thumb{
-
-outline:3px solid #3b82f6;
-
-border-radius:12px;
-
-box-shadow:0 0 18px rgba(59,130,246,.45);
-
-}
-
-`;
-
-document.head.appendChild(style);
-
-/* ---------- Startup ---------- */
-
-renderSidebar();
-
-updateZoom();
-
-/* ===========================================
-   PART 3F
-   MODAL SYNC & SMART NAVIGATION
-=========================================== */
-
-function refreshModal() {
-
-    const modal = document.getElementById("imagePreviewModal");
-
-    if (modal.style.display !== "flex") return;
-
-    const img = document.getElementById("previewImage");
-
-    img.src = images[currentIndex].src;
-
-    img.style.transform =
-        `rotate(${images[currentIndex].rotation}deg)`;
-
-    updateCounter();
-
-}
-
-/* ---------- Double Click ---------- */
-
-mainPreview.ondblclick = () => {
-
-    if (images.length) {
-
-        document.getElementById("imagePreviewModal").style.display = "flex";
-
-        refreshModal();
-
-    }
-
-};
-
-/* ---------- Mouse Wheel Zoom ---------- */
-
-mainPreview.addEventListener("wheel", (e) => {
-
-    e.preventDefault();
-
-    if (e.deltaY < 0) {
-
-        zoom = Math.min(3, zoom + .1);
-
-    } else {
-
-        zoom = Math.max(.2, zoom - .1);
-
-    }
-
-    updateZoom();
-
-});
-
-/* ---------- Touch Zoom Placeholder ---------- */
-
-let touchStartDistance = 0;
-
-mainPreview.addEventListener("touchstart", (e) => {
-
-    if (e.touches.length !== 2) return;
-
-    const dx = e.touches[0].clientX - e.touches[1].clientX;
-
-    const dy = e.touches[0].clientY - e.touches[1].clientY;
-
-    touchStartDistance = Math.sqrt(dx * dx + dy * dy);
-
-});
-
-mainPreview.addEventListener("touchmove", (e) => {
-
-    if (e.touches.length !== 2) return;
-
-    const dx = e.touches[0].clientX - e.touches[1].clientX;
-
-    const dy = e.touches[0].clientY - e.touches[1].clientY;
-
-    const dist = Math.sqrt(dx * dx + dy * dy);
-
-    if (dist > touchStartDistance) {
-
-        zoom = Math.min(3, zoom + .02);
-
-    } else {
-
-        zoom = Math.max(.2, zoom - .02);
-
-    }
-
-    touchStartDistance = dist;
-
-    updateZoom();
-
-});
-
-/* ---------- Startup ---------- */
-
-refreshModal();
-
-/* ===========================================
-   PART 3G
-   PDF ENGINE V2
-=========================================== */
-
-async function getProcessedImage(imageData, quality) {
+async function processImageForPdf(imageData, quality) {
 
     return new Promise((resolve, reject) => {
 
@@ -1216,369 +631,202 @@ async function getProcessedImage(imageData, quality) {
             let width = img.width;
             let height = img.height;
 
-            // Maximum Render Size
             const MAX_SIZE = 2500;
-
             if (width > MAX_SIZE || height > MAX_SIZE) {
-
-                const ratio = Math.min(
-                    MAX_SIZE / width,
-                    MAX_SIZE / height
-                );
-
+                const ratio = Math.min(MAX_SIZE / width, MAX_SIZE / height);
                 width = Math.round(width * ratio);
                 height = Math.round(height * ratio);
-
             }
 
             const canvas = document.createElement("canvas");
             const ctx = canvas.getContext("2d");
 
-            // Rotation Support
-            if (Math.abs(imageData.rotation) % 180 === 90) {
-
-                canvas.width = height;
-                canvas.height = width;
-
-            } else {
-
-                canvas.width = width;
-                canvas.height = height;
-
-            }
+            const rotated90 = Math.abs(imageData.rotation) % 180 === 90;
+            canvas.width = rotated90 ? height : width;
+            canvas.height = rotated90 ? width : height;
 
             ctx.translate(canvas.width / 2, canvas.height / 2);
+            ctx.rotate(imageData.rotation * Math.PI / 180);
+            ctx.drawImage(img, -width / 2, -height / 2, width, height);
 
-            ctx.rotate(
-                imageData.rotation * Math.PI / 180
-            );
-
-            ctx.drawImage(
-                img,
-                -width / 2,
-                -height / 2,
-                width,
-                height
-            );
-
-            const format =
-
-                imageData.type === "image/png"
-                    ? "image/png"
-                    : "image/jpeg";
+            const format = imageData.type === "image/png" ? "image/png" : "image/jpeg";
 
             resolve({
-
-                data: canvas.toDataURL(
-                    format,
-                    quality
-                ),
-
+                data: canvas.toDataURL(format, quality),
+                format: format === "image/png" ? "PNG" : "JPEG",
                 width: canvas.width,
-
                 height: canvas.height
-
             });
-
         };
 
-        img.onerror = reject;
-
+        img.onerror = () => reject(new Error(`Could not load ${imageData.name}`));
         img.src = imageData.src;
-
     });
-
 }
 
-/* ===========================================
-   FIT ENGINE
-=========================================== */
-
-function calculateFit(
-
-    pageWidth,
-    pageHeight,
-    imgWidth,
-    imgHeight,
-    fitMode
-
-) {
+function calculateFit(pageWidth, pageHeight, imgWidth, imgHeight, fitMode) {
 
     if (fitMode === "fill") {
-
-        return {
-
-            x: 0,
-            y: 0,
-            width: pageWidth,
-            height: pageHeight
-
-        };
-
+        return { x: 0, y: 0, width: pageWidth, height: pageHeight };
     }
 
-    const ratio = Math.min(
-
-        pageWidth / imgWidth,
-        pageHeight / imgHeight
-
-    );
-
+    const ratio = Math.min(pageWidth / imgWidth, pageHeight / imgHeight);
     const width = imgWidth * ratio;
-
     const height = imgHeight * ratio;
 
     return {
-
         width,
-
         height,
-
         x: (pageWidth - width) / 2,
-
         y: (pageHeight - height) / 2
-
     };
-
 }
 
 /* ===========================================
-   LOADING
+   CONVERT TO PDF
 =========================================== */
 
-function startProgress(total) {
+async function convertPDF() {
 
-    progressContainer.style.display = "block";
+    if (images.length === 0) {
+        showToast("Upload images first", true);
+        return;
+    }
 
-    progressFill.style.width = "0%";
+    convertBtn.disabled = true;
+    showLoader();
+    startProgress();
 
-    progressPercent.textContent = "0%";
+    try {
 
+        const { jsPDF } = window.jspdf;
+
+        const pdf = new jsPDF({
+            orientation: document.getElementById("orientation").value,
+            format: document.getElementById("pageSize").value,
+            unit: "mm"
+        });
+
+        pdf.setProperties({
+            title: "ToolHub AI — Image to PDF",
+            author: "ToolHub AI",
+            subject: "Image to PDF",
+            creator: "ToolHub AI"
+        });
+
+        const quality = parseFloat(document.getElementById("quality").value);
+        const fitMode = document.getElementById("fitMode").value;
+
+        for (let i = 0; i < images.length; i++) {
+
+            if (i > 0) pdf.addPage();
+
+            const processed = await processImageForPdf(images[i], quality);
+
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
+
+            const fit = calculateFit(pageWidth, pageHeight, processed.width, processed.height, fitMode);
+
+            pdf.addImage(
+                processed.data,
+                processed.format,
+                fit.x,
+                fit.y,
+                fit.width,
+                fit.height,
+                undefined,
+                "FAST"
+            );
+
+            updateProgress(i + 1, images.length);
+        }
+
+        const fileName = images.length === 1
+            ? images[0].name.replace(/\.[^.]+$/, "")
+            : "Merged-Images";
+
+        pdf.save(fileName + ".pdf");
+        showToast("PDF generated successfully");
+
+    } catch (err) {
+        console.error(err);
+        showToast("Something went wrong generating the PDF", true);
+    } finally {
+        finishProgress();
+        hideLoader();
+        convertBtn.disabled = images.length === 0;
+    }
 }
 
-function updateProgress(index, total) {
+convertBtn.onclick = convertPDF;
 
-    const percent = Math.round(
+/* ===========================================
+   PROGRESS BAR
+=========================================== */
 
-        ((index + 1) / total) * 100
+function startProgress() {
+    progressContainer.style.display = "block";
+    progressFill.style.width = "0%";
+    progressPercent.textContent = "0%";
+}
 
-    );
-
-    progressFill.style.width =
-
-        percent + "%";
-
-    progressPercent.textContent =
-
-        percent + "%";
-
+function updateProgress(done, total) {
+    const percent = Math.round((done / total) * 100);
+    progressFill.style.width = percent + "%";
+    progressPercent.textContent = percent + "%";
 }
 
 function finishProgress() {
-
     progressFill.style.width = "100%";
-
     progressPercent.textContent = "100%";
-
     setTimeout(() => {
-
         progressContainer.style.display = "none";
-
         progressFill.style.width = "0%";
-
         progressPercent.textContent = "0%";
-
-    }, 800);
-
+    }, 700);
 }
 
 /* ===========================================
-   PART 3H
-   FINAL PRODUCTION POLISH
+   HELPERS
 =========================================== */
 
-/* ---------- Performance Cache ---------- */
-
-const imageCache = new Map();
-
-async function preloadImages() {
-
-    for (const img of images) {
-
-        if (imageCache.has(img.src)) continue;
-
-        await new Promise(resolve => {
-
-            const i = new Image();
-
-            i.onload = () => {
-
-                imageCache.set(img.src, true);
-
-                resolve();
-
-            };
-
-            i.onerror = resolve;
-
-            i.src = img.src;
-
-        });
-
-    }
-
+function revokeImage(url) {
+    if (url && url.startsWith("blob:")) URL.revokeObjectURL(url);
 }
 
-/* ---------- Smooth Thumbnail Animation ---------- */
+function estimateTotalSize() {
+    const totalBytes = images.reduce((sum, img) => sum + img.size, 0);
+    return (totalBytes / (1024 * 1024)).toFixed(2);
+}
 
 function animateThumbnail(element) {
-
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     element.animate(
-
-        [
-
-            {
-
-                opacity: 0,
-
-                transform: "translateY(10px)"
-
-            },
-
-            {
-
-                opacity: 1,
-
-                transform: "translateY(0)"
-
-            }
-
-        ],
-
-        {
-
-            duration: 180,
-
-            fill: "forwards"
-
-        }
-
+        [{ opacity: 0, transform: "translateY(8px)" }, { opacity: 1, transform: "translateY(0)" }],
+        { duration: 180, fill: "forwards" }
     );
-
 }
 
-/* ---------- Preview Fade ---------- */
+/* ===========================================
+   CLEANUP / UNSAVED-CHANGES WARNING
+=========================================== */
 
-function fadePreview() {
-
-    mainPreview.animate(
-
-        [
-
-            {
-
-                opacity: 0
-
-            },
-
-            {
-
-                opacity: 1
-
-            }
-
-        ],
-
-        {
-
-            duration: 200,
-
-            fill: "forwards"
-
-        }
-
-    );
-
-}
-
-
-
-/* ---------- Empty State ---------- */
-
-function updateEmptyState() {
-
+window.addEventListener("beforeunload", (e) => {
     if (images.length) {
-
-        emptyPreview.style.display = "none";
-
-        mainPreview.style.display = "block";
-
+        e.preventDefault();
+        e.returnValue = "";
     }
-
-    else {
-
-        emptyPreview.style.display = "flex";
-
-        mainPreview.style.display = "none";
-
-    }
-
-}
-
-
-
-/* ---------- Auto Cleanup ---------- */
+});
 
 window.addEventListener("pagehide", () => {
-
-    cleanupImages();
-
+    images.forEach(img => revokeImage(img.src));
+    if (lastDeleted) revokeImage(lastDeleted.item.src);
 });
 
-/* ---------- Auto Revoke Deleted ---------- */
+/* ===========================================
+   STARTUP
+=========================================== */
 
-function revokeImage(url) {
-
-    if (url.startsWith("blob:")) {
-
-        URL.revokeObjectURL(url);
-
-    }
-
-}
-
-/* ---------- PDF Size Estimate ---------- */
-
-function estimatePdfSize() {
-
-    let total = 0;
-
-    images.forEach(img => {
-
-        total += img.size;
-
-    });
-
-    return (
-
-        total /
-
-        (1024 * 1024)
-
-    ).toFixed(2);
-
-}
-
-
-
-/* ---------- Final Startup ---------- */
-
-window.addEventListener("load", () => {
-
-    updateZoom();
-
-    updateEmptyState();
-
-    showToast("Image to PDF Pro Ready 🚀");
-
-});
+renderSidebar();
+renderAll();
