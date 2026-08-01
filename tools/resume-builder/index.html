@@ -1,642 +1,208 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Resume Builder | ToolHub AI</title>
-
-<script src="https://cdn.tailwindcss.com"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ToolHub AI • Resume Builder</title>
+<meta name="description" content="Build a clean, professional resume in minutes. Live preview, multiple templates, and a sharp, ATS-friendly PDF download — free and private in your browser.">
+<meta name="theme-color" content="#0b1220">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%232563eb'/%3E%3Ctext x='50' y='64' font-size='40' font-family='Arial,sans-serif' font-weight='700' fill='white' text-anchor='middle'%3ECV%3C/text%3E%3C/svg%3E">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&family=Lora:wght@500;600;700&display=swap" rel="stylesheet">
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 <link rel="stylesheet" href="style.css">
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-<style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Poppins',sans-serif;
-}
-
-body{
-background:#0f172a;
-color:#fff;
-}
-
-</style>
-
 </head>
 
 <body>
 
-<nav class="bg-slate-900 border-b border-slate-700">
+<div class="app">
 
-<div class="max-w-7xl mx-auto flex justify-between items-center px-6 py-5">
+    <!-- TOP BAR -->
+    <header class="topbar">
 
-<a href="../../dashboard.html"
-class="text-2xl font-bold text-blue-500">
+        <a href="/" class="logo">
+            <i class="fa-solid fa-file-lines"></i>
+            <div class="logo-text">
+                <span>ToolHub AI</span>
+                <small>Resume Builder</small>
+            </div>
+        </a>
 
-🚀 ToolHub
-<span class="text-white">AI</span>
+        <div class="top-actions">
+            <span id="saveStatus" class="save-status"><i class="fa-solid fa-cloud"></i> Saved</span>
+            <button type="button" id="clearAllBtn" title="Clear all data" aria-label="Clear all data">
+                <i class="fa-solid fa-trash"></i>
+            </button>
+            <button type="button" id="downloadBtn" class="download-btn">
+                <i class="fa-solid fa-download"></i>
+                <span>Download PDF</span>
+            </button>
+        </div>
 
-</a>
+    </header>
 
-<a href="../../dashboard.html"
-class="text-gray-300 hover:text-blue-400">
+    <!-- MOBILE TABS -->
+    <div class="mobile-tabs">
+        <button type="button" class="tab-btn active" data-tab="edit">
+            <i class="fa-solid fa-pen"></i> Edit
+        </button>
+        <button type="button" class="tab-btn" data-tab="preview">
+            <i class="fa-solid fa-eye"></i> Preview
+        </button>
+    </div>
 
-⬅ Dashboard
+    <!-- MAIN LAYOUT -->
+    <div class="layout">
 
-</a>
+        <!-- FORM PANEL -->
+        <section class="form-panel" id="formPanel">
+
+            <!-- Design bar -->
+            <div class="design-bar">
+
+                <div class="design-group">
+                    <label>Template</label>
+                    <div class="template-options" id="templateOptions">
+                        <button type="button" class="template-swatch active" data-template="modern">
+                            <span class="swatch-preview modern"></span>
+                            Modern
+                        </button>
+                        <button type="button" class="template-swatch" data-template="classic">
+                            <span class="swatch-preview classic"></span>
+                            Classic
+                        </button>
+                    </div>
+                </div>
+
+                <div class="design-group">
+                    <label>Accent Color</label>
+                    <div class="color-swatches" id="colorSwatches">
+                        <button type="button" class="color-dot active" data-color="#2563eb" style="--c:#2563eb" aria-label="Blue"></button>
+                        <button type="button" class="color-dot" data-color="#0ea5a4" style="--c:#0ea5a4" aria-label="Teal"></button>
+                        <button type="button" class="color-dot" data-color="#7c3aed" style="--c:#7c3aed" aria-label="Purple"></button>
+                        <button type="button" class="color-dot" data-color="#dc2626" style="--c:#dc2626" aria-label="Red"></button>
+                        <button type="button" class="color-dot" data-color="#111827" style="--c:#111827" aria-label="Graphite"></button>
+                    </div>
+                </div>
+
+            </div>
+
+            <form id="resumeForm" autocomplete="off">
+
+                <!-- Personal Info -->
+                <div class="form-card">
+                    <h3><i class="fa-solid fa-user"></i> Personal Info</h3>
+                    <div class="field-grid">
+                        <div class="field"><label for="fullName">Full Name</label><input id="fullName" placeholder="Aisha Khan"></div>
+                        <div class="field"><label for="jobTitle">Job Title</label><input id="jobTitle" placeholder="Product Designer"></div>
+                        <div class="field"><label for="email">Email</label><input id="email" type="email" placeholder="aisha@email.com"></div>
+                        <div class="field"><label for="phone">Phone</label><input id="phone" placeholder="+91 98765 43210"></div>
+                        <div class="field"><label for="location">Location</label><input id="location" placeholder="Mumbai, India"></div>
+                        <div class="field"><label for="website">Website / LinkedIn</label><input id="website" placeholder="linkedin.com/in/aisha"></div>
+                    </div>
+                </div>
+
+                <!-- Summary -->
+                <div class="form-card">
+                    <h3><i class="fa-solid fa-align-left"></i> Professional Summary</h3>
+                    <div class="field">
+                        <textarea id="summary" rows="3" placeholder="2–3 lines on who you are, your experience, and what you're looking for."></textarea>
+                    </div>
+                </div>
+
+                <!-- Experience -->
+                <div class="form-card">
+                    <div class="card-header-row">
+                        <h3><i class="fa-solid fa-briefcase"></i> Experience</h3>
+                        <button type="button" class="add-btn" id="addExperience"><i class="fa-solid fa-plus"></i> Add</button>
+                    </div>
+                    <div id="experienceList" class="repeater-list"></div>
+                    <p class="empty-hint" id="experienceEmpty">No experience added yet.</p>
+                </div>
+
+                <!-- Education -->
+                <div class="form-card">
+                    <div class="card-header-row">
+                        <h3><i class="fa-solid fa-graduation-cap"></i> Education</h3>
+                        <button type="button" class="add-btn" id="addEducation"><i class="fa-solid fa-plus"></i> Add</button>
+                    </div>
+                    <div id="educationList" class="repeater-list"></div>
+                    <p class="empty-hint" id="educationEmpty">No education added yet.</p>
+                </div>
+
+                <!-- Skills -->
+                <div class="form-card">
+                    <h3><i class="fa-solid fa-bolt"></i> Skills</h3>
+                    <div class="field">
+                        <input id="skillsInput" placeholder="Type a skill and press Enter">
+                    </div>
+                    <div id="skillsTags" class="tag-list"></div>
+                </div>
+
+                <!-- Projects -->
+                <div class="form-card">
+                    <div class="card-header-row">
+                        <h3><i class="fa-solid fa-diagram-project"></i> Projects <span class="optional-label">optional</span></h3>
+                        <button type="button" class="add-btn" id="addProject"><i class="fa-solid fa-plus"></i> Add</button>
+                    </div>
+                    <div id="projectsList" class="repeater-list"></div>
+                </div>
+
+                <!-- Certifications -->
+                <div class="form-card">
+                    <div class="card-header-row">
+                        <h3><i class="fa-solid fa-certificate"></i> Certifications <span class="optional-label">optional</span></h3>
+                        <button type="button" class="add-btn" id="addCertification"><i class="fa-solid fa-plus"></i> Add</button>
+                    </div>
+                    <div id="certificationsList" class="repeater-list"></div>
+                </div>
+
+                <!-- Languages -->
+                <div class="form-card">
+                    <div class="card-header-row">
+                        <h3><i class="fa-solid fa-language"></i> Languages <span class="optional-label">optional</span></h3>
+                        <button type="button" class="add-btn" id="addLanguage"><i class="fa-solid fa-plus"></i> Add</button>
+                    </div>
+                    <div id="languagesList" class="repeater-list"></div>
+                </div>
+
+            </form>
+
+        </section>
+
+        <!-- PREVIEW PANEL -->
+        <section class="preview-panel" id="previewPanel">
+            <div class="preview-scale-wrap">
+                <div id="resumePreview" class="resume modern"></div>
+            </div>
+        </section>
+
+    </div>
+    <!-- /layout -->
+
+    <footer class="footer">
+        <p>© 2026 ToolHub AI • Resume Builder — your data stays in your browser</p>
+    </footer>
 
 </div>
-
-</nav>
-
-<section class="max-w-7xl mx-auto p-6">
-
-<h1 class="text-4xl font-bold mb-8">
-
-📄 Resume Builder
-
-</h1>
-
-<div class="grid lg:grid-cols-2 gap-8">
-
-<!-- ===========================
-LEFT PANEL
-=========================== -->
-
-<div class="bg-slate-800 rounded-2xl p-6">
-
-<h2 class="text-2xl font-bold mb-6">
-
-👤 Personal Information
-
-</h2>
-
-<label class="font-semibold">
-
-Resume Template
-
-</label>
-
-<select id="template" onchange="changeTemplate()" class="w-full p-3 mb-6 rounded bg-slate-900">
-
-<option value="classic">Classic</option>
-
-<option value="modern">Modern</option>
-
-<option value="minimal">Minimal</option>
-
-<option value="creative">Creative</option>
-
-<option value="premium">Premium Canva</option>
-
-<option value="plain">Plain White</option>
-
-<option value="ats">ATS Resume</option>
-
-</select>
-
-<label class="font-semibold mt-4 block">
-Theme Color
-</label>
-
-<select id="themeColor" onchange="changeTheme()" class="w-full p-3 rounded bg-slate-900 mb-6">
-
-<option value="blue">Blue</option>
-
-<option value="green">Green</option>
-
-<option value="purple">Purple</option>
-
-<option value="red">Red</option>
-
-<option value="black">Black</option>
-
-<option value="white">White</option>
-
-
-</select>
-
-<label class="font-semibold">
-
-Full Name
-
-</label>
-
-<input
-id="name"
-type="text"
-placeholder="Enter Full Name"
-class="w-full p-3 rounded bg-slate-900 mb-4">
-
-<label class="font-semibold">
-
-Email
-
-</label>
-
-<input
-id="email"
-type="email"
-placeholder="Enter Email"
-class="w-full p-3 rounded bg-slate-900 mb-4">
-
-<label class="font-semibold">
-
-Phone Number
-
-</label>
-
-<input
-id="phone"
-type="text"
-placeholder="Enter Phone Number"
-class="w-full p-3 rounded bg-slate-900 mb-4">
-
-<label class="font-semibold">
-
-Address
-
-</label>
-
-<textarea
-id="address"
-rows="3"
-placeholder="Enter Address"
-class="w-full p-3 rounded bg-slate-900 mb-4"></textarea>
-
-<label class="font-semibold">
-
-Profile Photo
-
-</label>
-
-<input
-type="file"
-id="photo"
-accept="image/*"
-class="w-full p-3 rounded bg-slate-900 mb-6">
-
-<hr class="border-slate-700 my-6">
-
-<h2 class="text-2xl font-bold text-blue-400 mb-5">
-
-📝 Professional Summary
-
-</h2>
-
-<textarea
-id="summary"
-rows="6"
-placeholder="Write your summary..."
-class="w-full p-3 rounded bg-slate-900"></textarea>
-
-<hr class="border-slate-700 my-6">
-
-<h2 class="text-2xl font-bold text-blue-400 mb-5">
-
-🛠 Skills
-
-</h2>
-
-<input
-id="skills"
-type="text"
-placeholder="HTML, CSS, JavaScript, Excel..."
-class="w-full p-3 rounded bg-slate-900 mb-6">
-
-<hr class="border-slate-700 my-6">
-
-<h2 class="text-2xl font-bold text-blue-400 mb-5">
-
-🎓 Education
-
-</h2>
-
-<input
-id="college"
-type="text"
-placeholder="College / University"
-class="w-full p-3 rounded bg-slate-900 mb-4">
-
-<input
-id="degree"
-type="text"
-placeholder="Degree"
-class="w-full p-3 rounded bg-slate-900 mb-4">
-
-<input
-id="year"
-type="text"
-placeholder="Passing Year"
-class="w-full p-3 rounded bg-slate-900 mb-4">
-
-<button
-type="button"
-id="addEducation"
-class="w-full bg-blue-600 hover:bg-blue-700 rounded-lg p-3 mb-4">
-
-+ Add Education
-
-</button>
-
-<div id="educationList"></div>
-
-<hr class="border-slate-700 my-6">
-
-<h2 class="text-2xl font-bold text-blue-400 mb-5">
-
-💼 Experience
-
-</h2>
-
-<input
-id="company"
-type="text"
-placeholder="Company Name"
-class="w-full p-3 rounded bg-slate-900 mb-4">
-
-<input
-id="job"
-type="text"
-placeholder="Job Title"
-class="w-full p-3 rounded bg-slate-900 mb-4">
-
-<input
-id="duration"
-type="text"
-placeholder="Duration (2024 - Present)"
-class="w-full p-3 rounded bg-slate-900 mb-4">
-
-<button
-type="button"
-id="addExperience"
-class="w-full bg-blue-600 hover:bg-blue-700 rounded-lg p-3 mb-4">
-
-+ Add Experience
-
-</button>
-
-<div id="experienceList"></div>
-
-<hr class="border-slate-700 my-6">
-
-<h2 class="text-2xl font-bold text-blue-400 mb-5">
-
-🚀 Projects
-
-</h2>
-
-<input
-id="project"
-type="text"
-placeholder="Project Name"
-class="w-full p-3 rounded bg-slate-900 mb-4">
-
-<textarea
-id="projectDesc"
-rows="4"
-placeholder="Project Description"
-class="w-full p-3 rounded bg-slate-900 mb-4"></textarea>
-
-<button
-type="button"
-id="addProject"
-class="w-full bg-blue-600 hover:bg-blue-700 rounded-lg p-3 mb-4">
-
-+ Add Project
-
-</button>
-
-<div id="projectList"></div>
-
-<hr class="border-slate-700 my-6">
-
-<h2 class="text-2xl font-bold text-blue-400 mb-5">
-
-🌐 Social Links
-
-</h2>
-
-<input
-id="linkedin"
-type="text"
-placeholder="LinkedIn Profile URL"
-class="w-full p-3 rounded bg-slate-900 mb-4">
-
-<input
-id="github"
-type="text"
-placeholder="GitHub Profile URL"
-class="w-full p-3 rounded bg-slate-900 mb-6">
-
-<hr class="border-slate-700 my-6">
-
-<h2 class="text-2xl font-bold text-blue-400 mb-5">
-
-🏆 Certifications
-
-</h2>
-
-<input
-id="certificate"
-type="text"
-placeholder="Google UX Design, AWS, etc."
-class="w-full p-3 rounded bg-slate-900 mb-6">
-
-<hr class="border-slate-700 my-6">
-
-<h2 class="text-2xl font-bold text-blue-400 mb-5">
-
-🌍 Languages
-
-</h2>
-
-<input
-id="languages"
-type="text"
-placeholder="English, Hindi..."
-class="w-full p-3 rounded bg-slate-900 mb-8">
-
-<button
-id="generateBtn"
-onclick="generateResume()"
-class="w-full bg-blue-600 hover:bg-blue-700 rounded-xl p-3 font-semibold mb-4">
-
-📄 Generate Resume
-
-</button>
-
-<button
-id="downloadBtn"
-onclick="downloadPDF()"
-class="w-full bg-green-600 hover:bg-green-700 rounded-xl p-3 font-semibold mb-4">
-
-⬇ Download PDF
-
-</button>
-
-<button
-id="printBtn"
-onclick="printResume()"
-class="w-full bg-purple-600 hover:bg-purple-700 rounded-xl p-3 font-semibold">
-
-🖨 Print Resume
-
-</button>
-
+<!-- /app -->
+
+<div id="toast" class="toast"></div>
+
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="loader-card">
+        <div class="loader-spinner"></div>
+        <h2>Generating PDF</h2>
+        <p>Please wait…</p>
+    </div>
 </div>
 
-<!-- RIGHT PANEL START -->
-<div>
-    <div id="resumePreview" class="bg-white rounded-3xl overflow-hidden shadow-2xl">
-
-<!-- ===========================
-PREMIUM HEADER
-=========================== -->
-
-<div class="bg-gradient-to-r from-violet-600 via-blue-600 to-cyan-500 text-white p-8">
-
-<div class="flex flex-col md:flex-row items-center gap-6">
-
-<img
-id="previewPhoto"
-src=""
-class="hidden w-32 h-32 rounded-full border-4 border-white object-cover">
-
-<div class="flex-1 text-center md:text-left">
-
-<h1
-id="previewName"
-class="text-5xl font-bold">
-
-Your Name
-
-</h1>
-
-<p class="text-blue-100 mt-2 text-lg">
-
-Professional Resume
-
-</p>
-
-<div class="mt-5 space-y-1">
-
-<p id="previewEmail">
-
-email@example.com
-
-</p>
-
-<p id="previewPhone">
-
-+91 XXXXX XXXXX
-
-</p>
-
-<p id="previewAddress">
-
-Your Address
-
-</p>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-<!-- ===========================
-BODY
-=========================== -->
-
-<div class="grid md:grid-cols-3">
-
-<!-- LEFT SIDEBAR -->
-
-<div class="bg-slate-100 p-6">
-
-<h2 class="font-bold text-xl mb-4">
-
-🛠 Skills
-
-</h2>
-
-<p id="previewSkills">
-
-HTML, CSS, JavaScript
-
-</p>
-
-<hr class="my-6">
-
-<h2 class="font-bold text-xl mb-4">
-
-🌐 Social Links
-
-</h2>
-
-<p>
-
-<b>LinkedIn</b>
-
-</p>
-
-<p id="previewLinkedin">
-
-Not Added
-
-</p>
-
-<br>
-
-<p>
-
-<b>GitHub</b>
-
-</p>
-
-<p id="previewGithub">
-
-Not Added
-
-</p>
-
-<hr class="my-6">
-
-<h2 class="font-bold text-xl mb-4">
-
-🏆 Certifications
-
-</h2>
-
-<p id="previewCertificate">
-
-Not Added
-
-</p>
-
-<hr class="my-6">
-
-<h2 class="font-bold text-xl mb-4">
-
-🌍 Languages
-
-</h2>
-
-<p id="previewLanguages">
-
-Not Added
-
-</p>
-
-</div>
-
-<!-- RIGHT CONTENT -->
-
-<div class="md:col-span-2 p-8">
-    <h2 class="text-2xl font-bold text-slate-800 mb-4">
-
-📝 Professional Summary
-
-</h2>
-
-<p id="previewSummary" class="text-gray-700 leading-7 mb-8">
-
-Your professional summary will appear here.
-
-</p>
-
-<h2 class="resume-heading">
-
-🎓 Education
-
-</h2>
-
-<div id="previewEducation" class="mb-8">
-
-Your education will appear here.
-
-</div>
-
-<h2 class="resume-heading">
-
-💼 Experience
-
-</h2>
-
-<div id="previewExperience" class="mb-8">
-
-Your experience will appear here.
-
-</div>
-
-<h2 class="resume-heading">
-
-🚀 Projects
-
-</h2>
-
-<div id="previewProject" class="mb-8">
-
-Your projects will appear here.
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-<!-- END RESUME PREVIEW -->
-
-</div>
-
-</section>
-
-<footer class="bg-slate-900 border-t border-slate-700 py-6 mt-10">
-
-<div class="max-w-7xl mx-auto flex justify-between items-center px-6">
-
-<p class="text-gray-400">
-
-© 2026 ToolHub AI
-
-</p>
-
-<a
-href="../../dashboard.html"
-class="text-blue-400 hover:text-blue-300">
-
-⬅ Back to Dashboard
-
-</a>
-
-</div>
-
-</footer>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 <script src="script.js"></script>
 
 </body>
-
 </html>
