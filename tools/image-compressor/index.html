@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ToolHub AI • Image Compressor</title>
+<meta name="description" content="Compress JPG, PNG and WebP images right in your browser. Adjustable quality, optional resize, format conversion, and batch ZIP download — free and private.">
+<meta name="theme-color" content="#0b1220">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%232563eb'/%3E%3Cpath d='M30 65 L45 45 L58 58 L70 35 L82 65 Z' fill='white'/%3E%3Ccircle cx='38' cy='38' r='7' fill='white'/%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- TOP BAR -->
+    <header class="topbar">
+
+        <a href="/" class="logo">
+            <i class="fa-solid fa-compress"></i>
+            <div class="logo-text">
+                <span>ToolHub AI</span>
+                <small>Image Compressor</small>
+            </div>
+        </a>
+
+        <div class="top-actions">
+            <button type="button" id="themeBtn" title="Toggle theme" aria-label="Toggle light/dark theme">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+            <a href="/dashboard.html" title="Dashboard" aria-label="Dashboard">
+                <i class="fa-solid fa-table-columns"></i>
+            </a>
+        </div>
+
+    </header>
+
+    <div class="page">
+
+        <!-- UPLOAD -->
+        <div class="panel-card">
+
+            <input type="file" id="imageInput" multiple accept="image/jpeg,image/jpg,image/png,image/webp" hidden>
+
+            <label for="imageInput" id="dropZone" class="upload-box">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+                <h4>Drag images here</h4>
+                <p>or click to browse — JPG, PNG, WebP</p>
+            </label>
+
+            <div class="upload-buttons">
+                <button type="button" class="camera-btn" id="cameraBtn">
+                    <i class="fa-solid fa-camera"></i> Camera
+                </button>
+                <button type="button" class="gallery-btn" id="galleryBtn">
+                    <i class="fa-solid fa-images"></i> Gallery
+                </button>
+            </div>
+
+        </div>
+
+        <!-- SETTINGS -->
+        <div class="panel-card">
+
+            <h3><i class="fa-solid fa-sliders"></i> Compression Settings</h3>
+
+            <div class="settings-row">
+
+                <div class="setting-block">
+                    <div class="setting-label-row">
+                        <label for="qualitySlider">Quality</label>
+                        <span id="qualityValue" class="setting-value">75%</span>
+                    </div>
+                    <input type="range" id="qualitySlider" min="10" max="100" step="5" value="75">
+                    <p class="setting-hint">Lower quality = smaller file size. Doesn't affect PNG (lossless).</p>
+                </div>
+
+                <div class="setting-block">
+                    <label for="formatSelect">Output Format</label>
+                    <select id="formatSelect">
+                        <option value="original">Keep Original Format</option>
+                        <option value="image/jpeg">JPEG</option>
+                        <option value="image/webp">WebP (best compression)</option>
+                        <option value="image/png">PNG (lossless)</option>
+                    </select>
+                </div>
+
+                <div class="setting-block">
+                    <div class="checkbox-row">
+                        <input type="checkbox" id="resizeToggle">
+                        <label for="resizeToggle">Resize large images</label>
+                    </div>
+                    <input type="number" id="maxWidthInput" placeholder="Max width in px" value="1920" min="100" step="10" disabled>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- STATS + ACTIONS -->
+        <div class="panel-card stats-card" id="statsCard" style="display:none;">
+
+            <div class="stats-row">
+                <div class="stat">
+                    <small>Images</small>
+                    <strong id="statCount">0</strong>
+                </div>
+                <div class="stat">
+                    <small>Original</small>
+                    <strong id="statOriginal">0 MB</strong>
+                </div>
+                <i class="fa-solid fa-arrow-right-long stat-arrow"></i>
+                <div class="stat">
+                    <small>Compressed</small>
+                    <strong id="statCompressed">0 MB</strong>
+                </div>
+                <div class="stat stat-saved">
+                    <small>Saved</small>
+                    <strong id="statSaved">0%</strong>
+                </div>
+            </div>
+
+            <div class="stats-actions">
+                <button type="button" id="compressAllBtn" class="secondary-btn">
+                    <i class="fa-solid fa-rotate"></i> Recompress All
+                </button>
+                <button type="button" id="downloadZipBtn" class="convert-btn">
+                    <i class="fa-solid fa-file-zipper"></i> Download All (.zip)
+                </button>
+                <button type="button" id="removeAllBtn" class="danger-btn">
+                    <i class="fa-solid fa-trash"></i> Remove All
+                </button>
+            </div>
+
+            <div class="progress-wrapper" id="progressContainer">
+                <div class="progress-bar"><div id="progressFill"></div></div>
+            </div>
+
+        </div>
+
+        <!-- RESULTS -->
+        <div id="emptyState" class="empty-state">
+            <i class="fa-solid fa-images"></i>
+            <h2>No images yet</h2>
+            <p>Upload a few photos above and watch them shrink.</p>
+        </div>
+
+        <div id="resultsGrid" class="results-grid"></div>
+
+    </div>
+    <!-- /page -->
+
+    <footer class="footer">
+        <p>© 2026 ToolHub AI • Image Compressor — files never leave your device</p>
+    </footer>
+
+</div>
+<!-- /app -->
+
+<div id="toast" class="toast"></div>
+
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="loader-card">
+        <div class="loader-spinner"></div>
+        <h2>Zipping files</h2>
+        <p>Please wait…</p>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
