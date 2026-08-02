@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>About — ToolHub AI</title>
+<link rel="canonical" href="https://tool-hub-ai.vercel.app/about.html">
+<meta name="description" content="ToolHub AI builds free, private, browser-based tools. No sign-up, no servers storing your files — just tools that work.">
+<meta name="theme-color" content="#0b1220">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="About — ToolHub AI">
+<meta property="og:description" content="Free, private, browser-based tools. No sign-up, no servers storing your files.">
+<meta property="og:url" content="https://tool-hub-ai.vercel.app/about.html">
+<meta property="og:image" content="https://tool-hub-ai.vercel.app/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="About — ToolHub AI">
+<meta name="twitter:description" content="Free, private, browser-based tools. No sign-up, no servers storing your files.">
+<meta name="twitter:image" content="https://tool-hub-ai.vercel.app/assets/og-image.png">
+<meta property="og:site_name" content="ToolHub AI">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='11' fill='%232563eb'/%3E%3Cpath d='M12 13h16M20 13v14' stroke='white' stroke-width='3.6' stroke-linecap='round'/%3E%3Cpath d='M29 9l1.3 2.7L33 13l-2.7 1.3L29 17l-1.3-2.7L25 13l2.7-1.3z' fill='white'/%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+<link rel="stylesheet" href="css/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tool-hub-ai.vercel.app/" },
+    { "@type": "ListItem", "position": 2, "name": "About", "item": "https://tool-hub-ai.vercel.app/about.html" }
+  ]
+}
+</script>
+</head>
+
+<body>
+
+<div class="page-loader" id="pageLoader">
+    <svg class="loader-mark" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="loaderGrad" x1="0" y1="0" x2="40" y2="40">
+            <stop offset="0" stop-color="#3b82f6"/><stop offset="1" stop-color="#7c3aed"/>
+        </linearGradient></defs>
+        <rect width="40" height="40" rx="11" fill="url(#loaderGrad)"/>
+        <path d="M12 13h16M20 13v14" stroke="white" stroke-width="3.4" stroke-linecap="round"/>
+        <path d="M29 9l1.3 2.7L33 13l-2.7 1.3L29 17l-1.3-2.7L25 13l2.7-1.3z" fill="white" opacity="0.95"/>
+    </svg>
+</div>
+
+<header class="navbar" id="navbar">
+    <div class="nav-inner">
+        <a href="/" class="logo">
+            <span class="logo-mark">
+                <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+                    <defs><linearGradient id="logoGradNav" x1="0" y1="0" x2="40" y2="40">
+                        <stop offset="0" stop-color="#3b82f6"/><stop offset="1" stop-color="#7c3aed"/>
+                    </linearGradient></defs>
+                    <rect width="40" height="40" rx="11" fill="url(#logoGradNav)"/>
+                    <path d="M12 13h16M20 13v14" stroke="white" stroke-width="3.4" stroke-linecap="round"/>
+                    <path d="M29 9l1.3 2.7L33 13l-2.7 1.3L29 17l-1.3-2.7L25 13l2.7-1.3z" fill="white" opacity="0.95"/>
+                </svg>
+            </span>
+            <span class="logo-text">ToolHub<span class="accent">AI</span></span>
+        </a>
+        <nav class="nav-links" id="navLinks">
+            <a href="/">Home</a>
+            <a href="/dashboard.html">All Tools</a>
+            <a href="/about.html" class="nav-link-active">About</a>
+            <a href="/contact.html">Contact</a>
+        </nav>
+        <div class="nav-actions" style="margin-left:auto;">
+            <button type="button" id="themeBtn" title="Toggle theme" aria-label="Toggle theme">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+            <a href="/dashboard.html" class="nav-cta">Open Dashboard</a>
+        </div>
+    </div>
+</header>
+
+<main>
+
+    <section class="static-hero">
+        <span class="eyebrow">About ToolHub AI</span>
+        <h1>Tools that respect your time — and your files</h1>
+        <p>
+            ToolHub AI started from a simple frustration: too many "free" online tools bury you in
+            sign-ups, watermarks, and uploads to servers you've never heard of. We wanted something
+            simpler — open a page, do the thing, done.
+        </p>
+    </section>
+
+    <section class="static-section">
+        <div class="value-grid">
+            <div class="value-card">
+                <i class="fa-solid fa-lock"></i>
+                <h3>Private by default</h3>
+                <p>Every tool runs entirely in your browser. Your files are never uploaded to a server — we couldn't see them even if we wanted to.</p>
+            </div>
+            <div class="value-card">
+                <i class="fa-solid fa-bolt"></i>
+                <h3>Fast, no waiting</h3>
+                <p>No queues, no "processing" spinners tied to a backend. Everything happens on your device, instantly.</p>
+            </div>
+            <div class="value-card">
+                <i class="fa-solid fa-gift"></i>
+                <h3>Free, no catch</h3>
+                <p>No sign-up walls, no hidden limits, no credit card. If that ever changes, it'll be loud and clear — not sneaky.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="static-section">
+        <div class="section-head">
+            <span class="eyebrow">Why browser-based</span>
+            <h2>The best server is no server</h2>
+        </div>
+        <p style="text-align:center; color:var(--text-dim); max-width:640px; margin:0 auto; line-height:1.7;">
+            Modern browsers are powerful enough to compress images, generate PDFs, and build documents
+            without ever leaving the tab. So that's what we build on — it means your data stays yours,
+            and the tools keep working even if our servers are having a bad day.
+        </p>
+    </section>
+
+    <section class="cta-band">
+        <div class="cta-band-inner">
+            <h2>Ready to try a tool?</h2>
+            <p>No sign-up needed — pick one and get started.</p>
+            <a href="/dashboard.html" class="btn-primary light"><i class="fa-solid fa-grip"></i> Browse All Tools</a>
+        </div>
+    </section>
+
+</main>
+
+<footer class="site-footer">
+    <div class="footer-inner">
+        <div class="footer-col footer-brand">
+            <a href="/" class="logo">
+                <span class="logo-mark">
+                    <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+                        <defs><linearGradient id="logoGradFooter" x1="0" y1="0" x2="40" y2="40">
+                            <stop offset="0" stop-color="#3b82f6"/><stop offset="1" stop-color="#7c3aed"/>
+                        </linearGradient></defs>
+                        <rect width="40" height="40" rx="11" fill="url(#logoGradFooter)"/>
+                        <path d="M12 13h16M20 13v14" stroke="white" stroke-width="3.4" stroke-linecap="round"/>
+                        <path d="M29 9l1.3 2.7L33 13l-2.7 1.3L29 17l-1.3-2.7L25 13l2.7-1.3z" fill="white" opacity="0.95"/>
+                    </svg>
+                </span>
+                <span class="logo-text">ToolHub<span class="accent">AI</span></span>
+            </a>
+            <p>Free, private, browser-based tools — no sign-up, ever.</p>
+        </div>
+        <div class="footer-col">
+            <h4>Product</h4>
+            <a href="/dashboard.html">All Tools</a>
+            <a href="/about.html">About</a>
+            <a href="/contact.html">Contact</a>
+        </div>
+        <div class="footer-col">
+            <h4>Categories</h4>
+            <a href="/dashboard.html?category=pdf">PDF Tools</a>
+            <a href="/dashboard.html?category=image">Image Tools</a>
+            <a href="/dashboard.html?category=ai">AI Tools</a>
+            <a href="/dashboard.html?category=text">Text &amp; Docs</a>
+        </div>
+        <div class="footer-col">
+            <h4>Popular</h4>
+            <a href="/tools/image-to-pdf/index.html">Image to PDF</a>
+            <a href="/tools/ai-email-writer/index.html">AI Email Writer</a>
+            <a href="/tools/image-compressor/index.html">Image Compressor</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>© 2026 ToolHub AI. All tools run locally in your browser.</p>
+    </div>
+</footer>
+
+<script src="js/theme.js"></script>
+<script src="js/loader.js"></script>
+</body>
+</html>

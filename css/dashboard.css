@@ -1,0 +1,145 @@
+/* ===========================================
+   DASHBOARD — page-specific styles
+   (shared tokens, navbar, tool-card, footer etc.
+   all come from css/style.css, loaded before this file)
+=========================================== */
+
+.nav-link-active {
+    color: var(--text) !important;
+    position: relative;
+}
+
+.nav-link-active::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -22px;
+    height: 2px;
+    background: var(--accent);
+}
+
+/* ---------- Page header ---------- */
+
+.dash-header {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 60px 20px 30px;
+    text-align: center;
+}
+
+.dash-header .eyebrow {
+    display: block;
+}
+
+.dash-header h1 {
+    font-size: clamp(28px, 4.5vw, 42px);
+    margin: 10px 0 12px;
+}
+
+.dash-header > p {
+    color: var(--text-dim);
+    font-size: 15.5px;
+    margin-bottom: 28px;
+}
+
+.dash-search-row {
+    margin-bottom: 22px;
+}
+
+.dash-search.hero-search {
+    max-width: 520px;
+}
+
+/* ---------- Category chips ---------- */
+
+.category-chips {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid var(--border-light);
+    background: var(--card);
+    color: var(--text-dim);
+    padding: 9px 18px;
+    border-radius: 999px;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .2s ease;
+}
+
+.chip:hover {
+    border-color: var(--accent);
+    color: var(--text);
+}
+
+.chip.active {
+    background: var(--accent-dark);
+    border-color: var(--accent-dark);
+    color: #fff;
+}
+
+/* ---------- Sections ---------- */
+
+.dash-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 44px 20px;
+}
+
+.section-head.left {
+    text-align: left;
+    max-width: none;
+    margin: 0 0 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.section-head.left .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.section-head.left h2 {
+    font-size: clamp(20px, 3vw, 26px);
+}
+
+#popularSection { padding-top: 20px; }
+
+#popularSection .eyebrow { color: var(--amber); }
+#recentSection .eyebrow { color: var(--teal); }
+
+/* ---------- Popular badge (extra badge variant for tool cards) ---------- */
+
+.tool-badge.popular {
+    background: rgba(245, 158, 11, .18);
+    color: var(--amber);
+}
+
+.tool-card-badges {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    display: flex;
+    gap: 6px;
+}
+
+.tool-card {
+    position: relative;
+}
+
+@media (max-width: 640px) {
+    .dash-header { padding: 40px 16px 24px; }
+    .dash-section { padding: 32px 16px; }
+    .category-chips { justify-content: flex-start; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 6px; }
+    .chip { flex-shrink: 0; }
+}

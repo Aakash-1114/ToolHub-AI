@@ -1,230 +1,235 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>All Tools — ToolHub AI Dashboard</title>
+<link rel="canonical" href="https://tool-hub-ai.vercel.app/dashboard.html">
+<meta name="description" content="Browse every ToolHub AI tool — PDF, image, AI and document utilities. Free, private, and running entirely in your browser.">
+<meta name="theme-color" content="#0b1220">
 
-    <title>Dashboard - ToolHub AI</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="All Tools — ToolHub AI Dashboard">
+<meta property="og:description" content="Browse every ToolHub AI tool — PDF, image, AI and document utilities, all free and private.">
+<meta property="og:url" content="https://tool-hub-ai.vercel.app/dashboard.html">
+<meta property="og:image" content="https://tool-hub-ai.vercel.app/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="All Tools — ToolHub AI Dashboard">
+<meta name="twitter:description" content="Browse every ToolHub AI tool — PDF, image, AI and document utilities, all free and private.">
+<meta name="twitter:image" content="https://tool-hub-ai.vercel.app/assets/og-image.png">
+<meta property="og:site_name" content="ToolHub AI">
 
-    <script src="https://cdn.tailwindcss.com"></script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='11' fill='%232563eb'/%3E%3Cpath d='M12 13h16M20 13v14' stroke='white' stroke-width='3.6' stroke-linecap='round'/%3E%3Cpath d='M29 9l1.3 2.7L33 13l-2.7 1.3L29 17l-1.3-2.7L25 13l2.7-1.3z' fill='white'/%3E%3C/svg%3E">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
-
-    <style>
-        * {
-            font-family: 'Poppins', sans-serif;
-        }
-
-        body {
-            background: #0f172a;
-        }
-    </style>
-
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/dashboard.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tool-hub-ai.vercel.app/" },
+    { "@type": "ListItem", "position": 2, "name": "All Tools", "item": "https://tool-hub-ai.vercel.app/dashboard.html" }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "itemListElement": [
+    { "@type": "SoftwareApplication", "position": 1, "name": "Image to PDF", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (Web Browser)", "url": "https://tool-hub-ai.vercel.app/tools/image-to-pdf/index.html", "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" } },
+    { "@type": "SoftwareApplication", "position": 2, "name": "PDF Merger", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (Web Browser)", "url": "https://tool-hub-ai.vercel.app/tools/pdf-merger/index.html", "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" } },
+    { "@type": "SoftwareApplication", "position": 3, "name": "Image Resizer", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (Web Browser)", "url": "https://tool-hub-ai.vercel.app/tools/image-resizer/index.html", "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" } },
+    { "@type": "SoftwareApplication", "position": 4, "name": "AI Email Writer", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (Web Browser)", "url": "https://tool-hub-ai.vercel.app/tools/ai-email-writer/index.html", "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" } },
+    { "@type": "SoftwareApplication", "position": 5, "name": "Invoice Generator", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (Web Browser)", "url": "https://tool-hub-ai.vercel.app/tools/invoice-generator/index.html", "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" } },
+    { "@type": "SoftwareApplication", "position": 6, "name": "Image Compressor", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (Web Browser)", "url": "https://tool-hub-ai.vercel.app/tools/image-compressor/index.html", "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" } },
+    { "@type": "SoftwareApplication", "position": 7, "name": "Resume Builder", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (Web Browser)", "url": "https://tool-hub-ai.vercel.app/tools/resume-builder/index.html", "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" } }
+  ]
+}
+</script>
 </head>
 
-<body id="body" class="bg-slate-900 text-white transition-all duration-300"></body>
-<!-- Navbar -->
+<body>
 
-<nav class="sticky top-0 z-50 bg-slate-900/90 backdrop-blur border-b border-slate-700">
-
-    <div class="max-w-7xl mx-auto flex justify-between items-center px-6 py-5">
-
-        <a href="index.html" class="text-2xl font-bold text-blue-500">
-            🚀 ToolHub <span class="text-white">AI</span>
-        </a>
-
-        <div class="flex items-center gap-4">
-
-            <button id="themeToggle" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl transition">
-
-                🌙
-
-            </button>
-
-            <a href="index.html" class="text-gray-300 hover:text-blue-400">
-
-                🏠 Home
-
-            </a>
-
-        </div>
-
-    </div>
-
-</nav>
-<!-- Tools -->
-
-<section class="max-w-7xl mx-auto px-6 py-12">
-
-    <h1 class="text-4xl font-bold mb-8">
-        All Tools
-    </h1>
-
-    <div id="favoriteSection" class="hidden mb-10">
-
-    <h2 class="text-3xl font-bold mb-6">
-        ⭐ Favorite Tools
-    </h2>
-
-    <div id="favoriteTools" class="grid md:grid-cols-2 lg:grid-cols-4 gap-8"></div>
-
+<div class="page-loader" id="pageLoader">
+    <svg class="loader-mark" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="loaderGrad" x1="0" y1="0" x2="40" y2="40">
+            <stop offset="0" stop-color="#3b82f6"/><stop offset="1" stop-color="#7c3aed"/>
+        </linearGradient></defs>
+        <rect width="40" height="40" rx="11" fill="url(#loaderGrad)"/>
+        <path d="M12 13h16M20 13v14" stroke="white" stroke-width="3.4" stroke-linecap="round"/>
+        <path d="M29 9l1.3 2.7L33 13l-2.7 1.3L29 17l-1.3-2.7L25 13l2.7-1.3z" fill="white" opacity="0.95"/>
+    </svg>
 </div>
 
-    <input id="search" type="text" placeholder="🔍 Search tools..."
-        class="w-full p-4 rounded-xl bg-slate-800 border border-slate-700 outline-none focus:ring-2 focus:ring-blue-500 mb-6">
 
-    <div class="flex flex-wrap gap-3 mb-8">
+<!-- NAVBAR (same structure as the homepage, so both pages stay visually identical) -->
+<header class="navbar" id="navbar">
+    <div class="nav-inner">
 
-        <button class="categoryBtn bg-blue-600 px-4 py-2 rounded-xl" data-category="all">
-            All
-        </button>
-
-        <button class="categoryBtn bg-slate-800 px-4 py-2 rounded-xl" data-category="career">
-            Career
-        </button>
-
-        <button class="categoryBtn bg-slate-800 px-4 py-2 rounded-xl" data-category="image">
-            Image
-        </button>
-
-        <button class="categoryBtn bg-slate-800 px-4 py-2 rounded-xl" data-category="pdf">
-            PDF
-        </button>
-
-        <button class="categoryBtn bg-slate-800 px-4 py-2 rounded-xl" data-category="ai">
-            AI
-        </button>
-
-    </div>
-
-    <div id="toolsGrid" class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-
-        <a href="tools/resume-builder/index.html" data-category="career" data-name="resume builder">
-            <div class="bg-slate-800 p-6 rounded-2xl hover:bg-slate-700 transition relative">
-
-                <button class="favoriteBtn absolute top-4 right-4 text-2xl" data-tool="resume-builder">
-                    🤍
-                </button>
-
-                <div class="text-5xl">📄</div>
-                <h2 class="text-xl font-bold mt-4">Resume Builder</h2>
-                <p class="text-gray-400 mt-2">
-                    Create professional resumes.
-                </p>
-            </div>
+        <a href="/" class="logo">
+            <span class="logo-mark"><svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+                <defs><linearGradient id="logoGradNav" x1="0" y1="0" x2="40" y2="40">
+                    <stop offset="0" stop-color="#3b82f6"/><stop offset="1" stop-color="#7c3aed"/>
+                </linearGradient></defs>
+                <rect width="40" height="40" rx="11" fill="url(#logoGradNav)"/>
+                <path d="M12 13h16M20 13v14" stroke="white" stroke-width="3.4" stroke-linecap="round"/>
+                <path d="M29 9l1.3 2.7L33 13l-2.7 1.3L29 17l-1.3-2.7L25 13l2.7-1.3z" fill="white" opacity="0.95"/>
+            </svg></span>
+            <span class="logo-text">ToolHub<span class="accent">AI</span></span>
         </a>
 
-        <a href="tools/cover-letter/index.html" data-category="career" data-name="cover letter">
+        <nav class="nav-links" id="navLinks">
+            <a href="/">Home</a>
+            <a href="/dashboard.html" class="nav-link-active">All Tools</a>
+            <a href="/about.html">About</a>
+            <a href="/contact.html">Contact</a>
+        </nav>
 
-            <div class="bg-slate-800 p-6 rounded-2xl hover:bg-slate-700 transition relative">
-
-                <button class="favoriteBtn absolute top-4 right-4 text-2xl" data-tool="cover-letter">
-                    🤍
-                </button>
-
-                <div class="text-5xl">✉️</div>
-                <h2 class="text-xl font-bold mt-4">Cover Letter</h2>
-                <p class="text-gray-400 mt-2">
-                    Generate cover letters.
-                </p>
-            </div>
-        </a>
-
-        <a href="tools/image-compressor/index.html" data-category="image" data-name="image compressor">
-
-            <div class="bg-slate-800 p-6 rounded-2xl hover:bg-slate-700 transition relative">
-
-                <button class="favoriteBtn absolute top-4 right-4 text-2xl" data-tool="image-compressor">
-                    🤍
-                </button>
-                <div class="text-5xl">🖼️</div>
-                <h2 class="text-xl font-bold mt-4">Image Compressor</h2>
-                <p class="text-gray-400 mt-2">
-                    Compress images instantly.
-                </p>
-            </div>
-        </a>
-
-        <a href="tools/image-to-pdf/index.html" data-category="pdf image" data-name="image to pdf">
-
-            <div class="bg-slate-800 p-6 rounded-2xl hover:bg-slate-700 transition relative">
-
-                <button class="favoriteBtn absolute top-4 right-4 text-2xl" data-tool="image-to-pdf">
-                    🤍
-                </button>
-
-                <div class="text-5xl">📑</div>
-                <h2 class="text-xl font-bold mt-4">Image to PDF</h2>
-                <p class="text-gray-400 mt-2">
-                    Convert images to PDF.
-                </p>
-            </div>
-        </a>
-
-    </div>
-
-</section>
-
-<!-- Categories -->
-
-<section class="max-w-7xl mx-auto px-6 py-12">
-
-    <h2 class="text-3xl font-bold mb-8">
-        Browse Categories
-    </h2>
-
-    <div class="grid md:grid-cols-3 gap-8">
-
-        <div class="bg-slate-800 p-6 rounded-2xl">
-            <h3 class="text-2xl font-bold">💼 Career</h3>
-            <p class="text-gray-400 mt-3">
-                Resume Builder & Cover Letter
-            </p>
+        <div class="nav-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="navSearchInput" placeholder="Search tools…">
         </div>
 
-        <div class="bg-slate-800 p-6 rounded-2xl">
-            <h3 class="text-2xl font-bold">🖼️ Image</h3>
-            <p class="text-gray-400 mt-3">
-                Image Compressor & Image to PDF
-            </p>
-        </div>
-
-        <div class="bg-slate-800 p-6 rounded-2xl">
-            <h3 class="text-2xl font-bold">📄 PDF</h3>
-            <p class="text-gray-400 mt-3">
-                More PDF tools coming soon.
-            </p>
+        <div class="nav-actions">
+            <button type="button" id="themeBtn" title="Toggle theme" aria-label="Toggle theme">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+            <a href="/" class="nav-cta">Back to Home</a>
+            <button type="button" class="menu-btn" id="menuBtn" aria-label="Menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
         </div>
 
     </div>
 
-</section>
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="nav-search mobile-only">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="navSearchInputMobile" placeholder="Search tools…">
+        </div>
+        <a href="/">Home</a>
+        <a href="/dashboard.html">All Tools</a>
+        <a href="/about.html">About</a>
+        <a href="/contact.html">Contact</a>
+    </div>
+</header>
 
-<!-- Footer -->
+<main>
 
-<footer class="bg-slate-900 border-t border-slate-700 mt-12">
+    <!-- PAGE HEADER -->
+    <section class="dash-header">
+        <span class="eyebrow">Dashboard</span>
+        <h1>Every tool, in one place</h1>
+        <p>Search, filter by category, or just scroll — everything below runs locally in your browser.</p>
 
-    <div class="max-w-7xl mx-auto px-6 py-6 flex justify-between items-center">
+        <div class="dash-search-row">
+            <div class="hero-search dash-search">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="dashSearchInput" placeholder="Try 'compress', 'resume', 'invoice'…">
+            </div>
+        </div>
 
-        <p class="text-gray-400">
-            © 2026 ToolHub AI
-        </p>
+        <div class="category-chips" id="categoryChips">
+            <button type="button" class="chip active" data-category="all">All Tools</button>
+            <button type="button" class="chip" data-category="pdf"><i class="fa-solid fa-file-pdf"></i> PDF</button>
+            <button type="button" class="chip" data-category="image"><i class="fa-solid fa-image"></i> Image</button>
+            <button type="button" class="chip" data-category="ai"><i class="fa-solid fa-wand-magic-sparkles"></i> AI</button>
+            <button type="button" class="chip" data-category="text"><i class="fa-solid fa-file-lines"></i> Text &amp; Docs</button>
+        </div>
+    </section>
 
-        <a href="index.html" class="text-blue-400">
-            Back to Home
-        </a>
+    <!-- POPULAR -->
+    <section class="dash-section reveal" id="popularSection">
+        <div class="section-head left">
+            <span class="eyebrow"><i class="fa-solid fa-fire"></i> Popular</span>
+            <h2>Most used tools</h2>
+        </div>
+        <div class="tools-grid" id="popularGrid"></div>
+    </section>
+
+    <!-- RECENTLY ADDED -->
+    <section class="dash-section reveal" id="recentSection">
+        <div class="section-head left">
+            <span class="eyebrow"><i class="fa-solid fa-sparkles"></i> Fresh</span>
+            <h2>Recently added</h2>
+        </div>
+        <div class="tools-grid" id="recentGrid"></div>
+    </section>
+
+    <!-- ALL TOOLS -->
+    <section class="dash-section reveal" id="allToolsSection">
+        <div class="section-head left">
+            <span class="eyebrow" id="allToolsEyebrow"><i class="fa-solid fa-grip"></i> Browse</span>
+            <h2 id="allToolsHeading">All tools</h2>
+        </div>
+        <div class="tools-grid" id="allToolsGrid"></div>
+        <p class="no-results" id="noResults" style="display:none;">No tools match your search — try a different keyword or category.</p>
+    </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+    <div class="footer-inner">
+
+        <div class="footer-col footer-brand">
+            <a href="/" class="logo">
+                <span class="logo-mark"><svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+                <defs><linearGradient id="logoGradFooter" x1="0" y1="0" x2="40" y2="40">
+                    <stop offset="0" stop-color="#3b82f6"/><stop offset="1" stop-color="#7c3aed"/>
+                </linearGradient></defs>
+                <rect width="40" height="40" rx="11" fill="url(#logoGradFooter)"/>
+                <path d="M12 13h16M20 13v14" stroke="white" stroke-width="3.4" stroke-linecap="round"/>
+                <path d="M29 9l1.3 2.7L33 13l-2.7 1.3L29 17l-1.3-2.7L25 13l2.7-1.3z" fill="white" opacity="0.95"/>
+            </svg></span>
+                <span class="logo-text">ToolHub<span class="accent">AI</span></span>
+            </a>
+            <p>Free, private, browser-based tools — no sign-up, ever.</p>
+        </div>
+
+        <div class="footer-col">
+            <h4>Product</h4>
+            <a href="/dashboard.html">All Tools</a>
+            <a href="/about.html">About</a>
+            <a href="/contact.html">Contact</a>
+        </div>
+
+        <div class="footer-col">
+            <h4>Categories</h4>
+            <a href="/dashboard.html?category=pdf">PDF Tools</a>
+            <a href="/dashboard.html?category=image">Image Tools</a>
+            <a href="/dashboard.html?category=ai">AI Tools</a>
+            <a href="/dashboard.html?category=text">Text &amp; Docs</a>
+        </div>
+
+        <div class="footer-col">
+            <h4>Popular</h4>
+            <a href="/tools/image-to-pdf/index.html">Image to PDF</a>
+            <a href="/tools/ai-email-writer/index.html">AI Email Writer</a>
+            <a href="/tools/image-compressor/index.html">Image Compressor</a>
+        </div>
 
     </div>
 
+    <div class="footer-bottom">
+        <p>© 2026 ToolHub AI. All tools run locally in your browser.</p>
+    </div>
 </footer>
 
+<script src="js/theme.js"></script>
+<script src="js/loader.js"></script>
+<script src="js/tools-data.js"></script>
 <script src="js/dashboard.js"></script>
-
 </body>
-
 </html>

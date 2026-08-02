@@ -1,5 +1,5 @@
 User-agent: *
-
 Allow: /
+Disallow: /404.html
 
 Sitemap: https://tool-hub-ai.vercel.app/sitemap.xml
