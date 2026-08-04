@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ToolHub AI • Compress PDF</title>
+<meta name="description" content="Shrink large PDF files right in your browser. Adjustable quality, batch processing, ZIP download — free and private.">
+<meta name="theme-color" content="#0b1220">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%232563eb'/%3E%3Cpath d='M28 15h32l12 12v58a4 4 0 0 1-4 4H28a4 4 0 0 1-4-4V19a4 4 0 0 1 4-4z' fill='white' opacity='0.92'/%3E%3Cpath d='M60 15v12h12z' fill='%2393c5fd'/%3E%3Cpath d='M36 55l8 8-8 8M52 55l-8 8 8 8' stroke='%232563eb' stroke-width='4.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="app">
+
+    <header class="topbar">
+        <a href="/" class="logo">
+            <i class="fa-solid fa-file-zipper"></i>
+            <div class="logo-text">
+                <span>ToolHub AI</span>
+                <small>Compress PDF</small>
+            </div>
+        </a>
+        <div class="top-actions">
+            <button type="button" id="themeBtn" title="Toggle theme" aria-label="Toggle theme">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+            <a href="/dashboard.html" title="Dashboard" aria-label="Dashboard">
+                <i class="fa-solid fa-table-columns"></i>
+            </a>
+        </div>
+    </header>
+
+    <div class="page">
+
+        <!-- UPLOAD -->
+        <div class="panel-card">
+
+            <input type="file" id="pdfInput" multiple accept="application/pdf" hidden>
+
+            <label for="pdfInput" id="dropZone" class="upload-box">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+                <h4>Drag PDF files here</h4>
+                <p>or click to browse</p>
+            </label>
+
+        </div>
+
+        <!-- SETTINGS -->
+        <div class="panel-card">
+
+            <h3><i class="fa-solid fa-sliders"></i> Compression Settings</h3>
+
+            <div class="settings-row">
+
+                <div class="setting-block">
+                    <div class="setting-label-row">
+                        <label for="qualitySlider">Quality</label>
+                        <span id="qualityValue" class="setting-value">65%</span>
+                    </div>
+                    <input type="range" id="qualitySlider" min="20" max="95" step="5" value="65">
+                    <p class="setting-hint">Lower quality = smaller file. Best for scanned or photo-heavy PDFs.</p>
+                </div>
+
+                <div class="setting-block">
+                    <label for="resolutionSelect">Resolution</label>
+                    <select id="resolutionSelect">
+                        <option value="1.5">Standard (recommended)</option>
+                        <option value="1">Low — smallest file</option>
+                        <option value="2.2">High — sharper text</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <p class="setting-warning">
+                <i class="fa-solid fa-circle-info"></i>
+                Compression re-renders every page as an image. This shrinks scanned or photo-heavy PDFs a lot —
+                but text in the output can no longer be selected or searched.
+            </p>
+
+        </div>
+
+        <!-- STATS + ACTIONS -->
+        <div class="panel-card stats-card" id="statsCard" style="display:none;">
+
+            <div class="stats-row">
+                <div class="stat">
+                    <small>Files</small>
+                    <strong id="statCount">0</strong>
+                </div>
+                <div class="stat">
+                    <small>Original</small>
+                    <strong id="statOriginal">0 MB</strong>
+                </div>
+                <i class="fa-solid fa-arrow-right-long stat-arrow"></i>
+                <div class="stat">
+                    <small>Compressed</small>
+                    <strong id="statCompressed">0 MB</strong>
+                </div>
+                <div class="stat stat-saved">
+                    <small>Saved</small>
+                    <strong id="statSaved">0%</strong>
+                </div>
+            </div>
+
+            <div class="stats-actions">
+                <button type="button" id="compressAllBtn" class="secondary-btn">
+                    <i class="fa-solid fa-rotate"></i> Recompress All
+                </button>
+                <button type="button" id="downloadZipBtn" class="convert-btn">
+                    <i class="fa-solid fa-file-zipper"></i> Download All (.zip)
+                </button>
+                <button type="button" id="removeAllBtn" class="danger-btn">
+                    <i class="fa-solid fa-trash"></i> Remove All
+                </button>
+            </div>
+
+            <div class="progress-wrapper" id="progressContainer">
+                <div class="progress-bar"><div id="progressFill"></div></div>
+                <p class="progress-label" id="progressLabel">Compressing…</p>
+            </div>
+
+        </div>
+
+        <!-- RESULTS -->
+        <div id="emptyState" class="empty-state">
+            <i class="fa-solid fa-file-pdf"></i>
+            <h2>No PDFs yet</h2>
+            <p>Upload a PDF to shrink it down.</p>
+        </div>
+
+        <div id="resultsList" class="results-list"></div>
+
+    </div>
+
+    <footer class="footer">
+        <p>© 2026 ToolHub AI • Compress PDF — files never leave your device</p>
+    </footer>
+
+</div>
+
+<div id="toast" class="toast"></div>
+
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="loader-card">
+        <div class="loader-spinner"></div>
+        <h2>Zipping files</h2>
+        <p>Please wait…</p>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>

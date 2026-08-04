@@ -24,9 +24,9 @@ const TOOLS = [
         icon: "fa-layer-group",
         category: "pdf",
         iconClass: "cat-pdf",
-        isNew: false,
+        isNew: true,
         popular: false,
-        addedOrder: 2
+        addedOrder: 8
     },
     {
         name: "Image Resizer",
@@ -68,7 +68,7 @@ const TOOLS = [
         icon: "fa-compress",
         category: "image",
         iconClass: "cat-image",
-        isNew: true,
+        isNew: false,
         popular: true,
         addedOrder: 6
     },
@@ -79,8 +79,30 @@ const TOOLS = [
         icon: "fa-file-lines",
         category: "text",
         iconClass: "cat-text",
-        isNew: true,
+        isNew: false,
         popular: false,
         addedOrder: 7
+    },
+    {
+        name: "Compress PDF",
+        desc: "Shrink large PDF files with an adjustable quality slider — great for scanned documents.",
+        href: "/tools/compress-pdf/index.html",
+        icon: "fa-file-zipper",
+        category: "pdf",
+        iconClass: "cat-pdf",
+        isNew: true,
+        popular: true,
+        addedOrder: 9
+    },
+    {
+        name: "Cover Letter Generator",
+        desc: "Write a clean, professional cover letter with live preview and instant PDF export.",
+        href: "/tools/cover-letter/index.html",
+        icon: "fa-envelope-open-text",
+        category: "text",
+        iconClass: "cat-text",
+        isNew: true,
+        popular: false,
+        addedOrder: 10
     }
 ];

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ToolHub AI • Merge PDF</title>
+<meta name="description" content="Combine multiple PDF files into one document, in the order you choose. Free, private, runs entirely in your browser.">
+<meta name="theme-color" content="#0b1220">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%232563eb'/%3E%3Crect x='20' y='18' width='40' height='50' rx='4' fill='white' opacity='0.9'/%3E%3Crect x='38' y='34' width='42' height='50' rx='4' fill='white'/%3E%3Cpath d='M50 52h18M50 62h18M50 72h12' stroke='%232563eb' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="app">
+
+    <header class="topbar">
+        <a href="/" class="logo">
+            <i class="fa-solid fa-layer-group"></i>
+            <div class="logo-text">
+                <span>ToolHub AI</span>
+                <small>Merge PDF</small>
+            </div>
+        </a>
+        <div class="top-actions">
+            <button type="button" id="themeBtn" title="Toggle theme" aria-label="Toggle theme">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+            <a href="/dashboard.html" title="Dashboard" aria-label="Dashboard">
+                <i class="fa-solid fa-table-columns"></i>
+            </a>
+        </div>
+    </header>
+
+    <div class="page">
+
+        <!-- UPLOAD -->
+        <div class="panel-card">
+
+            <input type="file" id="pdfInput" multiple accept="application/pdf" hidden>
+
+            <label for="pdfInput" id="dropZone" class="upload-box">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+                <h4>Drag PDF files here</h4>
+                <p>or click to browse — merge as many as you like</p>
+            </label>
+
+        </div>
+
+        <!-- STATS + ACTIONS -->
+        <div class="panel-card stats-card" id="statsCard" style="display:none;">
+
+            <div class="stats-row">
+                <div class="stat">
+                    <small>Files</small>
+                    <strong id="statCount">0</strong>
+                </div>
+                <div class="stat">
+                    <small>Total Pages</small>
+                    <strong id="statPages">0</strong>
+                </div>
+                <div class="stat">
+                    <small>Total Size</small>
+                    <strong id="statSize">0 MB</strong>
+                </div>
+            </div>
+
+            <p class="reorder-hint"><i class="fa-solid fa-arrows-up-down"></i> Drag files to change the merge order</p>
+
+            <div class="stats-actions">
+                <button type="button" id="mergeBtn" class="convert-btn">
+                    <i class="fa-solid fa-layer-group"></i> Merge &amp; Download
+                </button>
+                <button type="button" id="removeAllBtn" class="danger-btn">
+                    <i class="fa-solid fa-trash"></i> Remove All
+                </button>
+            </div>
+
+            <div class="progress-wrapper" id="progressContainer">
+                <div class="progress-bar"><div id="progressFill"></div></div>
+                <p class="progress-label" id="progressLabel">Merging…</p>
+            </div>
+
+        </div>
+
+        <!-- EMPTY STATE -->
+        <div id="emptyState" class="empty-state">
+            <i class="fa-solid fa-file-pdf"></i>
+            <h2>No PDFs yet</h2>
+            <p>Upload two or more PDF files to combine them into one.</p>
+        </div>
+
+        <!-- FILE LIST -->
+        <div id="fileList" class="file-list"></div>
+
+    </div>
+
+    <footer class="footer">
+        <p>© 2026 ToolHub AI • Merge PDF — files never leave your device</p>
+    </footer>
+
+</div>
+
+<div id="toast" class="toast"></div>
+
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="loader-card">
+        <div class="loader-spinner"></div>
+        <h2>Merging PDFs</h2>
+        <p>Please wait…</p>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>

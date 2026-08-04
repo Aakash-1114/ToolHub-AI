@@ -1,169 +1,181 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ToolHub AI • Cover Letter Generator</title>
+<meta name="description" content="Write a clean, professional cover letter with a live preview and instant PDF download. Free and private — runs in your browser.">
+<meta name="theme-color" content="#0b1220">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%232563eb'/%3E%3Crect x='24' y='22' width='52' height='60' rx='4' fill='white' opacity='0.95'/%3E%3Cpath d='M34 38h32M34 48h32M34 58h20' stroke='%232563eb' stroke-width='4' stroke-linecap='round'/%3E%3Cpath d='M56 68l6 6 12-14' stroke='%2316a34a' stroke-width='5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 
-    <title>AI Cover Letter Generator - ToolHub AI</title>
-
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
-
-    <style>
-        * {
-            font-family: 'Poppins', sans-serif;
-        }
-
-        body {
-            background: #0f172a;
-        }
-    </style>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&family=Lora:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+<link rel="stylesheet" href="style.css">
 </head>
 
-<body class="text-white">
+<body>
 
-    <nav class="bg-slate-900 border-b border-slate-700">
+<div class="app">
 
-        <div class="max-w-7xl mx-auto flex justify-between items-center px-6 py-5">
-
-            <a href="../../dashboard.html" class="text-2xl font-bold text-blue-500">
-
-                🚀 ToolHub <span class="text-white">AI</span>
-
-            </a>
-
-            <a href="../../dashboard.html" class="text-gray-300 hover:text-blue-400">
-
-                ⬅ Dashboard
-
-            </a>
-
+    <header class="topbar">
+        <a href="/" class="logo">
+            <i class="fa-solid fa-envelope-open-text"></i>
+            <div class="logo-text">
+                <span>ToolHub AI</span>
+                <small>Cover Letter Generator</small>
+            </div>
+        </a>
+        <div class="top-actions">
+            <span id="saveStatus" class="save-status"><i class="fa-solid fa-cloud"></i> Saved</span>
+            <button type="button" id="clearAllBtn" title="Clear all data" aria-label="Clear all data">
+                <i class="fa-solid fa-trash"></i>
+            </button>
+            <button type="button" id="downloadBtn" class="download-btn">
+                <i class="fa-solid fa-download"></i>
+                <span>Download PDF</span>
+            </button>
         </div>
+    </header>
 
-    </nav>
+    <div class="mobile-tabs">
+        <button type="button" class="tab-btn active" data-tab="edit"><i class="fa-solid fa-pen"></i> Edit</button>
+        <button type="button" class="tab-btn" data-tab="preview"><i class="fa-solid fa-eye"></i> Preview</button>
+    </div>
 
-    <section class="max-w-7xl mx-auto p-6">
+    <div class="layout">
 
-        <h1 class="text-4xl font-bold mb-8">
+        <!-- FORM PANEL -->
+        <section class="form-panel" id="formPanel">
 
-            ✉️ AI Cover Letter Generator
-
-        </h1>
-
-        <div class="grid lg:grid-cols-2 gap-8">
-
-            <!-- Left -->
-
-            <div class="bg-slate-800 p-6 rounded-2xl">
-
-                <h2 class="text-2xl font-semibold mb-6">
-
-                    Enter Details
-
-                </h2>
-
-                <input id="name" type="text" placeholder="Your Name" class="w-full p-3 mb-4 rounded bg-slate-900">
-
-                <input id="company" type="text" placeholder="Company Name" class="w-full p-3 mb-4 rounded bg-slate-900">
-
-                <input id="job" type="text" placeholder="Job Role" class="w-full p-3 mb-4 rounded bg-slate-900">
-
-                <textarea id="skills" placeholder="Your Skills"
-                    class="w-full p-3 mb-4 rounded bg-slate-900 h-24"></textarea>
-
-                <label class="block mb-2 text-lg font-medium">
-                    Select Template
-                </label>
-
-                <select id="template" class="w-full p-3 mb-4 rounded bg-slate-900">
-
-                    <option value="professional">
-                        💼 Professional
-                    </option>
-
-                    <option value="modern">
-                        ✨ Modern
-                    </option>
-
-                    <option value="simple">
-                        📄 Simple
-                    </option>
-
-                </select>
-
-                <button onclick="generateLetter()" class="w-full bg-blue-600 hover:bg-blue-700 p-3 rounded-xl">
-
-                    Generate Cover Letter
-
-                </button>
-
-                <button onclick="downloadPDF()" class="w-full bg-green-600 hover:bg-green-700 p-3 rounded-xl mt-4">
-
-                    📄 Download PDF
-
-                </button>
-
-                <button onclick="copyLetter()" class="w-full bg-indigo-600 hover:bg-indigo-700 p-3 rounded-xl mt-4">
-
-                    📋 Copy Cover Letter
-
-                </button>
-
-                <button onclick="clearForm()" class="w-full bg-red-600 hover:bg-red-700 p-3 rounded-xl mt-4">
-
-                    🗑️ Clear Form
-
-                </button>
-
-                <button onclick="printLetter()" class="w-full bg-purple-600 hover:bg-purple-700 p-3 rounded-xl mt-4">
-
-                    🖨️ Print Cover Letter
-
-                </button>
-
+            <div class="design-bar">
+                <div class="design-group">
+                    <label>Template</label>
+                    <div class="template-options" id="templateOptions">
+                        <button type="button" class="template-swatch active" data-template="modern">
+                            <span class="swatch-preview modern"></span>Modern
+                        </button>
+                        <button type="button" class="template-swatch" data-template="classic">
+                            <span class="swatch-preview classic"></span>Classic
+                        </button>
+                    </div>
+                </div>
+                <div class="design-group">
+                    <label>Accent Color</label>
+                    <div class="color-swatches" id="colorSwatches">
+                        <button type="button" class="color-dot active" data-color="#2563eb" style="--c:#2563eb" aria-label="Blue"></button>
+                        <button type="button" class="color-dot" data-color="#0ea5a4" style="--c:#0ea5a4" aria-label="Teal"></button>
+                        <button type="button" class="color-dot" data-color="#7c3aed" style="--c:#7c3aed" aria-label="Purple"></button>
+                        <button type="button" class="color-dot" data-color="#dc2626" style="--c:#dc2626" aria-label="Red"></button>
+                        <button type="button" class="color-dot" data-color="#111827" style="--c:#111827" aria-label="Graphite"></button>
+                    </div>
+                </div>
             </div>
 
-            <!-- Right -->
+            <form id="letterForm" autocomplete="off">
 
-            <div id="letterPreview" class="bg-white text-black rounded-2xl p-8">
+                <!-- Your Info -->
+                <div class="form-card">
+                    <h3><i class="fa-solid fa-user"></i> Your Info</h3>
+                    <div class="field-grid">
+                        <div class="field"><label for="fullName">Full Name</label><input id="fullName" placeholder="Aisha Khan"></div>
+                        <div class="field"><label for="email">Email</label><input id="email" type="email" placeholder="aisha@email.com"></div>
+                        <div class="field"><label for="phone">Phone</label><input id="phone" placeholder="+91 98765 43210"></div>
+                        <div class="field"><label for="address">Location</label><input id="address" placeholder="Mumbai, India"></div>
+                        <div class="field full"><label for="linkedin">LinkedIn / Portfolio (optional)</label><input id="linkedin" placeholder="linkedin.com/in/aisha"></div>
+                    </div>
+                </div>
 
-                <h2 class="text-3xl font-bold mb-6">
+                <!-- Recipient & Role -->
+                <div class="form-card">
+                    <h3><i class="fa-solid fa-building"></i> Recipient &amp; Role</h3>
+                    <div class="field-grid">
+                        <div class="field"><label for="jobTitle">Job Title</label><input id="jobTitle" placeholder="Product Designer"></div>
+                        <div class="field"><label for="companyName">Company Name</label><input id="companyName" placeholder="Acme Inc."></div>
+                        <div class="field"><label for="hiringManager">Hiring Manager (optional)</label><input id="hiringManager" placeholder="Rahul Sharma"></div>
+                        <div class="field"><label for="companyAddress">Company Address (optional)</label><input id="companyAddress" placeholder="Bengaluru, India"></div>
+                        <div class="field"><label for="letterDate">Date</label><input id="letterDate" placeholder="1 August 2026"></div>
+                        <div class="field"><label for="salutation">Salutation</label><input id="salutation" placeholder="Dear Hiring Manager,"></div>
+                    </div>
+                </div>
 
-                    Cover Letter
+                <!-- Letter Body -->
+                <div class="form-card">
+                    <div class="card-header-row">
+                        <h3><i class="fa-solid fa-align-left"></i> Opening Paragraph</h3>
+                        <button type="button" class="example-btn" data-example="opening">Use Example</button>
+                    </div>
+                    <div class="field">
+                        <textarea id="opening" rows="3" placeholder="Why you're writing and the role you're applying for."></textarea>
+                    </div>
+                </div>
 
-                </h2>
+                <div class="form-card">
+                    <div class="card-header-row">
+                        <h3><i class="fa-solid fa-align-left"></i> Body Paragraph</h3>
+                        <button type="button" class="example-btn" data-example="body">Use Example</button>
+                    </div>
+                    <div class="field">
+                        <textarea id="body" rows="5" placeholder="Your relevant experience, skills and achievements."></textarea>
+                    </div>
+                </div>
 
-                <p id="previewLetter">
+                <div class="form-card">
+                    <div class="card-header-row">
+                        <h3><i class="fa-solid fa-align-left"></i> Closing Paragraph</h3>
+                        <button type="button" class="example-btn" data-example="closing">Use Example</button>
+                    </div>
+                    <div class="field">
+                        <textarea id="closing" rows="3" placeholder="A call to action and thank-you."></textarea>
+                    </div>
+                </div>
 
-                    Your cover letter will appear here...
+                <!-- Sign-off -->
+                <div class="form-card">
+                    <h3><i class="fa-solid fa-signature"></i> Sign-off</h3>
+                    <div class="field">
+                        <select id="signOff">
+                            <option value="Sincerely,">Sincerely,</option>
+                            <option value="Best regards,">Best regards,</option>
+                            <option value="Kind regards,">Kind regards,</option>
+                            <option value="Respectfully,">Respectfully,</option>
+                        </select>
+                    </div>
+                </div>
 
-                </p>
+            </form>
 
+        </section>
+
+        <!-- PREVIEW PANEL -->
+        <section class="preview-panel" id="previewPanel">
+            <div class="preview-scale-wrap">
+                <div id="letterPreview" class="letter modern"></div>
             </div>
+        </section>
 
-            <div class="mt-4 text-sm text-gray-600">
-                Words: <span id="wordCount">0</span> |
-                Characters: <span id="charCount">0</span>
-            </div>
-        </div>
+    </div>
 
-    </section>
+    <footer class="footer">
+        <p>© 2026 ToolHub AI • Cover Letter Generator — your data stays in your browser</p>
+    </footer>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</div>
 
-    <script src="script.js"></script>
+<div id="toast" class="toast"></div>
+
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="loader-card">
+        <div class="loader-spinner"></div>
+        <h2>Generating PDF</h2>
+        <p>Please wait…</p>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="script.js"></script>
 
 </body>
-
 </html>
