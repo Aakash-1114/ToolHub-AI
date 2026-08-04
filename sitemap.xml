@@ -73,9 +73,23 @@
 
     <url>
         <loc>https://tool-hub-ai.vercel.app/tools/resume-builder/index.html</loc>
-        <lastmod>2026-08-02</lastmod>
+        <lastmod>2026-08-04</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.85</priority>
+    </url>
+
+    <url>
+        <loc>https://tool-hub-ai.vercel.app/tools/compress-pdf/index.html</loc>
+        <lastmod>2026-08-04</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.85</priority>
+    </url>
+
+    <url>
+        <loc>https://tool-hub-ai.vercel.app/tools/cover-letter/index.html</loc>
+        <lastmod>2026-08-04</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
     </url>
 
 </urlset>
