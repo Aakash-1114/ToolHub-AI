@@ -30,6 +30,20 @@
     </url>
 
     <url>
+        <loc>https://tool-hub-ai.vercel.app/privacy.html</loc>
+        <lastmod>2026-08-04</lastmod>
+        <changefreq>yearly</changefreq>
+        <priority>0.3</priority>
+    </url>
+
+    <url>
+        <loc>https://tool-hub-ai.vercel.app/terms.html</loc>
+        <lastmod>2026-08-04</lastmod>
+        <changefreq>yearly</changefreq>
+        <priority>0.3</priority>
+    </url>
+
+    <url>
         <loc>https://tool-hub-ai.vercel.app/tools/image-to-pdf/index.html</loc>
         <lastmod>2026-08-02</lastmod>
         <changefreq>monthly</changefreq>

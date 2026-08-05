@@ -892,6 +892,67 @@ img, svg {
     padding: 40px 20px;
 }
 
+.legal-content {
+    max-width: 760px;
+}
+
+.legal-content .updated-date {
+    color: var(--text-faint);
+    font-size: 13px;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.legal-content h2 {
+    font-size: 18px;
+    margin: 32px 0 12px;
+    color: var(--text);
+}
+
+.legal-content h2:first-of-type {
+    margin-top: 0;
+}
+
+.legal-content p {
+    color: var(--text-dim);
+    font-size: 14.5px;
+    line-height: 1.75;
+    margin-bottom: 14px;
+    text-align: left;
+}
+
+.legal-content ul {
+    margin: 0 0 14px 20px;
+    color: var(--text-dim);
+    font-size: 14.5px;
+    line-height: 1.8;
+}
+
+.legal-content a {
+    color: var(--accent-light);
+    text-decoration: underline;
+}
+
+.legal-content code {
+    background: var(--card-soft);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 1px 6px;
+    font-size: 13px;
+}
+
+.footer-bottom a {
+    color: var(--text-dim);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.footer-bottom a:hover {
+    color: var(--accent-light);
+}
+
 .value-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
