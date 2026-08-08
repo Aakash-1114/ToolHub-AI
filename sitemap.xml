@@ -58,27 +58,6 @@
     </url>
 
     <url>
-        <loc>https://tool-hub-ai.vercel.app/tools/image-resizer/index.html</loc>
-        <lastmod>2026-08-02</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.8</priority>
-    </url>
-
-    <url>
-        <loc>https://tool-hub-ai.vercel.app/tools/ai-email-writer/index.html</loc>
-        <lastmod>2026-08-02</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.8</priority>
-    </url>
-
-    <url>
-        <loc>https://tool-hub-ai.vercel.app/tools/invoice-generator/index.html</loc>
-        <lastmod>2026-08-02</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.8</priority>
-    </url>
-
-    <url>
         <loc>https://tool-hub-ai.vercel.app/tools/image-compressor/index.html</loc>
         <lastmod>2026-08-02</lastmod>
         <changefreq>monthly</changefreq>

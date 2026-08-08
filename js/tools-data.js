@@ -3,6 +3,8 @@
    Used by both the homepage (js/script.js) and the
    dashboard (js/dashboard.js). Add new tools here only —
    both pages read from this one list.
+
+   Only list tools that are actually built and live.
 =========================================== */
 
 const TOOLS = [
@@ -26,40 +28,7 @@ const TOOLS = [
         iconClass: "cat-pdf",
         isNew: true,
         popular: false,
-        addedOrder: 8
-    },
-    {
-        name: "Image Resizer",
-        desc: "Resize images to exact dimensions or a target file size in a few clicks.",
-        href: "/tools/image-resizer/index.html",
-        icon: "fa-crop-simple",
-        category: "image",
-        iconClass: "cat-image",
-        isNew: false,
-        popular: false,
-        addedOrder: 3
-    },
-    {
-        name: "AI Email Writer",
-        desc: "Draft clear, well-toned emails in seconds — just describe what you need to say.",
-        href: "/tools/ai-email-writer/index.html",
-        icon: "fa-wand-magic-sparkles",
-        category: "ai",
-        iconClass: "cat-ai",
-        isNew: false,
-        popular: true,
         addedOrder: 4
-    },
-    {
-        name: "Invoice Generator",
-        desc: "Create professional invoices with itemized billing and instant PDF download.",
-        href: "/tools/invoice-generator/index.html",
-        icon: "fa-file-invoice-dollar",
-        category: "text",
-        iconClass: "cat-text",
-        isNew: false,
-        popular: false,
-        addedOrder: 5
     },
     {
         name: "Image Compressor",
@@ -70,7 +39,7 @@ const TOOLS = [
         iconClass: "cat-image",
         isNew: false,
         popular: true,
-        addedOrder: 6
+        addedOrder: 2
     },
     {
         name: "Resume Builder",
@@ -81,7 +50,7 @@ const TOOLS = [
         iconClass: "cat-text",
         isNew: false,
         popular: false,
-        addedOrder: 7
+        addedOrder: 3
     },
     {
         name: "Compress PDF",
@@ -92,7 +61,7 @@ const TOOLS = [
         iconClass: "cat-pdf",
         isNew: true,
         popular: true,
-        addedOrder: 9
+        addedOrder: 5
     },
     {
         name: "Cover Letter Generator",
@@ -103,6 +72,6 @@ const TOOLS = [
         iconClass: "cat-text",
         isNew: true,
         popular: false,
-        addedOrder: 10
+        addedOrder: 6
     }
 ];
